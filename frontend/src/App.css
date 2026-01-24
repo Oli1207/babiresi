@@ -224,20 +224,23 @@ textarea.form-control:focus {
 
 /* Badges améliorés */
 .badge {
-  background: var(--glass-bg) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid var(--glass-border) !important;
-  color: var(--color-text-primary) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #000000 !important;
   padding: 6px 12px !important;
   border-radius: 8px !important;
   font-weight: 600 !important;
   transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 .badge:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 1) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
   transform: scale(1.05);
+  color: #000000 !important;
 }
 
 /* Checkboxes améliorés */

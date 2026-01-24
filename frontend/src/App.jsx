@@ -47,7 +47,7 @@ function AppLayout() {
 
         </Routes>
       </main>
-      {!isAuth && <Footer />}
+      {!isAuth && !isHome && <Footer />}
     </div>
   );
 }

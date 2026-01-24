@@ -304,7 +304,7 @@ a:hover {
 }
 
 .text-muted {
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 /* Animations d'entrée */

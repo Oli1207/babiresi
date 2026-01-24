@@ -42,33 +42,8 @@ export default function HomeScreen() {
     [listings, activeId]
   );
 
-  // ✅ NEW: “Top bar” simple pro
   return (
     <div className="home-shell">
-      <div className="home-topbar">
-        <div className="home-brand">
-          <div className="home-title">Babi Resi</div>
-          <div className="home-subtitle">Explore les résidences à Abidjan</div>
-        </div>
-
-        <div className="home-tabs">
-          <button
-            className={`home-tab ${tab === "map" ? "active" : ""}`}
-            onClick={() => setTab("map")}
-            type="button"
-          >
-            Carte
-          </button>
-          <button
-            className={`home-tab ${tab === "list" ? "active" : ""}`}
-            onClick={() => setTab("list")}
-            type="button"
-          >
-            Liste
-          </button>
-        </div>
-      </div>
-
       {/* ✅ Body */}
       <div className="home-body">
         {tab === "map" ? (
@@ -88,24 +63,6 @@ export default function HomeScreen() {
             onGoMap={() => setTab("map")} // ✅ CTA depuis la liste
           />
         )}
-      </div>
-
-      {/* ✅ Optionnel : petit footer sticky mobile (pro & simple) */}
-      <div className="home-bottomnav d-lg-none">
-        <button
-          className={`bn-item ${tab === "map" ? "active" : ""}`}
-          onClick={() => setTab("map")}
-          type="button"
-        >
-          Carte
-        </button>
-        <button
-          className={`bn-item ${tab === "list" ? "active" : ""}`}
-          onClick={() => setTab("list")}
-          type="button"
-        >
-          Liste
-        </button>
       </div>
     </div>
   );
