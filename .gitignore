@@ -1,0 +1,77 @@
+############################
+# GENERAL
+############################
+.DS_Store
+Thumbs.db
+.env
+.env.*
+*.log
+
+############################
+# PYTHON / DJANGO
+############################
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Django
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+static/
+
+# Django cache & sessions
+.cache/
+*.pid
+
+# Migrations (optionnel)
+# ⚠️ Décommente UNIQUEMENT si tu sais ce que tu fais
+# **/migrations/*.py
+# !**/migrations/__init__.py
+
+############################
+# REACT / NODE
+############################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+build/
+dist/
+
+# Vite
+.vite/
+
+# React env
+frontend/.env
+frontend/.env.*
+
+############################
+# IDE / EDITORS
+############################
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+############################
+# TEST / COVERAGE
+############################
+coverage/
+htmlcov/
+
+############################
+# TEMP FILES
+############################
+*.swp
+*.tmp

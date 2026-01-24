@@ -1,0 +1,104 @@
+/* Style TikTok mobile-like */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    font-family: 'Arial', sans-serif;
+    color: white;
+}
+
+.login-container {
+    /* min-height: 100vh; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-logo {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.login-logo img {
+    width: 80px;
+    height: auto;
+}
+
+h2 {
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
+    margin-top: 15px;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 400px;
+    background-color: #1c1c1e;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-field {
+    background: #2c2c2e;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+.input-field::placeholder {
+    color: #aaa;
+}
+
+.login-btn {
+    background: #004990;
+    border: none;
+    color: white;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.login-btn:hover {
+    background: #004990;
+}
+
+.forgot-password {
+    color: #aaa;
+    font-size: 14px;
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.sign-up-prompt {
+    font-size: 14px;
+    margin-top: 20px;
+    text-align: center;
+    color: #ccc;
+}
+.sign-up-prompt a {
+    color: #004990;
+    text-decoration: none;
+}
+.sign-up-prompt a:hover {
+    text-decoration: underline;
+}

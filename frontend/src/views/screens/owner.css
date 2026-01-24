@@ -1,0 +1,98 @@
+.owner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .owner-grid { grid-template-columns: 1fr; }
+}
+
+.owner-card {
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 16px;
+  background: #fff;
+  padding: 12px;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+}
+
+.owner-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.owner-title {
+  font-weight: 950;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.owner-pill {
+  font-size: 11px;
+  font-weight: 950;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(0,0,0,0.04);
+  white-space: nowrap;
+}
+
+.owner-pill.requested { background: rgba(255, 193, 7, 0.18); }
+.owner-pill.awaiting_payment { background: rgba(13, 110, 253, 0.12); }
+.owner-pill.paid { background: rgba(25, 135, 84, 0.14); }
+.owner-pill.rejected { background: rgba(220, 53, 69, 0.12); }
+
+.owner-sub, .owner-sub2 {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.60);
+}
+
+.owner-money {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.75);
+}
+
+/* Modal */
+.owner-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+}
+
+.owner-modal {
+  width: min(520px, 100%);
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+  padding: 14px;
+}
+
+.owner-modal-title {
+  font-weight: 950;
+  font-size: 16px;
+}
+
+.owner-modal-sub {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.60);
+}
+
+.owner-note {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(0,0,0,0.03);
+}

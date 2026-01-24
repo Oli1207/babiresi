@@ -1,0 +1,349 @@
+/* ====== Layout global ====== */
+.home-shell {
+  height: calc(100dvh - 0px);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.home-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+}
+
+.home-brand .home-title {
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+}
+
+.home-brand .home-subtitle {
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+}
+
+.home-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.home-tab {
+  border: 1px solid rgba(0,0,0,0.12);
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.home-tab.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.home-body {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ====== Bottom nav (mobile) ====== */
+.home-bottomnav {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  background: #fff;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+.bn-item {
+  flex: 1;
+  padding: 12px 10px;
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+}
+
+.bn-item.active {
+  color: #111;
+}
+
+/* ====== Map Screen ====== */
+.map-screen {
+  position: relative;
+  height: 100%;
+}
+
+.map-canvas {
+  height: 100%;
+}
+
+.map-overlay-top {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 999;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.map-chip {
+  pointer-events: auto;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 999px;
+  padding: 10px 12px;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+.map-chip-btn {
+  cursor: pointer;
+}
+
+/* ====== Drawer ====== */
+.map-drawer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -420px;
+  z-index: 999;
+  background: #fff;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  box-shadow: 0 -20px 40px rgba(0,0,0,0.12);
+  padding: 10px 12px 14px;
+  transition: bottom 0.25s ease;
+}
+
+.map-drawer.open {
+  bottom: 0;
+}
+
+.map-drawer-handle {
+  width: 52px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.18);
+  margin: 6px auto 10px;
+  cursor: pointer;
+}
+
+.map-drawer-empty {
+  padding: 10px 6px 16px;
+}
+
+.map-drawer-card {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.drawer-thumb {
+  width: 110px;
+  height: 96px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.10);
+}
+
+.drawer-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.drawer-info {
+  min-width: 0;
+}
+
+.drawer-title {
+  font-weight: 900;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.drawer-loc {
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+  margin-top: 4px;
+}
+
+.drawer-price {
+  font-weight: 900;
+  margin-top: 6px;
+}
+
+.drawer-price .drawer-per {
+  font-weight: 700;
+  color: rgba(0,0,0,0.55);
+}
+
+.drawer-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* ====== List Screen ====== */
+.list-screen {
+  height: 100%;
+  overflow: auto;
+  padding: 14px;
+}
+
+.list-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.list-h1 {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.list-h2 {
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+}
+
+.list-controls {
+  display: grid;
+  grid-template-columns: 1fr 170px;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 576px) {
+  .list-controls {
+    grid-template-columns: 1fr;
+  }
+}
+
+.list-section {
+  margin-bottom: 18px;
+}
+
+.list-section-title {
+  font-weight: 900;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.list-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 992px) {
+  .list-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 576px) {
+  .list-grid { grid-template-columns: 1fr; }
+}
+
+/* ====== Card ====== */
+.list-card {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: #fff;
+  cursor: pointer;
+  transition: transform .08s ease, border-color .08s ease;
+}
+
+.list-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0,0,0,0.18);
+}
+
+.list-card.active {
+  border-color: #111;
+}
+
+.list-thumb {
+  width: 110px;
+  height: 90px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.list-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.list-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.list-title {
+  font-weight: 900;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.list-sub {
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.list-price {
+  font-weight: 900;
+}
+
+.list-price span {
+  font-weight: 700;
+  color: rgba(0,0,0,0.55);
+}
+
+.list-chip {
+  font-size: 11px;
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Empty */
+.list-empty {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px dashed rgba(0,0,0,0.18);
+  text-align: center;
+}
