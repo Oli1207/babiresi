@@ -1,104 +1,408 @@
-/* Style TikTok mobile-like */
-body {
-    margin: 0;
-    padding: 0;
-    background-color: black;
-    font-family: 'Arial', sans-serif;
-    color: white;
+/* Style glassmorphism sobre et immersif pour les pages auth */
+/* Note: Le body est défini dans index.css, on ne le redéfinit pas ici */
+
+/* Animation de fond */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 .login-container {
-    /* min-height: 100vh; */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: transparent;
+  position: relative;
+  animation: fadeInUp 0.8s ease-out;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .login-logo {
-    margin-bottom: 30px;
-    text-align: center;
+  margin-bottom: 30px;
+  text-align: center;
+  animation: float 6s ease-in-out infinite;
 }
 
 .login-logo img {
-    width: 80px;
-    height: auto;
+  width: 80px;
+  height: auto;
+  filter: drop-shadow(0 4px 20px rgba(255, 255, 255, 0.1));
 }
 
 h2 {
-    font-size: 18px;
-    font-weight: 500;
-    color: #fff;
-    margin-top: 15px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 15px;
+  text-align: center;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+@media (max-width: 768px) {
+  h2 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  h2 {
+    font-size: 20px;
+    margin-top: 10px;
+  }
+}
+
+/* Box de login avec glassmorphism amélioré */
 .login-box {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 40px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+              0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+.login-box::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.login-box:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+              0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  transform: translateY(-4px);
+}
+
+@media (max-width: 768px) {
+  .login-box {
+    padding: 32px 24px;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    padding: 16px;
+  }
+  
+  .login-box {
+    padding: 32px 24px;
+    max-width: 100%;
+  }
+  
+  .login-form {
+    gap: 18px;
+  }
+  
+  .input-field {
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+  
+  .login-btn {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 12px;
+    min-height: 100vh;
     width: 100%;
-    max-width: 400px;
-    background-color: #1c1c1e;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .login-logo {
+    margin-bottom: 20px;
+  }
+  
+  .login-logo img {
+    width: 60px;
+  }
+  
+  .login-box {
+    padding: 24px 16px;
+    border-radius: 18px;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .login-form {
+    gap: 16px;
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .input-field {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .login-btn {
+    padding: 14px;
+    font-size: 14px;
+    border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .forgot-password {
+    font-size: 12px;
+    margin-top: 8px;
+  }
+  
+  .sign-up-prompt {
+    font-size: 13px;
+    margin-top: 20px;
+  }
 }
 
 .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+.form-group {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Inputs avec style glass amélioré et immersif */
 .input-field {
-    background: #2c2c2e;
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 20px;
+  border-radius: 14px;
+  font-size: 15px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  position: relative;
+  font-weight: 500;
+  pointer-events: auto !important;
+  z-index: 1000 !important;
 }
 
 .input-field::placeholder {
-    color: #aaa;
+  color: rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
 }
 
+.input-field:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+}
+
+.input-field:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08),
+              0 4px 20px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.input-field:focus::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Bouton avec style glass amélioré */
 .login-btn {
-    background: #004990;
-    border: none;
-    color: white;
-    padding: 14px;
-    font-size: 16px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: background 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 10px;
+  position: relative;
+  overflow: visible;
+  letter-spacing: 0.5px;
+  pointer-events: auto !important;
+  z-index: 1;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.login-btn:hover::before {
+  width: 400px;
+  height: 400px;
 }
 
 .login-btn:hover {
-    background: #004990;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4),
+              0 0 20px rgba(255, 255, 255, 0.1);
 }
 
+.login-btn:active {
+  transform: translateY(-1px);
+}
+
+.login-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-btn:disabled::before {
+  display: none;
+}
+
+/* Lien mot de passe oublié amélioré */
 .forgot-password {
-    color: #aaa;
-    font-size: 14px;
-    display: block;
-    margin-top: 10px;
-    text-align: center;
-    text-decoration: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  display: block;
+  margin-top: 10px;
+  text-align: right;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-right: 4px;
+}
+
+.forgot-password::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  width: 0;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.6);
+  transition: width 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .forgot-password:hover {
-    text-decoration: underline;
+  color: #ffffff;
 }
 
+.forgot-password:hover::after {
+  width: 100%;
+}
+
+/* Prompt inscription amélioré */
 .sign-up-prompt {
-    font-size: 14px;
-    margin-top: 20px;
-    text-align: center;
-    color: #ccc;
+  font-size: 14px;
+  margin-top: 24px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  position: relative;
+  z-index: 1;
 }
+
 .sign-up-prompt a {
-    color: #004990;
-    text-decoration: none;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0 4px;
 }
+
+.sign-up-prompt a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.8);
+  transition: width 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .sign-up-prompt a:hover {
-    text-decoration: underline;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.sign-up-prompt a:hover::after {
+  width: 100%;
 }

@@ -4,6 +4,7 @@ import { register, login } from '../../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth'; 
 import Swal from 'sweetalert2';
+import './login.css';
 
 function Register() {
   const [full_name, setFullname] = useState("");
@@ -42,7 +43,9 @@ function Register() {
       Swal.fire({
         icon: 'error',
         title: 'Erreur',
-        text: 'Vérifiez les informations fournies.'
+        text: 'Vérifiez les informations fournies.',
+        position: 'center',
+        confirmButtonText: 'OK'
       });
       setIsLoading(false);
     } else {
@@ -50,11 +53,13 @@ function Register() {
       const { error: loginError, data } = await login(email, password);
 
       if (loginError) {
-        // si le login auto foire, au pire l’utilisateur va se connecter manuellement
+        // si le login auto foire, au pire l'utilisateur va se connecter manuellement
         Swal.fire({
           icon: 'success',
           title: 'Inscription réussie',
-          text: 'Votre compte a bien été créé. Vous pouvez maintenant vous connecter.'
+          text: 'Votre compte a bien été créé. Vous pouvez maintenant vous connecter.',
+          position: 'center',
+          confirmButtonText: 'OK'
         });
         setIsLoading(false);
         resetForm();
@@ -70,7 +75,9 @@ function Register() {
       Swal.fire({
         icon: 'success',
         title: 'Inscription réussie',
-        text: 'Votre compte a bien été créé, vous êtes connecté !'
+        text: 'Votre compte a bien été créé, vous êtes connecté !',
+        position: 'center',
+        confirmButtonText: 'OK'
       });
 
       navigate('/');
@@ -80,121 +87,90 @@ function Register() {
   };
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      minHeight: '80vh',
-      padding: '20px',
-      borderRadius: '10px'
-    }}>
-      <h2 style={{ color: '#004990', marginBottom: '20px' }}>Créer un compte</h2>
+    <div className="login-container">
+      <div className="login-logo">
+        <h2>Babi Resi</h2>
+      </div>
 
-      <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: '400px' }}>
-        <input 
-          type='text'
-          placeholder='Nom et prénoms' 
-          value={full_name}
-          onChange={(e) => setFullname(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '10px',
-            marginBottom: '15px',
-            border: '1px solid #004990',
-            borderRadius: '5px',
-          }}
-        />
+      <div className="login-box">
+        <h2>Créer un compte</h2>
 
-        <input 
-          type='email'
-          placeholder='Email' 
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '10px',
-            marginBottom: '15px',
-            border: '1px solid #004990',
-            borderRadius: '5px',
-          }}
-        />
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label htmlFor="full_name" className="form-label">Nom et prénoms</label>
+            <input 
+              type='text'
+              id='full_name'
+              placeholder='Nom et prénoms' 
+              value={full_name}
+              onChange={(e) => setFullname(e.target.value)}
+              className="input-field"
+            />
+          </div>
 
-        <input 
-          type='number'
-          placeholder='Numéro' 
-          value={phone}
-          onChange={(e) => setMobile(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '10px',
-            marginBottom: '15px',
-            border: '1px solid #004990',
-            borderRadius: '5px',
-          }}
-        />
+          <div className="form-group">
+            <label htmlFor="email" className="form-label">Email</label>
+            <input 
+              type='email'
+              id='email'
+              placeholder='Email' 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-field"
+            />
+          </div>
 
-        <input 
-          type='password'
-          placeholder='Mot de passe' 
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '10px',
-            marginBottom: '15px',
-            border: '1px solid #004990',
-            borderRadius: '5px',
-          }}
-        />
+          <div className="form-group">
+            <label htmlFor="phone" className="form-label">Numéro de téléphone</label>
+            <input 
+              type='number'
+              id='phone'
+              placeholder='Numéro' 
+              value={phone}
+              onChange={(e) => setMobile(e.target.value)}
+              className="input-field"
+            />
+          </div>
 
-        <input 
-          type='password'
-          placeholder='Confirmez votre mot de passe' 
-          value={password2}
-          onChange={(e) => setPassword2(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '10px',
-            marginBottom: '20px',
-            border: '1px solid #004990',
-            borderRadius: '5px',
-          }}
-        />
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">Mot de passe</label>
+            <input 
+              type='password'
+              id='password'
+              placeholder='Mot de passe' 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-field"
+            />
+          </div>
 
-        <button 
-          type='submit'
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: '#004990',
-            border: 'none',
-            borderRadius: '5px',
-            color: 'white',
-            fontSize: '16px',
-            cursor: 'pointer'
-          }}
-          disabled={isLoading}
-        >
-          {isLoading ? 'Loading...' : 'Créer un compte'}
-        </button>
-      </form>
+          <div className="form-group">
+            <label htmlFor="password2" className="form-label">Confirmez votre mot de passe</label>
+            <input 
+              type='password'
+              id='password2'
+              placeholder='Confirmez votre mot de passe' 
+              value={password2}
+              onChange={(e) => setPassword2(e.target.value)}
+              className="input-field"
+            />
+          </div>
 
-      <div style={{ marginTop: '15px' }}>
-        <span style={{ color: '#004990', fontSize: '14px' }}>
-          Vous avez déjà un compte ?{" "}
-          <Link
-            to="/login"
-            style={{
-              color: '#004990',
-              fontWeight: 'bold',
-              textDecoration: 'underline',
-              cursor: 'pointer'
-            }}
+          <button 
+            type='submit'
+            className="login-btn"
+            disabled={isLoading}
           >
+            {isLoading ? 'Chargement...' : 'Créer un compte'}
+          </button>
+        </form>
+
+        <div className="sign-up-prompt">
+          Vous avez déjà un compte ?{" "}
+          <Link to="/login">
             Connectez-vous
           </Link>
-        </span>
+        </div>
       </div>
     </div>
   );

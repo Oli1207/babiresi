@@ -12,37 +12,43 @@ import { useEffect } from "react";
 import BookingStatusScreen from "./views/screens/BookingStatusScreen";
 import MyBookingsScreen from "./views/screens/MyBookingsScreen";
 import PaystackReturnScreen from "./views/screens/PaystackReturnScreen";
-// ✅ NEW: page détail résidence
-// import ListingDetail from "./views/screens/ListingDetail";
+import Navbar from "./views/components/Navbar";
+import Footer from "./views/components/Footer";
+import "./App.css";
 
 function AppLayout() {
   const location = useLocation();
 
   // ✅ Home full width (seulement "/")
   const isHome = location.pathname === "/";
+  const isAuth = location.pathname === "/login" || location.pathname === "/register";
 
   return (
-    <main className={isHome ? "p-0" : "container py-4"}>
-      <Routes>
-        <Route path="/" element={<HomeScreen />} />
+    <div className="app-container">
+      {!isAuth && <Navbar />}
+      <main className={isHome ? "p-0" : "container py-4"}>
+        <Routes>
+          <Route path="/" element={<HomeScreen />} />
 
-        {/* Auth */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+          {/* Auth */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* Create */}
-        <Route path="/create" element={<CreateListing />} />
+          {/* Create */}
+          <Route path="/create" element={<CreateListing />} />
 
-        {/* ✅ NEW: Listing detail */}
-        <Route path="/listings/:id" element={<ListingDetailScreen />} />
-        <Route path="/owner/inbox" element={<OwnerInboxScreen />} />
-<Route path="/owner/validate-key" element={<ValidateKey />} />
-<Route path="/bookings/:id" element={<BookingStatusScreen />} />
-<Route path="/me/bookings" element={<MyBookingsScreen />} />
-<Route path="/payments/paystack/return" element={<PaystackReturnScreen />} />
+          {/* ✅ NEW: Listing detail */}
+          <Route path="/listings/:id" element={<ListingDetailScreen />} />
+          <Route path="/owner/inbox" element={<OwnerInboxScreen />} />
+          <Route path="/owner/validate-key" element={<ValidateKey />} />
+          <Route path="/bookings/:id" element={<BookingStatusScreen />} />
+          <Route path="/me/bookings" element={<MyBookingsScreen />} />
+          <Route path="/payments/paystack/return" element={<PaystackReturnScreen />} />
 
-      </Routes>
-    </main>
+        </Routes>
+      </main>
+      {!isAuth && <Footer />}
+    </div>
   );
 }
 

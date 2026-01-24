@@ -1,0 +1,134 @@
+/* Styles personnalisés pour SweetAlert2 - Positionnement et responsive */
+
+/* Container principal - centré et responsive */
+.swal2-container {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 99999 !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* Popup centrée */
+.swal2-popup {
+  position: relative !important;
+  margin: auto !important;
+  max-width: 90% !important;
+  width: auto !important;
+  min-width: 300px !important;
+  max-width: 500px !important;
+  box-sizing: border-box !important;
+}
+
+/* Responsive pour mobile */
+@media (max-width: 576px) {
+  .swal2-container {
+    padding: 16px !important;
+  }
+  
+  .swal2-popup {
+    max-width: calc(100% - 32px) !important;
+    min-width: 280px !important;
+    padding: 1.25rem !important;
+  }
+  
+  .swal2-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .swal2-content {
+    font-size: 0.9rem !important;
+  }
+  
+  .swal2-confirm {
+    padding: 0.5rem 1.5rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .swal2-popup {
+    max-width: calc(100% - 24px) !important;
+    min-width: 260px !important;
+    padding: 1rem !important;
+  }
+  
+  .swal2-title {
+    font-size: 1.1rem !important;
+  }
+  
+  .swal2-content {
+    font-size: 0.85rem !important;
+  }
+}
+
+/* Style pour les boutons */
+.swal2-confirm {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 0.6rem 1.75rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.swal2-confirm:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Style pour le popup avec thème sombre */
+.swal2-popup {
+  background: rgba(10, 10, 10, 0.95) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  color: #ffffff !important;
+}
+
+.swal2-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.swal2-content {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Icônes avec style glass */
+.swal2-icon {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.swal2-icon.swal2-success {
+  border-color: rgba(25, 135, 84, 0.3) !important;
+}
+
+.swal2-icon.swal2-error {
+  border-color: rgba(220, 53, 69, 0.3) !important;
+}
+
+.swal2-icon.swal2-warning {
+  border-color: rgba(255, 193, 7, 0.3) !important;
+}
+
+/* Backdrop */
+.swal2-backdrop-show {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+

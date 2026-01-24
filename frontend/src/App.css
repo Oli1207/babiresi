@@ -1,0 +1,508 @@
+/* Styles globaux pour l'application avec UX/UI immersive */
+
+.app-container {
+  min-height: 100vh;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+/* Override Bootstrap pour le thème sombre avec style immersif */
+.btn-dark {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  color: var(--color-text-primary) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: visible !important;
+  font-weight: 600 !important;
+  isolation: isolate;
+}
+
+.btn-dark::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.btn-dark:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-dark,
+.btn-outline-dark,
+.btn-outline-secondary,
+.btn,
+.btn-sm {
+  position: relative;
+  z-index: 1;
+  overflow: visible !important;
+  pointer-events: auto !important;
+  isolation: isolate;
+}
+
+.btn-dark:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 
+              0 0 20px rgba(255, 255, 255, 0.1) !important;
+}
+
+.btn-dark:active {
+  transform: translateY(-1px) !important;
+}
+
+.btn-outline-dark {
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  color: var(--color-text-primary) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-weight: 600 !important;
+}
+
+.btn-outline-dark:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+              0 0 15px rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Champs de formulaire améliorés avec style immersif */
+.form-control,
+.form-select {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+  color: var(--color-text-primary) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 12px !important;
+  padding: 14px 18px !important;
+  font-size: 15px !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+  cursor: text !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  touch-action: manipulation !important;
+}
+
+.form-control:hover,
+.form-select:hover {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  transform: translateY(-1px);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: var(--color-text-primary) !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08),
+              0 4px 20px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(-2px) !important;
+  outline: none !important;
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+  transition: all 0.3s ease !important;
+}
+
+.form-control:focus::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px);
+}
+
+/* Textarea amélioré */
+textarea.form-control {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+textarea.form-control:focus {
+  min-height: 140px;
+}
+
+/* Select amélioré */
+.form-select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 16px center !important;
+  padding-right: 45px !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+.form-select option {
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 12px;
+}
+
+/* Labels améliorés */
+.form-label {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  margin-bottom: 8px !important;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.form-label:hover {
+  color: var(--color-text-primary) !important;
+  opacity: 0.9;
+}
+
+/* Cards Bootstrap améliorées */
+.card {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 32px var(--glass-shadow) !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow: visible;
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.6s;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card:hover::before {
+  left: 100%;
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 16px 48px var(--glass-shadow),
+              0 0 30px rgba(255, 255, 255, 0.05) !important;
+}
+
+.card-body {
+  position: relative;
+  z-index: 1;
+}
+
+/* Badges améliorés */
+.badge {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--color-text-primary) !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.badge:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  transform: scale(1.05);
+}
+
+/* Checkboxes améliorés */
+.form-check-input {
+  width: 18px !important;
+  height: 18px !important;
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1.5px solid var(--glass-border) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+}
+
+.form-check-input:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  transform: scale(1.1);
+}
+
+.form-check-input:checked {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 0 0 3px var(--glass-bg),
+              0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.form-check-input:focus {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 0 3px var(--glass-bg) !important;
+}
+
+.form-check-label {
+  color: var(--color-text-primary) !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: color 0.3s ease !important;
+  margin-left: 8px !important;
+}
+
+.form-check-label:hover {
+  color: #ffffff !important;
+}
+
+/* Alertes améliorées */
+.alert {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 12px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  padding: 12px 16px !important;
+}
+
+.alert-warning {
+  background: rgba(255, 193, 7, 0.15) !important;
+  border-color: rgba(255, 193, 7, 0.3) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.alert-success {
+  background: rgba(25, 135, 84, 0.15) !important;
+  border-color: rgba(25, 135, 84, 0.3) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.alert-danger {
+  background: rgba(220, 53, 69, 0.15) !important;
+  border-color: rgba(220, 53, 69, 0.3) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* S'assurer que tous les inputs et selects sont interactifs */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="search"],
+textarea,
+select,
+.form-control,
+.form-select {
+  pointer-events: auto !important;
+  z-index: 1000 !important;
+  position: relative !important;
+  isolation: isolate;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+/* S'assurer que les conteneurs de formulaires ne bloquent pas */
+.list-controls,
+.list-screen,
+form,
+.form-group,
+.row,
+.col,
+.col-6,
+.col-12,
+.col-md-3 {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* S'assurer que les boutons sont interactifs */
+button,
+.btn,
+.btn-sm {
+  pointer-events: auto !important;
+  z-index: 10 !important;
+  position: relative;
+  isolation: isolate;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Désactiver les effets ripple sur les boutons de filtres pour éviter les blocages */
+.list-controls .btn::before,
+.list-controls button::before,
+.list-controls .btn-dark::before,
+.list-controls .btn-outline-dark::before {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* S'assurer que les champs dans list-controls sont toujours accessibles */
+.list-controls input,
+.list-controls select,
+.list-controls .form-control,
+.list-controls .form-select {
+  pointer-events: auto !important;
+  z-index: 10000 !important;
+  position: relative !important;
+  cursor: text !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+/* Forcer l'interactivité sur tous les éléments de formulaire */
+.list-controls * {
+  pointer-events: auto !important;
+}
+
+.list-controls input:focus,
+.list-controls select:focus,
+.list-controls .form-control:focus,
+.list-controls .form-select:focus {
+  pointer-events: auto !important;
+  z-index: 10001 !important;
+}
+
+/* S'assurer que les boutons fonctionnent */
+.list-controls button,
+.list-controls .btn {
+  pointer-events: auto !important;
+  z-index: 100 !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+/* Responsive utilities */
+@media (max-width: 1200px) {
+  .container {
+    max-width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 992px) {
+  .container {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  
+  .card {
+    padding: 14px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  .form-control,
+  .form-select {
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+  }
+  
+  .btn-dark,
+  .btn-outline-dark {
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+  }
+  
+  .badge {
+    padding: 5px 10px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .row {
+    margin-left: -8px;
+    margin-right: -8px;
+  }
+
+  .row > * {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .form-control,
+  .form-select {
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+    border-radius: 10px !important;
+  }
+  
+  .btn-dark,
+  .btn-outline-dark {
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+    border-radius: 10px !important;
+  }
+  
+  .card {
+    padding: 12px !important;
+    border-radius: 14px !important;
+  }
+  
+  .form-label {
+    font-size: 13px !important;
+  }
+  
+  .badge {
+    padding: 4px 8px !important;
+    font-size: 10px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  .form-control,
+  .form-select {
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+  }
+}
+

@@ -47,7 +47,7 @@ export default function HomeScreen() {
     <div className="home-shell">
       <div className="home-topbar">
         <div className="home-brand">
-          <div className="home-title">Kelari</div>
+          <div className="home-title">Babi Resi</div>
           <div className="home-subtitle">Explore les résidences à Abidjan</div>
         </div>
 

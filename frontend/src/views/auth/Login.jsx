@@ -4,6 +4,7 @@ import { login } from '../../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth'; 
 import Swal from 'sweetalert2';
+import './login.css';
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -36,7 +37,9 @@ function Login() {
             Swal.fire({
                 icon: 'error',
                 title: 'Erreur',
-                text: 'Vérifiez vos identifiants'
+                text: 'Vérifiez vos identifiants',
+                position: 'center',
+                confirmButtonText: 'OK'
             });
             setIsLoading(false);
         } else {
@@ -48,7 +51,9 @@ function Login() {
             Swal.fire({
                 icon: 'success',
                 title: 'Connexion réussie',
-                text: 'Bienvenue !'
+                text: 'Bienvenue !',
+                position: 'center',
+                confirmButtonText: 'OK'
             });
 
             navigate("/");
@@ -58,101 +63,69 @@ function Login() {
     }
 
     return (
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '80vh',
-            padding: '20px',
-            borderRadius: '10px',
-        }}>
-            <h2 style={{ color: '#004990', marginBottom: '20px' }}>Welcome Back</h2>
+        <div className="login-container">
+            <div className="login-logo">
+                <h2>Babi Resi</h2>
+            </div>
 
-            <form onSubmit={handleLogin} style={{ width: '100%', maxWidth: '400px' }}>
-                <input
-                    type='text'
-                    name='email'
-                    id='email'
-                    placeholder='Email'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    style={{
-                        width: '100%',
-                        padding: '10px',
-                        marginBottom: '15px',
-                        border: '1px solid #004990',
-                        borderRadius: '5px',
-                    }}
-                />
+            <div className="login-box">
+                <h2>Welcome Back</h2>
 
-                <input
-                    type='password'
-                    name='password'
-                    id='password'
-                    placeholder='Password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    style={{
-                        width: '100%',
-                        padding: '10px',
-                        marginBottom: '20px',
-                        border: '1px solid #004990',
-                        borderRadius: '5px',
-                    }}
-                />
-<div style={{
-    width: "100%",
-    textAlign: "right",
-    marginBottom: "15px"
-}}>
-    <Link
-        to="/forgot-password"
-        style={{
-            fontSize: "13px",
-            color: "#64748B",
-            textDecoration: "none",
-            cursor: "pointer"
-        }}
-        onMouseEnter={(e) => e.target.style.color = "#004990"}
-        onMouseLeave={(e) => e.target.style.color = "#64748B"}
-    >
-        Mot de passe oublié ?
-    </Link>
-</div>
+                <form onSubmit={handleLogin} className="login-form">
+                    <div className="form-group">
+                        <label htmlFor="email" className="form-label">Email</label>
+                        <input
+                            type='text'
+                            name='email'
+                            id='email'
+                            placeholder='Email'
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="input-field"
+                        />
+                    </div>
 
-                <button
-                    type='submit'
-                    style={{
-                        width: '100%',
-                        padding: '10px',
-                        backgroundColor: '#004990',
-                        border: 'none',
-                        borderRadius: '5px',
-                        color: 'white',
-                        fontSize: '16px',
-                        cursor: 'pointer'
-                    }}
-                    disabled={isLoading}
-                >
-                    {isLoading ? 'Loading...' : 'Login'}
-                </button>
-            </form>
-            <div style={{ marginTop: '15px' }}>
-                <span style={{ color: '#004990', fontSize: '14px' }}>
-                    Vous n'avez pas de compte ?{" "}
-                    <Link
-                        to="/register"
-                        style={{
-                            color: '#004990',
-                            fontWeight: 'bold',
-                            textDecoration: 'underline',
-                            cursor: 'pointer'
-                        }}
+                    <div className="form-group">
+                        <label htmlFor="password" className="form-label">Mot de passe</label>
+                        <input
+                            type='password'
+                            name='password'
+                            id='password'
+                            placeholder='Mot de passe'
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="input-field"
+                        />
+                    </div>
+
+                    <div style={{
+                        width: "100%",
+                        textAlign: "right",
+                        marginBottom: "10px"
+                    }}>
+                        <Link
+                            to="/forgot-password"
+                            className="forgot-password"
+                        >
+                            Mot de passe oublié ?
+                        </Link>
+                    </div>
+
+                    <button
+                        type='submit'
+                        className="login-btn"
+                        disabled={isLoading}
                     >
+                        {isLoading ? 'Chargement...' : 'Se connecter'}
+                    </button>
+                </form>
+
+                <div className="sign-up-prompt">
+                    Vous n'avez pas de compte ?{" "}
+                    <Link to="/register">
                         Créer un compte
                     </Link>
-                </span>
+                </div>
             </div>
         </div>
     );
