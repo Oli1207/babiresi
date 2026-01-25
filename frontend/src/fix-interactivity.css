@@ -1,0 +1,70 @@
+/* Fix d'urgence pour forcer l'interactivité des champs */
+
+/* Désactiver TOUS les pseudo-éléments qui pourraient bloquer */
+.list-controls *::before,
+.list-controls *::after {
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+/* Forcer l'interactivité sur TOUS les inputs et selects */
+input,
+select,
+textarea,
+.form-control,
+.form-select {
+  pointer-events: auto !important;
+  z-index: 99999 !important;
+  position: relative !important;
+  cursor: text !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  touch-action: manipulation !important;
+}
+
+/* Forcer l'interactivité sur TOUS les boutons */
+button,
+.btn {
+  pointer-events: auto !important;
+  z-index: 1000 !important;
+  cursor: pointer !important;
+}
+
+/* Spécifique pour list-controls */
+.list-controls {
+  pointer-events: auto !important;
+  z-index: 10000 !important;
+  isolation: isolate;
+}
+
+.list-controls * {
+  pointer-events: auto !important;
+}
+
+.list-controls input,
+.list-controls select,
+.list-controls .form-control,
+.list-controls .form-select {
+  pointer-events: auto !important;
+  z-index: 99999 !important;
+  position: relative !important;
+}
+
+.list-controls button,
+.list-controls .btn {
+  pointer-events: auto !important;
+  z-index: 1000 !important;
+  cursor: pointer !important;
+}
+
+/* Désactiver complètement les effets ripple dans list-controls */
+.list-controls .btn::before,
+.list-controls button::before,
+.list-controls .btn-dark::before,
+.list-controls .btn-outline-dark::before {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+

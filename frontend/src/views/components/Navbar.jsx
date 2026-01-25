@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth';
+import logoImage from '../../assets/Babi_Resii-removebg-preview.png';
 import './Navbar.css';
 
 function Navbar() {
@@ -27,7 +28,7 @@ function Navbar() {
       <div className="navbar-container">
         {/* Logo / Brand */}
         <Link to="/" className="navbar-brand" onClick={closeMobileMenu}>
-          <span className="navbar-logo-text">Babi Resi</span>
+          <img src={logoImage} alt="Babi Resi" className="navbar-logo" />
         </Link>
 
         {/* Menu hamburger pour mobile */}
