@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function formatMoney(x) {
@@ -10,7 +10,7 @@ function formatMoney(x) {
 function pickCover(listing) {
   const imgs = listing?.images || [];
   const cover = imgs.find((i) => i.is_cover) || imgs[0] || null;
-  return cover?.image_url || "https://via.placeholder.com/320x220?text=Residence";
+  return cover?.image_url || "/listing-fallback.jpg"; // ✅ fallback local (évite DNS)
 }
 
 function ListingCard({ l, active, onClick }) {
@@ -30,7 +30,6 @@ function ListingCard({ l, active, onClick }) {
           {l?.city ? ` · ${l.city}` : ""}
         </div>
 
-        {/* ✅ NEW: infos rapides (chambres/salons + vendeur) */}
         <div className="small text-muted mt-1">
           🛏 {l?.bedrooms ?? 0} ch · 🛋 {l?.living_rooms ?? 0} salon(s)
           {l?.author_name ? ` · 👤 ${l.author_name}` : ""}
@@ -71,6 +70,9 @@ function Section({ title, items, activeId, onPick }) {
 export default function ExploreListScreen(props) {
   const {
     loading = false,
+    loadingMore = false, // ✅ NEW
+    hasNext = false, // ✅ NEW
+    onLoadMore, // ✅ NEW
     listings = [],
     filters,
     setFilters,
@@ -81,35 +83,78 @@ export default function ExploreListScreen(props) {
 
   const navigate = useNavigate();
 
-  // ✅ defaults (anti-crash si filters est undefined)
-  const defaultFilters = {
-    q: "",
-    max_price: "",
-    guests: "",
-    min_bedrooms: "",
-    min_living_rooms: "",
-    has_garden: false,
-    has_generator: false,
-    has_security: false,
-    has_wifi: false,
-    has_ac: false,
-    has_parking: false,
-  };
+  // ✅ defaults (anti-crash)
+  const defaultFilters = useMemo(
+    () => ({
+      q: "",
+      city: "",
+      area: "",
+      borough: "",
+      max_price: "",
+      guests: "",
+      min_bedrooms: "",
+      min_living_rooms: "",
+      has_garden: false,
+      has_generator: false,
+      has_security: false,
+      has_wifi: false,
+      has_ac: false,
+      has_parking: false,
+    }),
+    []
+  );
 
-  const safeFilters = { ...defaultFilters, ...(filters || {}) };
-  const safeSetFilters = typeof setFilters === "function" ? setFilters : () => {};
+  const hasExternalFilters = typeof setFilters === "function";
+  const [localFilters, setLocalFilters] = useState(defaultFilters);
+
+  useEffect(() => {
+    if (!hasExternalFilters && filters) {
+      setLocalFilters((p) => ({ ...p, ...filters }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
+
+  const effectiveFilters = useMemo(() => {
+    const base = defaultFilters;
+    const incoming = filters || {};
+    const chosen = hasExternalFilters ? incoming : localFilters;
+    return { ...base, ...(chosen || {}) };
+  }, [defaultFilters, filters, hasExternalFilters, localFilters]);
+
+  const setEffectiveFilters = hasExternalFilters ? setFilters : setLocalFilters;
 
   const safeSetActiveId = typeof setActiveId === "function" ? setActiveId : () => {};
   const goMap = typeof onGoMap === "function" ? onGoMap : () => {};
 
-  // ✅ optionnel: type filter local
+  // ✅ type filter local (garde ton UX)
   const [typeFilter, setTypeFilter] = useState("all");
 
+  /**
+   * ✅ OPTI:
+   * Le backend filtre déjà (q, prix, guests, min rooms, amenities).
+   * Ici on garde seulement:
+   * - typeFilter local (si listing_type n’est pas encore filtré backend)
+   * - un check "guests" correct si jamais tu arrives ici avec un parent sans backend filtering (safe)
+   */
   const filtered = useMemo(() => {
     const arr = Array.isArray(listings) ? listings : [];
-    if (typeFilter === "all") return arr;
-    return arr.filter((l) => (l?.listing_type || "").toLowerCase() === typeFilter);
-  }, [listings, typeFilter]);
+    const type = (typeFilter || "all").toLowerCase();
+
+    const guests = effectiveFilters.guests === "" ? null : Number(effectiveFilters.guests);
+
+    return arr.filter((l) => {
+      // ✅ type
+      if (type !== "all" && (l?.listing_type || "").toLowerCase() !== type) return false;
+
+      // ✅ FIX: guests => max_guests (pas guests/capacity)
+      if (guests !== null && Number.isFinite(guests)) {
+        const cap = Number(l?.max_guests ?? 0);
+        if (cap < guests) return false;
+      }
+
+      return true;
+    });
+  }, [listings, typeFilter, effectiveFilters.guests]);
 
   const categories = useMemo(() => {
     const arr = filtered
@@ -148,11 +193,14 @@ export default function ExploreListScreen(props) {
     navigate(`/listings/${l.id}`);
   };
 
-  const toggleChip = (key) => safeSetFilters((p) => ({ ...p, [key]: !p?.[key] }));
+  const toggleChip = (key) => setEffectiveFilters((p) => ({ ...p, [key]: !p?.[key] }));
 
   const resetFilters = () =>
-    safeSetFilters({
+    setEffectiveFilters({
       q: "",
+      city: "",
+      area: "",
+      borough: "",
       max_price: "",
       guests: "",
       min_bedrooms: "",
@@ -165,12 +213,14 @@ export default function ExploreListScreen(props) {
       has_parking: false,
     });
 
+  const canLoadMore = typeof onLoadMore === "function" && hasNext;
+
   return (
     <div className="list-screen">
       <div className="list-header">
         <div>
           <div className="list-h1">Résidences</div>
-          <div className="list-h2">{loading ? "Chargement..." : `${filtered.length} résultats`}</div>
+          <div className="list-h2">{loading ? "Chargement..." : `${filtered.length} résultats (page courante)`}</div>
         </div>
 
         <button type="button" className="btn btn-outline-dark" onClick={goMap}>
@@ -182,8 +232,8 @@ export default function ExploreListScreen(props) {
       <div className="list-controls">
         <input
           className="form-control"
-          value={safeFilters.q}
-          onChange={(e) => safeSetFilters((p) => ({ ...p, q: e.target.value }))}
+          value={effectiveFilters.q}
+          onChange={(e) => setEffectiveFilters((p) => ({ ...p, q: e.target.value }))}
           placeholder="Rechercher: titre, quartier, commune, ville..."
         />
 
@@ -202,8 +252,8 @@ export default function ExploreListScreen(props) {
               type="number"
               className="form-control"
               placeholder="Prix max"
-              value={safeFilters.max_price}
-              onChange={(e) => safeSetFilters((p) => ({ ...p, max_price: e.target.value }))}
+              value={effectiveFilters.max_price}
+              onChange={(e) => setEffectiveFilters((p) => ({ ...p, max_price: e.target.value }))}
             />
           </div>
 
@@ -212,8 +262,8 @@ export default function ExploreListScreen(props) {
               type="number"
               className="form-control"
               placeholder="Voyageurs"
-              value={safeFilters.guests}
-              onChange={(e) => safeSetFilters((p) => ({ ...p, guests: e.target.value }))}
+              value={effectiveFilters.guests}
+              onChange={(e) => setEffectiveFilters((p) => ({ ...p, guests: e.target.value }))}
             />
           </div>
 
@@ -222,8 +272,8 @@ export default function ExploreListScreen(props) {
               type="number"
               className="form-control"
               placeholder="Min chambres"
-              value={safeFilters.min_bedrooms}
-              onChange={(e) => safeSetFilters((p) => ({ ...p, min_bedrooms: e.target.value }))}
+              value={effectiveFilters.min_bedrooms}
+              onChange={(e) => setEffectiveFilters((p) => ({ ...p, min_bedrooms: e.target.value }))}
             />
           </div>
 
@@ -232,8 +282,8 @@ export default function ExploreListScreen(props) {
               type="number"
               className="form-control"
               placeholder="Min salons"
-              value={safeFilters.min_living_rooms}
-              onChange={(e) => safeSetFilters((p) => ({ ...p, min_living_rooms: e.target.value }))}
+              value={effectiveFilters.min_living_rooms}
+              onChange={(e) => setEffectiveFilters((p) => ({ ...p, min_living_rooms: e.target.value }))}
             />
           </div>
         </div>
@@ -250,7 +300,7 @@ export default function ExploreListScreen(props) {
             <button
               key={key}
               type="button"
-              className={`btn btn-sm ${safeFilters[key] ? "btn-dark" : "btn-outline-dark"}`}
+              className={`btn btn-sm ${effectiveFilters[key] ? "btn-dark" : "btn-outline-dark"}`}
               onClick={() => toggleChip(key)}
             >
               {label}
@@ -272,6 +322,15 @@ export default function ExploreListScreen(props) {
       <Section title="Appartements" items={categories.appartement} activeId={activeId} onPick={pick} />
       <Section title="Villas" items={categories.villa} activeId={activeId} onPick={pick} />
       <Section title="Maisons" items={categories.maison} activeId={activeId} onPick={pick} />
+
+      {/* ✅ Load more pro */}
+      {canLoadMore && (
+        <div className="d-flex justify-content-center my-4">
+          <button type="button" className="btn btn-dark" onClick={onLoadMore} disabled={loadingMore}>
+            {loadingMore ? "Chargement..." : "Charger plus"}
+          </button>
+        </div>
+      )}
 
       {!loading && filtered.length === 0 && (
         <div className="list-empty">

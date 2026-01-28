@@ -77,4 +77,17 @@ urlpatterns = [
     # PWA Push
     # =======================
     path("push/subscribe/", listings_views.PushSubscribeView.as_view(), name="push-subscribe"),
+    
+    # =======================
+# Owners / Sellers
+# =======================
+# ✅ Dashboard privé du gérant (ses résidences + stats)
+path("owners/me/dashboard/", listings_views.OwnerDashboardMeView.as_view(), name="owner-dashboard-me"),
+
+# ✅ Page vendeur publique (clients)
+path("sellers/<int:user_id>/", listings_views.SellerPublicPageView.as_view(), name="seller-public-page"),
+
+# ✅ Suppression d’une résidence par son owner (optionnel)
+path("owners/me/listings/<int:listing_id>/", listings_views.OwnerListingDeleteView.as_view(), name="owner-listing-delete"),
+
 ]

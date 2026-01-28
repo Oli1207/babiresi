@@ -89,15 +89,72 @@ def generate_6_digit_code():
     return "".join(secrets.choice(string.digits) for _ in range(6))
 
 
+from pywebpush import webpush, WebPushException  # ✅ NEW
+import json  # (déjà importé chez toi)
+
 def send_push_to_user(user, title: str, body: str, data: dict = None):
     """
-    ✅ Placeholder PROPRE:
-    - on log l'intention et le nombre de subscriptions
-    - ensuite on branchera pywebpush pour envoyer réellement
+    ✅ Envoi Web Push réel (PWA)
+    - envoie à tous les devices du user
+    - supprime les subscriptions expirées (410/404)
     """
     subs = PushSubscription.objects.filter(user=user)
-    logger.warning("PUSH_NOTIFY to user=%s subs=%s title=%s body=%s data=%s", user.id, subs.count(), title, body, data)
-    return True
+    if not subs.exists():
+        logger.warning("PUSH_NOTIFY no subs for user=%s", user.id)
+        return False
+
+    vapid_private = getattr(settings, "VAPID_PRIVATE_KEY", None)
+    vapid_claims = getattr(settings, "VAPID_CLAIMS", {"sub": "mailto:admin@example.com"})
+    if not vapid_private:
+        logger.error("VAPID_PRIVATE_KEY missing in settings")
+        return False
+
+    payload = {
+        "title": title,
+        "body": body,
+        "data": data or {},
+    }
+
+    sent = 0
+    removed = 0
+
+    for sub in subs:
+        subscription_info = {
+            "endpoint": sub.endpoint,
+            "keys": {
+                "p256dh": sub.p256dh,
+                "auth": sub.auth,
+            },
+        }
+
+        try:
+            webpush(
+                subscription_info=subscription_info,
+                data=json.dumps(payload),
+                vapid_private_key=vapid_private,
+                vapid_claims=vapid_claims,
+            )
+            sent += 1
+            # ✅ last_seen_at
+            PushSubscription.objects.filter(id=sub.id).update(last_seen_at=timezone.now())
+
+        except WebPushException as ex:
+            status_code = getattr(ex.response, "status_code", None)
+
+            # ✅ subscription morte => on supprime
+            if status_code in [404, 410]:
+                sub.delete()
+                removed += 1
+                continue
+
+            logger.exception("WEBPUSH failed user=%s sub=%s err=%s", user.id, sub.id, str(ex))
+
+        except Exception as e:
+            logger.exception("WEBPUSH unknown error user=%s sub=%s err=%s", user.id, sub.id, str(e))
+
+    logger.warning("PUSH_NOTIFY done user=%s sent=%s removed=%s", user.id, sent, removed)
+    return sent > 0
+
 
 
 # =========================================================
@@ -186,9 +243,18 @@ class ListingListCreateView(generics.ListCreateAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = (
+            super()
+            .get_queryset()
+            # ✅ PERF: éviter N+1 côté list + map
+            .select_related("author")
+            .prefetch_related("images")
+        )
 
-        # ✅ NEW: recherche texte multi-champs
+        # ✅ Public: only active
+        qs = qs.filter(is_active=True)
+
+        # ✅ query params
         q = (self.request.query_params.get("q") or "").strip()
 
         city = self.request.query_params.get("city")
@@ -197,22 +263,24 @@ class ListingListCreateView(generics.ListCreateAPIView):
         max_price = self.request.query_params.get("max_price")
         guests = self.request.query_params.get("guests")
 
-        # ✅ NEW: pièces (min)
+        # ✅ rooms (min)
         min_bedrooms = self.request.query_params.get("min_bedrooms")
         min_bathrooms = self.request.query_params.get("min_bathrooms")
         min_living_rooms = self.request.query_params.get("min_living_rooms")
         min_kitchens = self.request.query_params.get("min_kitchens")
         min_beds = self.request.query_params.get("min_beds")
 
+        # ✅ text search
         if q:
             qs = qs.filter(
-                Q(title__icontains=q) |
-                Q(address_label__icontains=q) |
-                Q(city__icontains=q) |
-                Q(area__icontains=q) |
-                Q(borough__icontains=q)
+                Q(title__icontains=q)
+                | Q(address_label__icontains=q)
+                | Q(city__icontains=q)
+                | Q(area__icontains=q)
+                | Q(borough__icontains=q)
             )
 
+        # ✅ location
         if city:
             qs = qs.filter(city__icontains=city)
         if area:
@@ -220,18 +288,21 @@ class ListingListCreateView(generics.ListCreateAPIView):
         if borough:
             qs = qs.filter(borough__icontains=borough)
 
+        # ✅ price
         if max_price:
             try:
                 qs = qs.filter(price_per_night__lte=int(max_price))
             except Exception:
                 pass
 
+        # ✅ guests => max_guests
         if guests:
             try:
                 qs = qs.filter(max_guests__gte=int(guests))
             except Exception:
                 pass
 
+        # ✅ min rooms
         if min_bedrooms:
             try:
                 qs = qs.filter(bedrooms__gte=int(min_bedrooms))
@@ -258,21 +329,83 @@ class ListingListCreateView(generics.ListCreateAPIView):
             except Exception:
                 pass
 
-        # ✅ NEW: checkboxes (amenities)
+        # ✅ amenities bool
         def _as_bool(v):
             return str(v).lower() in ["1", "true", "yes", "y", "on"]
 
         for field in [
-            "has_wifi", "has_ac", "has_parking", "has_tv", "has_kitchen", "has_hot_water",
-            "has_garden", "has_balcony", "has_generator", "has_security",
-            "allows_pets", "allows_smoking",
+            "has_wifi",
+            "has_ac",
+            "has_parking",
+            "has_tv",
+            "has_kitchen",
+            "has_hot_water",
+            "has_garden",
+            "has_balcony",
+            "has_generator",
+            "has_security",
+            "allows_pets",
+            "allows_smoking",
         ]:
             val = self.request.query_params.get(field)
-            if val is not None:
-                if _as_bool(val):
-                    qs = qs.filter(**{field: True})
+            if val is not None and _as_bool(val):
+                qs = qs.filter(**{field: True})
 
-        return qs
+        # =========================================================
+        # ✅ MODE MAP: bounds filtering (active seulement quand map=1)
+        # =========================================================
+        map_mode = self.request.query_params.get("map")
+        if str(map_mode).lower() in ["1", "true", "yes", "on"]:
+            ne_lat = self.request.query_params.get("ne_lat")
+            ne_lng = self.request.query_params.get("ne_lng")
+            sw_lat = self.request.query_params.get("sw_lat")
+            sw_lng = self.request.query_params.get("sw_lng")
+
+            try:
+                ne_lat = float(ne_lat)
+                ne_lng = float(ne_lng)
+                sw_lat = float(sw_lat)
+                sw_lng = float(sw_lng)
+
+                qs = qs.filter(
+                    lat__isnull=False,
+                    lng__isnull=False,
+                    lat__gte=min(sw_lat, ne_lat),
+                    lat__lte=max(sw_lat, ne_lat),
+                    lng__gte=min(sw_lng, ne_lng),
+                    lng__lte=max(sw_lng, ne_lng),
+                )
+            except Exception:
+                pass
+
+        # ✅ stable order
+        return qs.order_by("-date_posted", "-id")
+
+    def list(self, request, *args, **kwargs):
+        """
+        ✅ Pro:
+        - list normale = pagination DRF (inchangée)
+        - map=1 = réponse ARRAY + LIMIT (évite de tuer Leaflet)
+        """
+        map_mode = request.query_params.get("map")
+        if str(map_mode).lower() in ["1", "true", "yes", "on"]:
+            qs = self.filter_queryset(self.get_queryset())
+
+            # ✅ limit markers (default 250, max 500)
+            limit = request.query_params.get("limit", "250")
+            try:
+                limit = int(limit)
+            except Exception:
+                limit = 250
+            limit = max(50, min(limit, 500))
+
+            qs = qs[:limit]
+            serializer = self.get_serializer(qs, many=True)
+            return Response(serializer.data)
+
+        return super().list(request, *args, **kwargs)
+
+
 
 class ListingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Listing.objects.all()
@@ -280,6 +413,12 @@ class ListingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     parser_classes = [MultiPartParser, FormParser]
 
+    # ✅ CHANGE: pas de delete, on force à passer par is_active
+    def delete(self, request, *args, **kwargs):
+        return Response(
+            {"detail": "Pour des raisons de sécurité les résidences ne peuvent être supprimées totalement. Cependant, elle n'apparaitra que sur votre profil."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
 # =========================================================
 # ✅ BOOKINGS — NEW FLOW
@@ -303,7 +442,7 @@ class BookingRequestCreateView(generics.CreateAPIView):
                 owner,
                 title="Nouvelle demande de réservation",
                 body=f"{booking.user} veut réserver {booking.listing.title} ({booking.duration_days} jours)",
-                data={"type": "booking_request", "booking_id": booking.id},
+                data={"type": "booking_request", "booking_id": booking.id, "url": "/owner/inbox"},
             )
 
 
@@ -391,7 +530,7 @@ class OwnerBookingDecisionView(APIView):
                 updated.user,
                 title="Réservation acceptée ✅",
                 body="Le gérant a validé ta demande. Tu peux payer l'acompte.",
-                data={"type": "booking_approved", "booking_id": updated.id},
+                data={"type": "booking_approved", "booking_id": updated.id, "url": f"/bookings/{updated.id}"},
             )
         elif updated.status == "rejected":
             send_push_to_user(
@@ -769,3 +908,110 @@ class PushSubscribeView(generics.CreateAPIView):
     """
     serializer_class = PushSubscriptionSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+# ✅ ADD at bottom of listings/views.py
+
+from django.contrib.auth import get_user_model  # ✅ NEW
+from userauths.models import Profile  # ✅ NEW
+from userauths.serializers import SafeUserSerializer  # ✅ NEW
+
+from .serializers import (
+    PublicProfileSerializer,
+    SellerPageSerializer,
+    OwnerDashboardSerializer,
+)
+
+UserModel = get_user_model()
+
+
+class OwnerDashboardMeView(APIView):
+    """
+    ✅ Gérant (privé): ses infos + ses résidences + stats
+    GET /owners/me/dashboard/
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        # ✅ profile
+        profile = Profile.objects.filter(user=request.user).first()
+
+        # ✅ listings du gérant (tous)
+        listings_qs = (
+            Listing.objects
+            .filter(author=request.user)
+            .prefetch_related("images")
+            .order_by("-date_posted")
+        )
+
+        stats = {
+            "total_listings": listings_qs.count(),
+            "active_listings": listings_qs.filter(is_active=True).count(),
+            "inactive_listings": listings_qs.filter(is_active=False).count(),
+        }
+
+        payload = {
+            "user": SafeUserSerializer(request.user).data,
+            "profile": PublicProfileSerializer(profile, context={"request": request}).data if profile else None,
+            "listings": ListingSerializer(listings_qs, many=True, context={"request": request}).data,
+            "stats": stats,
+        }
+        return Response(payload, status=status.HTTP_200_OK)
+
+
+class SellerPublicPageView(APIView):
+    """
+    ✅ Page vendeur (publique): infos vendeur + ses résidences actives
+    GET /sellers/<user_id>/
+    """
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, user_id: int):
+        seller = get_object_or_404(UserModel, id=user_id)
+        profile = Profile.objects.filter(user=seller).first()
+
+        listings_qs = (
+            Listing.objects
+            .filter(author=seller, is_active=True)  # ✅ public => seulement actives
+            .prefetch_related("images")
+            .order_by("-date_posted")
+        )
+
+        stats = {
+            "active_listings": listings_qs.count(),
+        }
+
+        payload = {
+            "profile": PublicProfileSerializer(profile, context={"request": request}).data if profile else {
+                "id": None,
+                "user": SafeUserSerializer(seller).data,
+                "image_url": None,
+                "full_name": seller.full_name or seller.username or seller.email,
+                "about": "",
+                "city": "",
+                "country": "",
+                "phone": seller.phone,
+            },
+            "listings": ListingSerializer(listings_qs, many=True, context={"request": request}).data,
+            "stats": stats,
+        }
+        return Response(payload, status=status.HTTP_200_OK)
+
+
+class OwnerListingDeleteView(APIView):
+    """
+    ✅ Delete sécurisé (optionnel).
+    Tu peux aussi utiliser ton ListingRetrieveUpdateDestroyView qui le fait déjà.
+    DELETE /owners/me/listings/<listing_id>/
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, listing_id: int):
+        listing = get_object_or_404(Listing, id=listing_id)
+
+        if listing.author_id != request.user.id:
+            return Response({"detail": "Non autorisé."}, status=status.HTTP_403_FORBIDDEN)
+
+        listing.delete()
+        return Response({"detail": "Résidence supprimée."}, status=status.HTTP_204_NO_CONTENT)

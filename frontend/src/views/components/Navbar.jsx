@@ -30,7 +30,9 @@ function Navbar() {
         <Link to="/" className="navbar-brand" onClick={closeMobileMenu}>
           <img src={logoImage} alt="Babi Resi" className="navbar-logo" />
         </Link>
-
+     <button className="btn btn-outline-dark btn-sm" onClick={() => navigate("/residences/create")}>
+            + Publier
+          </button>
         {/* Menu hamburger pour mobile */}
         <button 
           className="navbar-toggle"

@@ -16,7 +16,7 @@ const Toast = Swal.mixin({
 export const login = async (email, password) => {
   try {
     const { data, status } = await axios.post(
-      'http://127.0.0.1:8000/api/v1/user/token/',
+      'http://192.168.1.13:8000/api/v1/user/token/',
       { email, password }
     );
 
@@ -43,7 +43,7 @@ export const login = async (email, password) => {
 export const register = async (full_name, email, phone, password, password2) => {
   try {
     const { data } = await axios.post(
-      'http://127.0.0.1:8000/api/v1/user/register/',
+      'http://192.168.1.13:8000/api/v1/user/register/',
       {
         full_name,
         email,
@@ -137,7 +137,7 @@ export const getRefreshToken = async () => {
 
   try {
     const response = await axios.post(
-      'http://127.0.0.1:8000/api/v1/user/token/refresh/',
+      'http://192.168.1.13:8000/api/v1/user/token/refresh/',
       { refresh: refresh_token }
     );
     return response.data; // { access: 'new_access_token' }

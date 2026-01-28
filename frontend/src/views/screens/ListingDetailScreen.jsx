@@ -353,6 +353,18 @@ export default function ListingDetailScreen() {
                 {listing.has_kitchen ? <span className="ld-badge">Cuisine</span> : null}
                 {listing.has_hot_water ? <span className="ld-badge">Eau chaude</span> : null}
               </div>
+              {/* ✅ Gérant */}
+<div className="mt-3">
+  <div className="text-muted small">Gérant</div>
+  <button
+    type="button"
+    className="btn btn-link p-0"
+    onClick={() => navigate(`/seller/${listing.author_id}`)}
+  >
+    {listing.author_name || "Voir le profil"}
+  </button>
+</div>
+
             </div>
 
             {/* ✅ Mini map */}

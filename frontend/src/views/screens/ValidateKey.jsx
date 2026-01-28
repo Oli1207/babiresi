@@ -20,7 +20,7 @@ export default function ValidateKey() {
 
       Swal.fire({
         icon: "success",
-        title: "Check-in validé ✅",
+        title: "Check-in validé",
         text: `Booking #${data.id} confirmé.`,
       });
 

@@ -6,6 +6,9 @@ import './index.css'
 import './sweetalert2-custom.css'
 import App from './App.jsx'
 import './utils/leafletIconFix'
+import { registerSW } from "virtual:pwa-register";
+
+registerSW({ immediate: true });
 
 
 createRoot(document.getElementById('root')).render(

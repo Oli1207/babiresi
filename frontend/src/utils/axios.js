@@ -2,7 +2,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-import { BASE_URL } from "./constants"; // http://127.0.0.1:8000/api/v1/ :contentReference[oaicite:5]{index=5}
+import { BASE_URL } from "./constants"; // http://192.168.1.13:8000/api/v1/ :contentReference[oaicite:5]{index=5}
 
 const apiInstance = axios.create({
   baseURL: BASE_URL,

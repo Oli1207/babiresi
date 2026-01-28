@@ -112,6 +112,18 @@ class Listing(models.Model):
     def set_location(self, longitude: float, latitude: float):
         self.location = Point(float(longitude), float(latitude), srid=4326)
 
+    def ensure_defaults(self):
+        """
+        ✅ Force explicitement les defaults côté modèle
+        (utile si serializer/front envoie is_active vide/None)
+        """
+        if self.is_active is None:
+            self.is_active = True
+
+    def save(self, *args, **kwargs):
+        self.ensure_defaults()
+        return super().save(*args, **kwargs)
+
 
 # ✅ Images résidence (cover + galerie)
 class ListingImage(models.Model):

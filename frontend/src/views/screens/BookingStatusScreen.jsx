@@ -207,7 +207,7 @@ const fetchCode = async () => {
         <div className="card-body">
           <div className="d-flex align-items-start justify-content-between gap-2">
             <div>
-              <div className="fw-bold" style={{ fontSize: 18 }}>{booking.listing_title}</div>
+              <div className="fw-bold" style={{ fontSize: 18, color:"white" }}>{booking.listing_title}</div>
               <div className="text-muted small">
                 Statut : <b>{statusLabel(booking.status)}</b>
               </div>
@@ -218,7 +218,7 @@ const fetchCode = async () => {
           </div>
 
           {/* ✅ summary */}
-          <div className="mt-3 small">
+          <div className="mt-3 small text-light">
             <div>Durée : <b>{booking.duration_days}</b> jours · Voyageurs : <b>{booking.guests}</b></div>
             {booking.start_date && booking.end_date ? (
               <div>Dates : <b>{booking.start_date}</b> → <b>{booking.end_date}</b></div>
@@ -229,7 +229,7 @@ const fetchCode = async () => {
 
           {/* ✅ timeline */}
           <div className="mt-4">
-            <div className="fw-semibold mb-2">Progression</div>
+            <div className="fw-bold mb-2" style={{color:"whitesmoke"}}>Progression</div>
 
             {booking.status === "rejected" || booking.status === "cancelled" || booking.status === "expired" ? (
               <div className="alert alert-warning mb-0">
@@ -248,7 +248,7 @@ const fetchCode = async () => {
                       >
                         {idx + 1}
                       </span>
-                      <div className={done ? "fw-semibold" : "text-muted"}>{s.label}</div>
+                      <div className={done ? "text-light fw-bold" : "text-muted"}>{s.label}</div>
                     </div>
                   );
                 })}
@@ -275,7 +275,7 @@ const fetchCode = async () => {
   </span>
 )}
 
-              <div className="border rounded-3 p-3">
+              <div className="border text-light rounded-3 p-3">
                 <div className="d-flex justify-content-between"><span>Total</span><b>{fmt(booking.total_amount)} FCFA</b></div>
                 <div className="d-flex justify-content-between"><span>Acompte (50%)</span><b>{fmt(booking.deposit_amount)} FCFA</b></div>
                 <div className="d-flex justify-content-between">
@@ -301,7 +301,7 @@ const fetchCode = async () => {
           {booking.status === "paid" && (
             <div className="mt-4">
               <div className="alert alert-success mb-0">
-                <div className="fw-semibold">Acompte payé ✅</div>
+                <div className="fw-semibold">Acompte payé</div>
                 <div className="small mt-1">
                   À l’arrivée, le gérant te demandera un code pour valider la remise de la clé.
                 </div>
@@ -313,7 +313,7 @@ const fetchCode = async () => {
 {keyCode && (
   <div className="mt-3 p-3 bg-white border rounded-3">
     <div className="fw-semibold">Code de remise</div>
-    <div style={{ fontSize: 30, fontWeight: 900, letterSpacing: 4, textAlign: "center" }}>
+    <div style={{ fontSize: 30, fontWeight: 900, letterSpacing: 4, color:"black", textAlign: "center" }}>
       {keyCode}
     </div>
     {expiresAt && <div className="small text-muted text-center">Expire le : {String(expiresAt)}</div>}
@@ -326,14 +326,14 @@ const fetchCode = async () => {
           {/* ✅ checked_in / released blocks */}
           {booking.status === "checked_in" && (
             <div className="alert alert-info mt-4 mb-0">
-              <div className="fw-semibold">Check-in validé ✅</div>
+              <div className="fw-semibold">Check-in validé</div>
               <div className="small mt-1">Le gérant a validé ton arrivée.</div>
             </div>
           )}
 
           {booking.status === "released" && (
             <div className="alert alert-light border mt-4 mb-0">
-              <div className="fw-semibold">Réservation terminée ✅</div>
+              <div className="fw-semibold">Réservation terminée</div>
               <div className="small mt-1">Reversement effectué au gérant. Merci !</div>
             </div>
           )}

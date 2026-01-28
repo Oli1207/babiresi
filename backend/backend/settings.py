@@ -63,7 +63,7 @@ SECRET_KEY = 'django-insecure-%x#0wa&djs3q9)pg*#_%+-3sb7_3p(#1lzs6hun+py+rtn&ej=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "192.168.1.13", "127.0.0.1"]
 
 
 # Application definition
@@ -189,7 +189,9 @@ PAYSTACK_BASE_URL = "https://api.paystack.co"
 PAYSTACK_PUBLIC_KEY = "pk_test_8a9eca8b554bb106bdd36dbc0d04b1a8cd9aa6b6"
 PAYSTACK_CALLBACK_URL = "http://localhost:5173/payments/paystack/return"
 
-
+VAPID_PRIVATE_KEY = "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgB1OOxe3aZrgXU4BKF-uODpxfhuLY1XRoDnAGVZ4q-7uhRANCAAR6pEfDwcwYzIY7sYtdHfPLDLGb7JRZfamuu9ZyRmNN6zK-zj7MTxxH2cK_JrANaFKMYa1D1CsE0yBFnoD8Uq9L"
+VAPID_PUBLIC_KEY = "BHqkR8PBzBjMhjuxi10d88sMsZvslFl9qa671nJGY03rMr7OPsxPHEfZwr8msA1oUoxhrUPUKwTTIEWegPxSr0s"
+VAPID_CLAIMS = {"sub": "mailto:kangaholivier58@gmail.com"}
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -198,6 +200,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.AllowAny",
     ),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+  "PAGE_SIZE": 24,
 }
 
 SIMPLE_JWT = {

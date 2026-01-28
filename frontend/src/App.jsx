@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 import HomeScreen from "./views/screens/HomeScreen";
 import Login from "./views/auth/Login";
@@ -7,25 +8,45 @@ import CreateListing from "./views/screens/CreateListing";
 import ListingDetailScreen from "./views/screens/ListingDetailScreen";
 import ValidateKey from "./views/screens/ValidateKey";
 import OwnerInboxScreen from "./views/screens/OwnerInboxScreen";
-import { setUser } from "./utils/auth"; 
-import { useEffect } from "react";
 import BookingStatusScreen from "./views/screens/BookingStatusScreen";
 import MyBookingsScreen from "./views/screens/MyBookingsScreen";
 import PaystackReturnScreen from "./views/screens/PaystackReturnScreen";
+import SellerProfileScreen from "./views/screens/SellerProfileScreen";
+import OwnerProfileScreen from "./views/screens/OwnerProfileScreen";
+
 import Navbar from "./views/components/Navbar";
 import Footer from "./views/components/Footer";
 import "./App.css";
 
+import { setUser } from "./utils/auth";
+import { ensurePushSubscription } from "./utils/push";
+
 function AppLayout() {
   const location = useLocation();
 
-  // ✅ Home full width (seulement "/")
   const isHome = location.pathname === "/";
   const isAuth = location.pathname === "/login" || location.pathname === "/register";
+
+  useEffect(() => {
+    // ✅ Push: uniquement si clé dispo (et idéalement user connecté)
+    const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+
+    // 👉 règle simple: on tente seulement si token existe
+    // (adapte si toi tu stockes ailleurs)
+    const hasToken =
+      !!localStorage.getItem("access") ||
+      !!localStorage.getItem("token") ||
+      !!localStorage.getItem("authToken");
+
+    if (!vapidKey || !hasToken) return;
+
+    ensurePushSubscription(vapidKey).catch(console.error);
+  }, []);
 
   return (
     <div className="app-container">
       {!isAuth && <Navbar />}
+
       <main className={isHome ? "p-0" : "container py-4"}>
         <Routes>
           <Route path="/" element={<HomeScreen />} />
@@ -37,16 +58,26 @@ function AppLayout() {
           {/* Create */}
           <Route path="/create" element={<CreateListing />} />
 
-          {/* ✅ NEW: Listing detail */}
+          {/* Listing */}
           <Route path="/listings/:id" element={<ListingDetailScreen />} />
+
+          {/* Owner flow */}
           <Route path="/owner/inbox" element={<OwnerInboxScreen />} />
           <Route path="/owner/validate-key" element={<ValidateKey />} />
+          <Route path="/dashboard/owner" element={<OwnerProfileScreen />} />
+
+          {/* Booking */}
           <Route path="/bookings/:id" element={<BookingStatusScreen />} />
           <Route path="/me/bookings" element={<MyBookingsScreen />} />
+
+          {/* Paystack */}
           <Route path="/payments/paystack/return" element={<PaystackReturnScreen />} />
 
+          {/* Public seller */}
+          <Route path="/seller/:userId" element={<SellerProfileScreen />} />
         </Routes>
       </main>
+
       {!isAuth && !isHome && <Footer />}
     </div>
   );
@@ -56,6 +87,7 @@ function App() {
   useEffect(() => {
     setUser(); // ✅ hydrate le store depuis les cookies au démarrage
   }, []);
+
   return (
     <BrowserRouter>
       <AppLayout />

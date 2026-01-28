@@ -558,3 +558,46 @@ class PaymentTransactionSerializer(serializers.ModelSerializer):
         model = PaymentTransaction
         fields = ["id", "provider", "reference", "status", "amount", "raw", "created_at", "updated_at"]
         read_only_fields = fields
+
+
+# ✅ ADD at bottom of listings/serializers.py
+
+from userauths.models import Profile  # ✅ NEW
+from userauths.serializers import SafeUserSerializer  # ✅ NEW
+
+
+class PublicProfileSerializer(serializers.ModelSerializer):
+    """
+    ✅ Profil public du vendeur (safe)
+    """
+    user = SafeUserSerializer(read_only=True)
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Profile
+        fields = ["id", "user", "image_url", "full_name", "about", "city", "country", "phone"]
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        if not obj.image:
+            return None
+        return request.build_absolute_uri(obj.image.url) if request else obj.image.url
+
+
+class SellerPageSerializer(serializers.Serializer):
+    """
+    ✅ Page vendeur (publique): profil + listings actifs + stats
+    """
+    profile = PublicProfileSerializer()
+    listings = ListingSerializer(many=True)
+    stats = serializers.DictField()
+
+
+class OwnerDashboardSerializer(serializers.Serializer):
+    """
+    ✅ Dashboard privé gérant: profil + tous ses listings + stats
+    """
+    user = SafeUserSerializer()
+    profile = PublicProfileSerializer()
+    listings = ListingSerializer(many=True)
+    stats = serializers.DictField()

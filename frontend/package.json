@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -21,6 +21,7 @@
     "react-router-dom": "^7.12.0",
     "simple-zustand-devtools": "^1.1.0",
     "sweetalert2": "^11.26.17",
+    "vite-plugin-pwa": "^1.2.0",
     "zustand": "^5.0.10"
   },
   "devDependencies": {
