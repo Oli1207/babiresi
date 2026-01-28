@@ -50,6 +50,16 @@ function Navbar() {
             Accueil
           </Link>
           
+          <button 
+            className="navbar-link navbar-publish-mobile" 
+            onClick={() => {
+              navigate("/residences/create");
+              closeMobileMenu();
+            }}
+          >
+            Publier
+          </button>
+          
           {isLoggedIn() ? (
             <>
               <Link to="/create" className="navbar-link" onClick={closeMobileMenu}>
