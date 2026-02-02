@@ -2,7 +2,7 @@ from datetime import timedelta, date
 from django.utils import timezone
 from django.db import transaction
 from django.db.models import Q, Max
-from django.contrib.gis.geos import Point
+# from django.contrib.gis.geos import Point
 from django.contrib.auth.hashers import make_password, check_password
 
 from rest_framework import serializers
