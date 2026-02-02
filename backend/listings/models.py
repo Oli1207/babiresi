@@ -218,14 +218,14 @@ class Booking(models.Model):
         ]
         constraints = [
             # ✅ NEW: on impose end_date > start_date seulement si les 2 existent
-            models.CheckConstraint(
-                condition=(
-                    Q(start_date__isnull=True) |
-                    Q(end_date__isnull=True) |
-                    Q(end_date__gt=models.F("start_date"))
-                ),
-                name="booking_valid_range_if_dates_set"
+                models.CheckConstraint(
+            check=(
+                Q(start_date__isnull=True) |
+                Q(end_date__isnull=True) |
+                Q(end_date__gt=models.F("start_date"))
             ),
+            name="booking_valid_range_if_dates_set"
+        ),
         ]
 
     def __str__(self):
