@@ -254,13 +254,46 @@ class ListingSerializer(serializers.ModelSerializer):
     lng = serializers.FloatField(source="longitude", read_only=True)
 
     # =========================================================
-    # 2. PRIX
+    # 2. PRIX (le frontend utilise price_per_night)
     # =========================================================
-    # 👉 le frontend utilise price_per_night → on garde tel quel
     price_per_night = serializers.IntegerField(required=True)
 
     # =========================================================
-    # 3. IMAGES
+    # 3. CAPACITÉ & PIÈCES
+    # =========================================================
+    max_guests = serializers.IntegerField(required=False)
+    bedrooms = serializers.IntegerField(required=False)
+    bathrooms = serializers.IntegerField(required=False)
+    living_rooms = serializers.IntegerField(required=False)
+    kitchens = serializers.IntegerField(required=False)
+    beds = serializers.IntegerField(required=False)
+
+    # =========================================================
+    # 4. AMENITIES
+    # =========================================================
+    has_wifi = serializers.BooleanField(required=False)
+    has_ac = serializers.BooleanField(required=False)
+    has_parking = serializers.BooleanField(required=False)
+    has_tv = serializers.BooleanField(required=False)
+    has_kitchen = serializers.BooleanField(required=False)
+    has_hot_water = serializers.BooleanField(required=False)
+
+    has_garden = serializers.BooleanField(required=False)
+    has_balcony = serializers.BooleanField(required=False)
+    has_generator = serializers.BooleanField(required=False)
+    has_security = serializers.BooleanField(required=False)
+
+    allows_smoking = serializers.BooleanField(required=False)
+    allows_pets = serializers.BooleanField(required=False)
+
+    # =========================================================
+    # 5. AUTRES
+    # =========================================================
+    test = serializers.BooleanField(required=False)
+    is_active = serializers.BooleanField(required=False)
+
+    # =========================================================
+    # 6. IMAGES
     # =========================================================
     images = ListingImageSerializer(many=True, read_only=True)
 
@@ -273,7 +306,7 @@ class ListingSerializer(serializers.ModelSerializer):
     )
 
     # =========================================================
-    # 4. AUTEUR
+    # 7. AUTEUR
     # =========================================================
     author_id = serializers.IntegerField(source="author.id", read_only=True)
     author_name = serializers.SerializerMethodField(read_only=True)
@@ -287,8 +320,32 @@ class ListingSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "description",
+
             "price_per_night",
+            "max_guests",
+
+            "bedrooms",
+            "bathrooms",
+            "living_rooms",
+            "kitchens",
+            "beds",
+
+            "has_wifi",
+            "has_ac",
+            "has_parking",
+            "has_tv",
+            "has_kitchen",
+            "has_hot_water",
+            "has_garden",
+            "has_balcony",
+            "has_generator",
+            "has_security",
+
+            "allows_smoking",
+            "allows_pets",
+
             "test",
+            "is_active",
 
             "latitude",
             "longitude",
@@ -305,6 +362,7 @@ class ListingSerializer(serializers.ModelSerializer):
             "date_posted",
             "updated_at",
         ]
+
         read_only_fields = [
             "author",
             "author_id",
@@ -338,7 +396,6 @@ class ListingSerializer(serializers.ModelSerializer):
 
         listing = super().create(validated_data)
 
-        # cover
         ListingImage.objects.create(
             listing=listing,
             image=cover,
@@ -346,7 +403,6 @@ class ListingSerializer(serializers.ModelSerializer):
             order=0,
         )
 
-        # gallery
         for idx, img in enumerate(gallery, start=1):
             ListingImage.objects.create(
                 listing=listing,
@@ -357,34 +413,7 @@ class ListingSerializer(serializers.ModelSerializer):
 
         return listing
 
-    # =========================================================
-    # UPDATE
-    # =========================================================
-    @transaction.atomic
-    def update(self, instance, validated_data):
-        cover = validated_data.pop("cover_image", None)
-        gallery = validated_data.pop("gallery_images", None)
 
-        if cover:
-            instance.images.filter(is_cover=True).update(is_cover=False)
-            ListingImage.objects.create(
-                listing=instance,
-                image=cover,
-                is_cover=True,
-                order=0,
-            )
-
-        if gallery is not None:
-            max_order = instance.images.aggregate(m=Max("order")).get("m") or 0
-            for idx, img in enumerate(gallery, start=max_order + 1):
-                ListingImage.objects.create(
-                    listing=instance,
-                    image=img,
-                    is_cover=False,
-                    order=idx,
-                )
-
-        return super().update(instance, validated_data)
 # =========================================================
 # ✅ HELPERS BOOKING
 # =========================================================
