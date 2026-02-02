@@ -358,6 +358,18 @@ export default function ListingDetailScreen() {
               </div>
 
               {listing.description && <div className="ld-desc">{listing.description}</div>}
+              <div className="ld-card mt-3">
+  <div className="ld-section-title">Caractéristiques</div>
+
+  <div className="ld-features">
+    <div>🛏️ Chambres : <b>{listing.bedrooms}</b></div>
+    <div>🚿 Salles de bain : <b>{listing.bathrooms}</b></div>
+    <div>🛋️ Salons : <b>{listing.living_rooms}</b></div>
+    <div>🍳 Cuisines : <b>{listing.kitchens}</b></div>
+    <div>🛌 Lits : <b>{listing.beds}</b></div>
+    <div>👥 Max voyageurs : <b>{listing.max_guests}</b></div>
+  </div>
+</div>
 
               <div className="ld-badges">
                 <span className="ld-badge">{(listing.listing_type || "Résidence").toUpperCase()}</span>

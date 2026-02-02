@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth';
-import logoImage from '../../assets/Babi_Resii-removebg-preview.png';
+// import logoImage from '../../assets/Babi_Resii-removebg-preview.png';
+import logoImage from '../../assets/logo.png'
 import './Navbar.css';
 
 function Navbar() {
@@ -30,7 +31,7 @@ function Navbar() {
         <Link to="/" className="navbar-brand" onClick={closeMobileMenu}>
           <img src={logoImage} alt="Babi Resi" className="navbar-logo" />
         </Link>
-     <button className="btn btn-outline-dark btn-sm" onClick={() => navigate("/residences/create")}>
+     <button className="btn btn-outline-dark btn-sm" onClick={() => navigate("/create")}>
             + Publier
           </button>
         {/* Menu hamburger pour mobile */}

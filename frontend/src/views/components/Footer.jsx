@@ -8,7 +8,7 @@ function Footer() {
       <div className="footer-container">
         <div className="footer-content">
           <div className="footer-section footer-brand">
-            <h3 className="footer-title">Babi Resi</h3>
+            <h3 className="footer-title">Decrou Resi</h3>
             <p className="footer-description">
               Votre plateforme de référence pour trouver des résidences de qualité à Abidjan.
             </p>

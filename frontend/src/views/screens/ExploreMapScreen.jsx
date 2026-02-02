@@ -154,7 +154,7 @@ export default function ExploreMapScreen({
       <div className="map-overlay-top">
         <div className="map-chip">
           {loading
-            ? "Mise à jour…"
+            ? "Mise à jour des résidences en fonction de la zone…"
             : `${listings.length} résidences dans la zone`}
         </div>
 
@@ -212,8 +212,15 @@ export default function ExploreMapScreen({
                   <br />
                   {Number(l.price_per_night).toLocaleString()} FCFA / nuit
                   <br />
+                  <div style={{ fontSize: 12, marginTop: 4, opacity: 0.85 }}>
+  🛏 {l.bedrooms} ch · 🛁 {l.bathrooms} sdb · 🛋 {l.living_rooms} salon
+  <br />
+  🍳 {l.kitchens} cuisine · 🛌 {l.beds} lits
+</div>
+
                   <button
                     className="btn btn-dark btn-sm mt-2"
+                    style={{color:"black"}}
                     onClick={() => openDetail(l.id)}
                   >
                     Voir détails
