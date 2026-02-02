@@ -289,8 +289,6 @@ class ListingSerializer(serializers.ModelSerializer):
     # =========================================================
     # 5. AUTRES
     # =========================================================
-    test = serializers.BooleanField(required=False)
-    is_active = serializers.BooleanField(required=False)
 
     # =========================================================
     # 6. IMAGES
