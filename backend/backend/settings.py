@@ -149,17 +149,30 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # }
 # settings.py
 
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "decroure_principal",
-        "USER": "decroure",
-        "PASSWORD": "h63tIg42Vn",
-        "HOST": "uk17.acugis-dns.com",
-        "PORT": "5432",
-        "CONN_MAX_AGE": 60,  # connexion persistante (perf)
+     'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'c2738587c_decrouresi',
+        'USER': 'c2738587c_Olivier',
+        'PASSWORD': 'Blandine1207.',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
+
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.contrib.gis.db.backends.postgis",
+#         "NAME": "decroure_principal",
+#         "USER": "decroure",
+#         "PASSWORD": "h63tIg42Vn",
+#         "HOST": "uk17.acugis-dns.com",
+#         "PORT": "5432",
+#         "CONN_MAX_AGE": 60,  # connexion persistante (perf)
+#     }
+# }
 
 
 # Password validation

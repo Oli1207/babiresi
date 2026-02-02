@@ -22,6 +22,21 @@ function ListingCard({ l, active, onClick }) {
 
       <div className="list-meta">
         <div className="list-title">{l?.title || "Résidence"}</div>
+    {l?.test && (
+  <div
+    style={{
+      background: "#fff3cd",
+      border: "1px solid #ffecb5",
+      color: "#664d03",
+      padding: "8px 12px",
+      borderRadius: 8,
+      marginBottom: 12,
+      fontWeight: 600,
+    }}
+  >
+    ⚠️ Résidence de démonstration — annonce fictive
+  </div>
+)}
 
         <div className="list-sub">
           {(l?.borough || "")}

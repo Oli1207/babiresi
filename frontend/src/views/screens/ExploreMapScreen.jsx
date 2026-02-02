@@ -174,16 +174,41 @@ export default function ExploreMapScreen({
           <BoundsWatcher onUserMove={handleUserMove} />
 
           {listings
-            .filter((l) => typeof l.lat === "number")
+           .filter(
+  (l) =>
+    typeof (l.lat ?? l.latitude) === "number" &&
+    typeof (l.lng ?? l.longitude) === "number"
+)
+
             .map((l) => (
               <Marker
                 key={l.id}
-                position={[l.lat, l.lng]}
+               position={[
+  l.lat ?? l.latitude,
+  l.lng ?? l.longitude,
+]}
                 icon={markerIcon}
                 eventHandlers={{ click: () => onMarkerClick(l) }}
               >
                 <Popup autoClose={false} closeOnClick={false}>
                   <strong>{l.title}</strong>
+                  {l.test && (
+  <div
+    style={{
+      background: "#ffcc00",
+      color: "#000",
+      fontWeight: 700,
+      fontSize: 12,
+      padding: "2px 6px",
+      borderRadius: 4,
+      marginBottom: 4,
+      display: "inline-block",
+    }}
+  >
+    TEST
+  </div>
+)}
+
                   <br />
                   {Number(l.price_per_night).toLocaleString()} FCFA / nuit
                   <br />

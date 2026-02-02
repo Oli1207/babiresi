@@ -236,6 +236,176 @@ from django.db.models import Q
 from rest_framework import generics, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
 
+
+# class ListingListCreateView(generics.ListCreateAPIView):
+#     queryset = Listing.objects.all()
+#     serializer_class = ListingSerializer
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+#     parser_classes = [MultiPartParser, FormParser]
+
+#     def get_queryset(self):
+#         qs = (
+#             super()
+#             .get_queryset()
+#             # ✅ PERF: éviter N+1 côté list + map
+#             .select_related("author")
+#             .prefetch_related("images")
+#         )
+
+#         # ✅ Public: only active
+#         qs = qs.filter(is_active=True)
+
+#         # ✅ query params
+#         q = (self.request.query_params.get("q") or "").strip()
+
+#         city = self.request.query_params.get("city")
+#         area = self.request.query_params.get("area")
+#         borough = self.request.query_params.get("borough")
+#         max_price = self.request.query_params.get("max_price")
+#         guests = self.request.query_params.get("guests")
+
+#         # ✅ rooms (min)
+#         min_bedrooms = self.request.query_params.get("min_bedrooms")
+#         min_bathrooms = self.request.query_params.get("min_bathrooms")
+#         min_living_rooms = self.request.query_params.get("min_living_rooms")
+#         min_kitchens = self.request.query_params.get("min_kitchens")
+#         min_beds = self.request.query_params.get("min_beds")
+
+#         # ✅ text search
+#         if q:
+#             qs = qs.filter(
+#                 Q(title__icontains=q)
+#                 | Q(address_label__icontains=q)
+#                 | Q(city__icontains=q)
+#                 | Q(area__icontains=q)
+#                 | Q(borough__icontains=q)
+#             )
+
+#         # ✅ location
+#         if city:
+#             qs = qs.filter(city__icontains=city)
+#         if area:
+#             qs = qs.filter(area__icontains=area)
+#         if borough:
+#             qs = qs.filter(borough__icontains=borough)
+
+#         # ✅ price
+#         if max_price:
+#             try:
+#                 qs = qs.filter(price_per_night__lte=int(max_price))
+#             except Exception:
+#                 pass
+
+#         # ✅ guests => max_guests
+#         if guests:
+#             try:
+#                 qs = qs.filter(max_guests__gte=int(guests))
+#             except Exception:
+#                 pass
+
+#         # ✅ min rooms
+#         if min_bedrooms:
+#             try:
+#                 qs = qs.filter(bedrooms__gte=int(min_bedrooms))
+#             except Exception:
+#                 pass
+#         if min_bathrooms:
+#             try:
+#                 qs = qs.filter(bathrooms__gte=int(min_bathrooms))
+#             except Exception:
+#                 pass
+#         if min_living_rooms:
+#             try:
+#                 qs = qs.filter(living_rooms__gte=int(min_living_rooms))
+#             except Exception:
+#                 pass
+#         if min_kitchens:
+#             try:
+#                 qs = qs.filter(kitchens__gte=int(min_kitchens))
+#             except Exception:
+#                 pass
+#         if min_beds:
+#             try:
+#                 qs = qs.filter(beds__gte=int(min_beds))
+#             except Exception:
+#                 pass
+
+#         # ✅ amenities bool
+#         def _as_bool(v):
+#             return str(v).lower() in ["1", "true", "yes", "y", "on"]
+
+#         for field in [
+#             "has_wifi",
+#             "has_ac",
+#             "has_parking",
+#             "has_tv",
+#             "has_kitchen",
+#             "has_hot_water",
+#             "has_garden",
+#             "has_balcony",
+#             "has_generator",
+#             "has_security",
+#             "allows_pets",
+#             "allows_smoking",
+#         ]:
+#             val = self.request.query_params.get(field)
+#             if val is not None and _as_bool(val):
+#                 qs = qs.filter(**{field: True})
+
+#         # =========================================================
+#         # ✅ MODE MAP: bounds filtering (active seulement quand map=1)
+#         # =========================================================
+#         map_mode = self.request.query_params.get("map")
+#         if str(map_mode).lower() in ["1", "true", "yes", "on"]:
+#             ne_lat = self.request.query_params.get("ne_lat")
+#             ne_lng = self.request.query_params.get("ne_lng")
+#             sw_lat = self.request.query_params.get("sw_lat")
+#             sw_lng = self.request.query_params.get("sw_lng")
+
+#             try:
+#                 ne_lat = float(ne_lat)
+#                 ne_lng = float(ne_lng)
+#                 sw_lat = float(sw_lat)
+#                 sw_lng = float(sw_lng)
+
+#                 qs = qs.filter(
+#                     lat__isnull=False,
+#                     lng__isnull=False,
+#                     lat__gte=min(sw_lat, ne_lat),
+#                     lat__lte=max(sw_lat, ne_lat),
+#                     lng__gte=min(sw_lng, ne_lng),
+#                     lng__lte=max(sw_lng, ne_lng),
+#                 )
+#             except Exception:
+#                 pass
+
+#         # ✅ stable order
+#         return qs.order_by("-date_posted", "-id")
+
+#     def list(self, request, *args, **kwargs):
+#         """
+#         ✅ Pro:
+#         - list normale = pagination DRF (inchangée)
+#         - map=1 = réponse ARRAY + LIMIT (évite de tuer Leaflet)
+#         """
+#         map_mode = request.query_params.get("map")
+#         if str(map_mode).lower() in ["1", "true", "yes", "on"]:
+#             qs = self.filter_queryset(self.get_queryset())
+
+#             # ✅ limit markers (default 250, max 500)
+#             limit = request.query_params.get("limit", "250")
+#             try:
+#                 limit = int(limit)
+#             except Exception:
+#                 limit = 250
+#             limit = max(50, min(limit, 500))
+
+#             qs = qs[:limit]
+#             serializer = self.get_serializer(qs, many=True)
+#             return Response(serializer.data)
+
+#         return super().list(request, *args, **kwargs)
+
 class ListingListCreateView(generics.ListCreateAPIView):
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
@@ -246,7 +416,6 @@ class ListingListCreateView(generics.ListCreateAPIView):
         qs = (
             super()
             .get_queryset()
-            # ✅ PERF: éviter N+1 côté list + map
             .select_related("author")
             .prefetch_related("images")
         )
@@ -256,7 +425,6 @@ class ListingListCreateView(generics.ListCreateAPIView):
 
         # ✅ query params
         q = (self.request.query_params.get("q") or "").strip()
-
         city = self.request.query_params.get("city")
         area = self.request.query_params.get("area")
         borough = self.request.query_params.get("borough")
@@ -280,7 +448,7 @@ class ListingListCreateView(generics.ListCreateAPIView):
                 | Q(borough__icontains=q)
             )
 
-        # ✅ location
+        # ✅ location filters
         if city:
             qs = qs.filter(city__icontains=city)
         if area:
@@ -288,71 +456,46 @@ class ListingListCreateView(generics.ListCreateAPIView):
         if borough:
             qs = qs.filter(borough__icontains=borough)
 
-        # ✅ price
-        if max_price:
-            try:
+        # ✅ price & guests
+        try:
+            if max_price:
                 qs = qs.filter(price_per_night__lte=int(max_price))
-            except Exception:
-                pass
-
-        # ✅ guests => max_guests
-        if guests:
-            try:
+            if guests:
                 qs = qs.filter(max_guests__gte=int(guests))
-            except Exception:
-                pass
+        except (ValueError, TypeError):
+            pass
 
-        # ✅ min rooms
-        if min_bedrooms:
-            try:
+        # ✅ min rooms (bulk check)
+        try:
+            if min_bedrooms:
                 qs = qs.filter(bedrooms__gte=int(min_bedrooms))
-            except Exception:
-                pass
-        if min_bathrooms:
-            try:
+            if min_bathrooms:
                 qs = qs.filter(bathrooms__gte=int(min_bathrooms))
-            except Exception:
-                pass
-        if min_living_rooms:
-            try:
+            if min_living_rooms:
                 qs = qs.filter(living_rooms__gte=int(min_living_rooms))
-            except Exception:
-                pass
-        if min_kitchens:
-            try:
+            if min_kitchens:
                 qs = qs.filter(kitchens__gte=int(min_kitchens))
-            except Exception:
-                pass
-        if min_beds:
-            try:
+            if min_beds:
                 qs = qs.filter(beds__gte=int(min_beds))
-            except Exception:
-                pass
+        except (ValueError, TypeError):
+            pass
 
         # ✅ amenities bool
         def _as_bool(v):
             return str(v).lower() in ["1", "true", "yes", "y", "on"]
 
-        for field in [
-            "has_wifi",
-            "has_ac",
-            "has_parking",
-            "has_tv",
-            "has_kitchen",
-            "has_hot_water",
-            "has_garden",
-            "has_balcony",
-            "has_generator",
-            "has_security",
-            "allows_pets",
-            "allows_smoking",
-        ]:
+        amenities = [
+            "has_wifi", "has_ac", "has_parking", "has_tv", "has_kitchen",
+            "has_hot_water", "has_garden", "has_balcony", "has_generator",
+            "has_security", "allows_pets", "allows_smoking",
+        ]
+        for field in amenities:
             val = self.request.query_params.get(field)
             if val is not None and _as_bool(val):
                 qs = qs.filter(**{field: True})
 
         # =========================================================
-        # ✅ MODE MAP: bounds filtering (active seulement quand map=1)
+        # ✅ MODE MAP: Filtrage par coordonnées (Sans PostGIS)
         # =========================================================
         map_mode = self.request.query_params.get("map")
         if str(map_mode).lower() in ["1", "true", "yes", "on"]:
@@ -361,41 +504,35 @@ class ListingListCreateView(generics.ListCreateAPIView):
             sw_lat = self.request.query_params.get("sw_lat")
             sw_lng = self.request.query_params.get("sw_lng")
 
-            try:
-                ne_lat = float(ne_lat)
-                ne_lng = float(ne_lng)
-                sw_lat = float(sw_lat)
-                sw_lng = float(sw_lng)
+            if all([ne_lat, ne_lng, sw_lat, sw_lng]):
+                try:
+                    # Conversion en float
+                    nelat, nelng = float(ne_lat), float(ne_lng)
+                    swlat, swlng = float(sw_lat), float(sw_lng)
 
-                qs = qs.filter(
-                    lat__isnull=False,
-                    lng__isnull=False,
-                    lat__gte=min(sw_lat, ne_lat),
-                    lat__lte=max(sw_lat, ne_lat),
-                    lng__gte=min(sw_lng, ne_lng),
-                    lng__lte=max(sw_lng, ne_lng),
-                )
-            except Exception:
-                pass
+                    # Filtrage standard sur les colonnes FloatField
+                    # min/max sécurisent le cas où l'utilisateur traverse l'antiméridien
+                    qs = qs.filter(
+                        latitude__gte=min(swlat, nelat),
+                        latitude__lte=max(swlat, nelat),
+                        longitude__gte=min(swlng, nelng),
+                        longitude__lte=max(swlng, nelng),
+                    )
+                except (ValueError, TypeError):
+                    pass
 
-        # ✅ stable order
         return qs.order_by("-date_posted", "-id")
 
     def list(self, request, *args, **kwargs):
-        """
-        ✅ Pro:
-        - list normale = pagination DRF (inchangée)
-        - map=1 = réponse ARRAY + LIMIT (évite de tuer Leaflet)
-        """
         map_mode = request.query_params.get("map")
         if str(map_mode).lower() in ["1", "true", "yes", "on"]:
             qs = self.filter_queryset(self.get_queryset())
 
-            # ✅ limit markers (default 250, max 500)
+            # limit markers (default 250)
             limit = request.query_params.get("limit", "250")
             try:
                 limit = int(limit)
-            except Exception:
+            except (ValueError, TypeError):
                 limit = 250
             limit = max(50, min(limit, 500))
 

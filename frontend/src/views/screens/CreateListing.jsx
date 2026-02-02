@@ -31,7 +31,11 @@ function MapClickHandler({ onPick }) {
   const map = useMap();
 
   useEffect(() => {
-    const onClick = (e) => onPick(e.latlng.lat, e.latlng.lng);
+   const onClick = (e) => {
+  if (!e?.latlng) return;
+  onPick(e.latlng.lat, e.latlng.lng);
+};
+
     map.on("click", onClick);
     return () => map.off("click", onClick);
   }, [map, onPick]);
@@ -244,7 +248,12 @@ if (!userData) {
 
   // ✅ Marker draggable
   const MarkerDraggable = () => {
-    const position = [center.lat, center.lng];
+   if (typeof form.latitude !== "number" || typeof form.longitude !== "number") {
+  return null;
+}
+
+const position = [form.latitude, form.longitude];
+
 
     return (
       <Marker
@@ -816,7 +825,11 @@ navigate("/");
                     attribution="&copy; OpenStreetMap"
                   />
 
-                  <Recenter lat={form.latitude} lng={form.longitude} />
+                 {typeof form.latitude === "number" &&
+ typeof form.longitude === "number" && (
+  <Recenter lat={form.latitude} lng={form.longitude} />
+)}
+
 
                   {/* click map -> set coords */}
                   <MapClickHandler

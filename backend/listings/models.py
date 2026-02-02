@@ -2,8 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.core.validators import MinValueValidator
-from django.contrib.gis.db.models import PointField
-from django.contrib.gis.geos import Point
+# from django.contrib.gis.db.models import PointField
+# from django.contrib.gis.geos import Point
 from django.db.models import Q
 
 User = settings.AUTH_USER_MODEL
@@ -58,7 +58,9 @@ class Listing(models.Model):
     borough = models.CharField(max_length=80, blank=True, null=True)
     address_label = models.CharField(max_length=255, blank=True, null=True)
 
-    location = PointField(blank=True, null=True, srid=4326)
+    # location = PointField(blank=True, null=True, srid=4326)
+    latitude = models.FloatField(null=True, blank=True, db_index=True)
+    longitude = models.FloatField(null=True, blank=True, db_index=True)
 
     listing_type = models.CharField(max_length=20, choices=LISTING_TYPES, default="appartement")
     price_per_night = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])  # CFA
@@ -72,6 +74,8 @@ class Listing(models.Model):
 
     # ✅ NEW: couchage (utile)
     beds = models.PositiveSmallIntegerField(default=0, validators=[MinValueValidator(0)])          # nb lits
+
+    test = models.BooleanField(default=False)
 
     # Amenities
     has_wifi = models.BooleanField(default=False)

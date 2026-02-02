@@ -299,6 +299,22 @@ export default function ListingDetailScreen() {
         </button>
         <div className="ld-topmeta">
           <div className="ld-top-title">{listing.title}</div>
+          {listing.test && (
+  <div
+    style={{
+      background: "#fff3cd",
+      border: "1px solid #ffecb5",
+      color: "#664d03",
+      padding: "8px 12px",
+      borderRadius: 8,
+      marginBottom: 12,
+      fontWeight: 600,
+    }}
+  >
+    ⚠️ Résidence de démonstration — annonce fictive
+  </div>
+)}
+
           <div className="ld-top-sub">
             {(listing.borough || "")}
             {listing.borough && listing.area ? " · " : ""}
@@ -373,7 +389,11 @@ export default function ListingDetailScreen() {
 
               <div className="ld-map">
                 <MapContainer
-                  center={[lat || 5.3599, lng || -4.0082]}
+                 center={[
+  typeof lat === "number" ? lat : 5.3599,
+  typeof lng === "number" ? lng : -4.0082,
+]}
+
                   zoom={15}
                   scrollWheelZoom={true}
                   style={{ height: "100%", width: "100%" }}
