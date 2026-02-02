@@ -4,6 +4,7 @@ import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
 import Cookies from 'js-cookie';
 import Swal from 'sweetalert2';
+import { BASE_URL } from "./constants"; 
 
 const Toast = Swal.mixin({
   toast: true,
@@ -16,7 +17,7 @@ const Toast = Swal.mixin({
 export const login = async (email, password) => {
   try {
     const { data, status } = await axios.post(
-      'http://192.168.1.13:8000/api/v1/user/token/',
+      `${BASE_URL}user/token/`,
       { email, password }
     );
 
@@ -43,7 +44,7 @@ export const login = async (email, password) => {
 export const register = async (full_name, email, phone, password, password2) => {
   try {
     const { data } = await axios.post(
-      'http://192.168.1.13:8000/api/v1/user/register/',
+      `${BASE_URL}user/register/`,
       {
         full_name,
         email,
@@ -137,7 +138,7 @@ export const getRefreshToken = async () => {
 
   try {
     const response = await axios.post(
-      'http://192.168.1.13:8000/api/v1/user/token/refresh/',
+      `${BASE_URL}user/token/refresh/`,
       { refresh: refresh_token }
     );
     return response.data; // { access: 'new_access_token' }

@@ -63,7 +63,21 @@ SECRET_KEY = 'django-insecure-%x#0wa&djs3q9)pg*#_%+-3sb7_3p(#1lzs6hun+py+rtn&ej=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "192.168.1.13", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "192.168.1.13", "127.0.0.1", "backend.decrouresi.com", "decrouresi.com"]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Exemple pour React
+    "http://192.168.1.12:5173",
+    "http://192.168.1.13:5173",
+    "https://backend.decrouresi.com",
+    "https://decrouresi.com",
+   
+]
+from corsheaders.defaults import default_headers  # ADDED
+
+CORS_ALLOW_HEADERS = list(default_headers) + [    # ADDED
+    'idempotency-key',                            # ADDED: notre header custom
+]
 
 
 # Application definition
@@ -83,6 +97,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'userauths',
     'listings',
+    'houses',
 ]
 
 MIDDLEWARE = [
@@ -119,14 +134,30 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# 'USER': 'c2738587c_Olivier',
+# 'PASSWORD': 'L@QDe5az@ks36Di',
+
+# DATABASES = {
+#      'default': {
+#         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+#         'NAME': 'babiresi',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Olivier1207.',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+# settings.py
+
 DATABASES = {
-     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'babiresi',
-        'USER': 'postgres',
-        'PASSWORD': 'Olivier1207.',
-        'HOST': 'localhost',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": "decroure_principal",
+        "USER": "decroure",
+        "PASSWORD": "h63tIg42Vn",
+        "HOST": "uk17.acugis-dns.com",
+        "PORT": "5432",
+        "CONN_MAX_AGE": 60,  # connexion persistante (perf)
     }
 }
 
@@ -176,7 +207,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL = 'userauths.User'
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:5173/']
+CSRF_TRUSTED_ORIGINS = ['https://decrouresi.com']
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -187,7 +220,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 PAYSTACK_SECRET_KEY = "sk_test_e645af35c48d9a0997a2a524919c34219268f5de"
 PAYSTACK_BASE_URL = "https://api.paystack.co"
 PAYSTACK_PUBLIC_KEY = "pk_test_8a9eca8b554bb106bdd36dbc0d04b1a8cd9aa6b6"
-PAYSTACK_CALLBACK_URL = "http://localhost:5173/payments/paystack/return"
+PAYSTACK_CALLBACK_URL = "https://decrouresi.com/payments/paystack/return"
 
 VAPID_PRIVATE_KEY = "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgB1OOxe3aZrgXU4BKF-uODpxfhuLY1XRoDnAGVZ4q-7uhRANCAAR6pEfDwcwYzIY7sYtdHfPLDLGb7JRZfamuu9ZyRmNN6zK-zj7MTxxH2cK_JrANaFKMYa1D1CsE0yBFnoD8Uq9L"
 VAPID_PUBLIC_KEY = "BHqkR8PBzBjMhjuxi10d88sMsZvslFl9qa671nJGY03rMr7OPsxPHEfZwr8msA1oUoxhrUPUKwTTIEWegPxSr0s"
