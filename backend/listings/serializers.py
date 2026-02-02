@@ -135,23 +135,134 @@ class ListingImageSerializer(serializers.ModelSerializer):
 #         return super().update(instance, validated_data)
 
 
+# class ListingSerializer(serializers.ModelSerializer):
+#     # =========================================================
+#     # 1. COORDONNÉES (Version Simple Float)
+#     # =========================================================
+    
+#     # Ce sont les vrais champs de votre modèle maintenant.
+#     # On les laisse en lecture/écriture pour que Django les sauvegarde tout seul.
+#     latitude = serializers.FloatField(required=True)
+#     longitude = serializers.FloatField(required=True)
+
+#     # Pour compatibilité Frontend (React utilise 'lat' et 'lng')
+#     # L'astuce "source=" évite d'écrire des fonctions get_lat/get_lng
+#     lat = serializers.FloatField(source='latitude', read_only=True)
+#     lng = serializers.FloatField(source='longitude', read_only=True)
+#     price = serializers.IntegerField(write_only=True, required=False)
+#     price = serializers.IntegerField(source="price_per_night", read_only=True)
+
+#     # =========================================================
+#     # 2. IMAGES & AUTEUR
+#     # =========================================================
+#     images = ListingImageSerializer(many=True, read_only=True)
+
+#     cover_image = serializers.ImageField(write_only=True, required=True)
+#     gallery_images = serializers.ListField(
+#         child=serializers.ImageField(),
+#         write_only=True,
+#         required=False,
+#         allow_empty=True,
+#     )
+    
+#     author_id = serializers.IntegerField(source="author.id", read_only=True)
+#     author_name = serializers.SerializerMethodField(read_only=True)
+
+#     class Meta:
+#         model = Listing
+#         # ATTENTION : J'ai retiré "location" de la liste ci-dessous car il n'existe plus
+#         fields = [
+#             "id", "title", "price", "description",  # Ajoutez vos autres champs ici explicitement c'est plus sûr
+#           "test",
+#   "latitude", "longitude", 
+#             "lat", "lng", 
+#             "images", "cover_image", "gallery_images",
+#             "author_id", "author_name",
+#             "created_at", "updated_at" # ou date_posted selon votre modèle
+#         ]
+#         read_only_fields = ["author", "created_at", "updated_at"]
+
+#     def get_author_name(self, obj):
+#         u = getattr(obj, "author", None)
+#         if not u:
+#             return None
+#         return u.full_name or u.username or u.email
+
+#     # =========================================================
+#     # 3. CREATE & UPDATE SIMPLIFIÉS
+#     # =========================================================
+
+#     @transaction.atomic
+#     def create(self, validated_data):
+#         # On extrait les images (car elles ne sont pas dans le modèle Listing)
+#         cover = validated_data.pop("cover_image")
+#         gallery = validated_data.pop("gallery_images", [])
+
+#         # NOTE : On NE touche PAS à latitude/longitude. 
+#         # Comme ils sont dans validated_data, super().create() va les insérer 
+#         # directement dans les colonnes float du modèle. Magique !
+#         if "price" in validated_data:
+#             validated_data["price_per_night"] = validated_data.pop("price")
+#         # Gestion de l'auteur
+#         request = self.context.get("request")
+#         if request and request.user and request.user.is_authenticated:
+#             validated_data["author"] = request.user
+            
+#         validated_data.setdefault("is_active", True)
+
+#         # Création du Listing (sauvegarde lat/lon automatiquement)
+#         listing = super().create(validated_data)
+
+#         # Création des images
+#         ListingImage.objects.create(listing=listing, image=cover, is_cover=True, order=0)
+#         for idx, img in enumerate(gallery, start=1):
+#             ListingImage.objects.create(listing=listing, image=img, is_cover=False, order=idx)
+
+#         return listing
+
+#     @transaction.atomic
+#     def update(self, instance, validated_data):
+#         # Pareil ici : pas besoin de logique spéciale pour lat/lon.
+#         # Django mettra à jour les colonnes float tout seul.
+
+#         cover = validated_data.pop("cover_image", None)
+#         if cover is not None:
+#             # On rétrograde l'ancienne cover
+#             instance.images.filter(is_cover=True).update(is_cover=False)
+#             # On ajoute la nouvelle
+#             ListingImage.objects.create(listing=instance, image=cover, is_cover=True, order=0)
+
+#         gallery = validated_data.pop("gallery_images", None)
+#         if gallery is not None:
+#             # Calcul du prochain "order" disponible
+#             max_order = instance.images.aggregate(m=Max("order")).get("m") or 0
+            
+#             for idx, img in enumerate(gallery, start=max_order + 1):
+#                 ListingImage.objects.create(listing=instance, image=img, is_cover=False, order=idx)
+
+#         return super().update(instance, validated_data)
+
+
 class ListingSerializer(serializers.ModelSerializer):
     # =========================================================
-    # 1. COORDONNÉES (Version Simple Float)
+    # 1. COORDONNÉES (float simples, stockées en DB)
     # =========================================================
-    
-    # Ce sont les vrais champs de votre modèle maintenant.
-    # On les laisse en lecture/écriture pour que Django les sauvegarde tout seul.
     latitude = serializers.FloatField(required=True)
     longitude = serializers.FloatField(required=True)
 
-    # Pour compatibilité Frontend (React utilise 'lat' et 'lng')
-    # L'astuce "source=" évite d'écrire des fonctions get_lat/get_lng
-    lat = serializers.FloatField(source='latitude', read_only=True)
-    lng = serializers.FloatField(source='longitude', read_only=True)
+    # Alias lecture seule pour le frontend (React: lat / lng)
+    lat = serializers.FloatField(source="latitude", read_only=True)
+    lng = serializers.FloatField(source="longitude", read_only=True)
 
     # =========================================================
-    # 2. IMAGES & AUTEUR
+    # 2. PRIX (champ VIRTUEL pour le frontend)
+    # =========================================================
+    # 👉 N'existe PAS dans le modèle
+    # 👉 Sera mappé vers price_per_night dans create/update
+    price = serializers.IntegerField(write_only=True, required=False)
+
+    # =========================================================
+    # 3. IMAGES
     # =========================================================
     images = ListingImageSerializer(many=True, read_only=True)
 
@@ -162,80 +273,137 @@ class ListingSerializer(serializers.ModelSerializer):
         required=False,
         allow_empty=True,
     )
-    
+
+    # =========================================================
+    # 4. AUTEUR
+    # =========================================================
     author_id = serializers.IntegerField(source="author.id", read_only=True)
     author_name = serializers.SerializerMethodField(read_only=True)
 
+    # =========================================================
+    # 5. META
+    # =========================================================
     class Meta:
         model = Listing
-        # ATTENTION : J'ai retiré "location" de la liste ci-dessous car il n'existe plus
         fields = [
-            "id", "title", "price", "description",  # Ajoutez vos autres champs ici explicitement c'est plus sûr
-          "test",
-  "latitude", "longitude", 
-            "lat", "lng", 
-            "images", "cover_image", "gallery_images",
-            "author_id", "author_name",
-            "created_at", "updated_at" # ou date_posted selon votre modèle
-        ]
-        read_only_fields = ["author", "created_at", "updated_at"]
+            "id",
+            "title",
+            "description",
 
+            # 👇 champ test (résidences fictives)
+            "test",
+
+            # Prix exposé côté frontend
+            "price",
+
+            # Coordonnées
+            "latitude",
+            "longitude",
+            "lat",
+            "lng",
+
+            # Images
+            "images",
+            "cover_image",
+            "gallery_images",
+
+            # Auteur
+            "author_id",
+            "author_name",
+
+            # Dates
+            "date_posted",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "author",
+            "date_posted",
+            "updated_at",
+        ]
+
+    # =========================================================
+    # 6. HELPERS
+    # =========================================================
     def get_author_name(self, obj):
         u = getattr(obj, "author", None)
         if not u:
             return None
-        return u.full_name or u.username or u.email
+        return getattr(u, "full_name", None) or u.username or u.email
 
     # =========================================================
-    # 3. CREATE & UPDATE SIMPLIFIÉS
+    # 7. CREATE
     # =========================================================
-
     @transaction.atomic
     def create(self, validated_data):
-        # On extrait les images (car elles ne sont pas dans le modèle Listing)
+        # Images (hors modèle Listing)
         cover = validated_data.pop("cover_image")
         gallery = validated_data.pop("gallery_images", [])
 
-        # NOTE : On NE touche PAS à latitude/longitude. 
-        # Comme ils sont dans validated_data, super().create() va les insérer 
-        # directement dans les colonnes float du modèle. Magique !
+        # 🔑 Mapping price -> price_per_night
+        if "price" in validated_data:
+            validated_data["price_per_night"] = validated_data.pop("price")
 
-        # Gestion de l'auteur
+        # Auteur auto depuis la requête
         request = self.context.get("request")
         if request and request.user and request.user.is_authenticated:
             validated_data["author"] = request.user
-            
+
+        # Sécurité
         validated_data.setdefault("is_active", True)
 
-        # Création du Listing (sauvegarde lat/lon automatiquement)
+        # Création du listing
         listing = super().create(validated_data)
 
-        # Création des images
-        ListingImage.objects.create(listing=listing, image=cover, is_cover=True, order=0)
+        # Image cover
+        ListingImage.objects.create(
+            listing=listing,
+            image=cover,
+            is_cover=True,
+            order=0,
+        )
+
+        # Galerie
         for idx, img in enumerate(gallery, start=1):
-            ListingImage.objects.create(listing=listing, image=img, is_cover=False, order=idx)
+            ListingImage.objects.create(
+                listing=listing,
+                image=img,
+                is_cover=False,
+                order=idx,
+            )
 
         return listing
 
+    # =========================================================
+    # 8. UPDATE
+    # =========================================================
     @transaction.atomic
     def update(self, instance, validated_data):
-        # Pareil ici : pas besoin de logique spéciale pour lat/lon.
-        # Django mettra à jour les colonnes float tout seul.
+        # 🔑 Mapping price -> price_per_night
+        if "price" in validated_data:
+            instance.price_per_night = validated_data.pop("price")
 
+        # Nouvelle cover
         cover = validated_data.pop("cover_image", None)
-        if cover is not None:
-            # On rétrograde l'ancienne cover
+        if cover:
             instance.images.filter(is_cover=True).update(is_cover=False)
-            # On ajoute la nouvelle
-            ListingImage.objects.create(listing=instance, image=cover, is_cover=True, order=0)
+            ListingImage.objects.create(
+                listing=instance,
+                image=cover,
+                is_cover=True,
+                order=0,
+            )
 
+        # Nouvelles images galerie
         gallery = validated_data.pop("gallery_images", None)
         if gallery is not None:
-            # Calcul du prochain "order" disponible
             max_order = instance.images.aggregate(m=Max("order")).get("m") or 0
-            
             for idx, img in enumerate(gallery, start=max_order + 1):
-                ListingImage.objects.create(listing=instance, image=img, is_cover=False, order=idx)
+                ListingImage.objects.create(
+                    listing=instance,
+                    image=img,
+                    is_cover=False,
+                    order=idx,
+                )
 
         return super().update(instance, validated_data)
 
