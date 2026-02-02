@@ -69,7 +69,7 @@ def detect_abidjan_commune(display_name: Optional[str], addr: Dict[str, Any]) ->
     return None
 
 
-def reverse_geocode_nominatim(lat: float, lng: float, timeout: int = 15, retries: int = 2) -> dict:
+def reverse_geocode_nominatim(latitude: float, longitude: float, timeout: int = 15, retries: int = 2) -> dict:
     """
     Retourne un dict normalisé:
     {
@@ -86,8 +86,8 @@ def reverse_geocode_nominatim(lat: float, lng: float, timeout: int = 15, retries
     ✅ force commune d'Abidjan si détectée dans l'adresse
     """
     # ✅ arrondir coords -> rend le cache efficace (et évite spam)
-    lat_r = round(float(lat), 5)
-    lng_r = round(float(lng), 5)
+    lat_r = round(float(latitude), 5)
+    lng_r = round(float(longitude), 5)
     cache_key = (lat_r, lng_r)
 
     if cache_key in _REVERSE_CACHE:
@@ -141,12 +141,15 @@ def reverse_geocode_nominatim(lat: float, lng: float, timeout: int = 15, retries
             )
 
             result = {
-                "address_label": display,
-                "city": city,
-                "area": area,
-                "borough": borough,
-                "raw": data,
+                 "address_label": display,
+                 "city": city,
+                 "area": area,
+                 "borough": borough,
+                 "latitude": lat_r,
+                 "longitude": lng_r,
+                 "raw": data,
             }
+
 
             # ✅ cache (et purge si trop gros)
             if len(_REVERSE_CACHE) >= _REVERSE_CACHE_MAX:

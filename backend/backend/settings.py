@@ -10,45 +10,45 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-import os, glob
+import os
 from pathlib import Path
 from datetime import timedelta# settings.py
 
 # --- Windows: pointer automatiquement vers les DLL GDAL/GEOS/PROJ dans le venv ---
-if os.name == "nt":
-    VENV_BASE = os.environ.get("VIRTUAL_ENV")
-    if VENV_BASE:
-        OSGeo_DIR = os.path.join(VENV_BASE, "Lib", "site-packages", "osgeo")
+# if os.name == "nt":
+#     VENV_BASE = os.environ.get("VIRTUAL_ENV")
+#     if VENV_BASE:
+#         OSGeo_DIR = os.path.join(VENV_BASE, "Lib", "site-packages", "osgeo")
 
-        # 1) PATH: pour que Python trouve les .dll
-        os.environ["PATH"] = OSGeo_DIR + os.pathsep + os.environ.get("PATH", "")
+#         # 1) PATH: pour que Python trouve les .dll
+#         os.environ["PATH"] = OSGeo_DIR + os.pathsep + os.environ.get("PATH", "")
 
-        # 2) Données PROJ & GDAL (NE PAS concaténer PATH ici)
-        os.environ["PROJ_LIB"] = os.path.join(OSGeo_DIR, "data", "proj")
-        os.environ["GDAL_DATA"] = os.path.join(OSGeo_DIR, "data", "gdal")
+#         # 2) Données PROJ & GDAL (NE PAS concaténer PATH ici)
+#         os.environ["PROJ_LIB"] = os.path.join(OSGeo_DIR, "data", "proj")
+#         os.environ["GDAL_DATA"] = os.path.join(OSGeo_DIR, "data", "gdal")
 
-        # 3) Localiser les DLL réelles (ta wheel met "gdal.dll", pas gdal311.dll)
-        #    On cherche dynamiquement pour éviter les fautes de nommage.
-        gdal_candidates = glob.glob(os.path.join(OSGeo_DIR, "gdal*.dll"))
-        geos_candidates = (glob.glob(os.path.join(OSGeo_DIR, "geos_c*.dll")) +
-                           glob.glob(os.path.join(OSGeo_DIR, "libgeos_c*.dll")))
+#         # 3) Localiser les DLL réelles (ta wheel met "gdal.dll", pas gdal311.dll)
+#         #    On cherche dynamiquement pour éviter les fautes de nommage.
+#         gdal_candidates = glob.glob(os.path.join(OSGeo_DIR, "gdal*.dll"))
+#         geos_candidates = (glob.glob(os.path.join(OSGeo_DIR, "geos_c*.dll")) +
+#                            glob.glob(os.path.join(OSGeo_DIR, "libgeos_c*.dll")))
 
-        # Priorité à "gdal.dll" s'il existe
-        gdal_path = None
-        for p in gdal_candidates:
-            if os.path.basename(p).lower() == "gdal.dll":
-                gdal_path = p
-                break
-        if not gdal_path and gdal_candidates:
-            gdal_path = gdal_candidates[0]
+#         # Priorité à "gdal.dll" s'il existe
+#         gdal_path = None
+#         for p in gdal_candidates:
+#             if os.path.basename(p).lower() == "gdal.dll":
+#                 gdal_path = p
+#                 break
+#         if not gdal_path and gdal_candidates:
+#             gdal_path = gdal_candidates[0]
 
-        geos_path = geos_candidates[0] if geos_candidates else None
+#         geos_path = geos_candidates[0] if geos_candidates else None
 
-        # 4) Expose pour GeoDjango (si trouvés)
-        if geos_path:
-            GEOS_LIBRARY_PATH = geos_path  # Django le lit s’il est dans le module settings
-        if gdal_path:
-            GDAL_LIBRARY_PATH = gdal_path
+#         # 4) Expose pour GeoDjango (si trouvés)
+#         if geos_path:
+#             GEOS_LIBRARY_PATH = geos_path  # Django le lit s’il est dans le module settings
+#         if gdal_path:
+#             GDAL_LIBRARY_PATH = gdal_path
       
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -92,8 +92,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis',
-    'rest_framework_gis',
+    # 'django.contrib.gis',
+    #'rest_framework_gis',
     'rest_framework_simplejwt',
     'userauths',
     'listings',
