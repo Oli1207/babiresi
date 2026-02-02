@@ -242,24 +242,22 @@ class ListingImageSerializer(serializers.ModelSerializer):
 
 #         return super().update(instance, validated_data)
 
-
 class ListingSerializer(serializers.ModelSerializer):
     # =========================================================
-    # 1. COORDONNÉES (float simples, stockées en DB)
+    # 1. COORDONNÉES (floats simples – plus de GeoDjango)
     # =========================================================
     latitude = serializers.FloatField(required=True)
     longitude = serializers.FloatField(required=True)
 
-    # Alias lecture seule pour le frontend (React: lat / lng)
+    # Compat frontend (lecture seule)
     lat = serializers.FloatField(source="latitude", read_only=True)
     lng = serializers.FloatField(source="longitude", read_only=True)
 
     # =========================================================
-    # 2. PRIX (champ VIRTUEL pour le frontend)
+    # 2. PRIX
     # =========================================================
-    # 👉 N'existe PAS dans le modèle
-    # 👉 Sera mappé vers price_per_night dans create/update
-    price = serializers.IntegerField(write_only=True, required=False)
+    # 👉 le frontend utilise price_per_night → on garde tel quel
+    price_per_night = serializers.IntegerField(required=True)
 
     # =========================================================
     # 3. IMAGES
@@ -281,7 +279,7 @@ class ListingSerializer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField(read_only=True)
 
     # =========================================================
-    # 5. META
+    # META
     # =========================================================
     class Meta:
         model = Listing
@@ -289,72 +287,58 @@ class ListingSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "description",
-
-            # 👇 champ test (résidences fictives)
+            "price_per_night",
             "test",
 
-            # Prix exposé côté frontend
-            "price",
-
-            # Coordonnées
             "latitude",
             "longitude",
             "lat",
             "lng",
 
-            # Images
             "images",
             "cover_image",
             "gallery_images",
 
-            # Auteur
             "author_id",
             "author_name",
 
-            # Dates
             "date_posted",
             "updated_at",
         ]
         read_only_fields = [
             "author",
+            "author_id",
+            "author_name",
             "date_posted",
             "updated_at",
         ]
 
     # =========================================================
-    # 6. HELPERS
+    # MÉTHODES
     # =========================================================
     def get_author_name(self, obj):
-        u = getattr(obj, "author", None)
-        if not u:
+        user = getattr(obj, "author", None)
+        if not user:
             return None
-        return getattr(u, "full_name", None) or u.username or u.email
+        return user.full_name or user.username or user.email
 
     # =========================================================
-    # 7. CREATE
+    # CREATE
     # =========================================================
     @transaction.atomic
     def create(self, validated_data):
-        # Images (hors modèle Listing)
         cover = validated_data.pop("cover_image")
         gallery = validated_data.pop("gallery_images", [])
 
-        # 🔑 Mapping price -> price_per_night
-        if "price" in validated_data:
-            validated_data["price_per_night"] = validated_data.pop("price")
-
-        # Auteur auto depuis la requête
         request = self.context.get("request")
         if request and request.user and request.user.is_authenticated:
             validated_data["author"] = request.user
 
-        # Sécurité
         validated_data.setdefault("is_active", True)
 
-        # Création du listing
         listing = super().create(validated_data)
 
-        # Image cover
+        # cover
         ListingImage.objects.create(
             listing=listing,
             image=cover,
@@ -362,7 +346,7 @@ class ListingSerializer(serializers.ModelSerializer):
             order=0,
         )
 
-        # Galerie
+        # gallery
         for idx, img in enumerate(gallery, start=1):
             ListingImage.objects.create(
                 listing=listing,
@@ -374,16 +358,13 @@ class ListingSerializer(serializers.ModelSerializer):
         return listing
 
     # =========================================================
-    # 8. UPDATE
+    # UPDATE
     # =========================================================
     @transaction.atomic
     def update(self, instance, validated_data):
-        # 🔑 Mapping price -> price_per_night
-        if "price" in validated_data:
-            instance.price_per_night = validated_data.pop("price")
-
-        # Nouvelle cover
         cover = validated_data.pop("cover_image", None)
+        gallery = validated_data.pop("gallery_images", None)
+
         if cover:
             instance.images.filter(is_cover=True).update(is_cover=False)
             ListingImage.objects.create(
@@ -393,8 +374,6 @@ class ListingSerializer(serializers.ModelSerializer):
                 order=0,
             )
 
-        # Nouvelles images galerie
-        gallery = validated_data.pop("gallery_images", None)
         if gallery is not None:
             max_order = instance.images.aggregate(m=Max("order")).get("m") or 0
             for idx, img in enumerate(gallery, start=max_order + 1):
@@ -406,7 +385,6 @@ class ListingSerializer(serializers.ModelSerializer):
                 )
 
         return super().update(instance, validated_data)
-
 # =========================================================
 # ✅ HELPERS BOOKING
 # =========================================================
