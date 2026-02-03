@@ -74,6 +74,10 @@ export default function DashboardScreen() {
             <span className="dashboard-card-label">Publier une résidence</span>
             <span className="dashboard-card-desc">Créer une nouvelle annonce</span>
           </Link>
+          <Link to="/owner/validate-key" className="dashboard-card">
+            <span className="dashboard-card-label">Valider la remise de clé</span>
+            <span className="dashboard-card-desc">Saisir le code à 6 chiffres donné par le client</span>
+          </Link>
         </div>
       </section>
 
