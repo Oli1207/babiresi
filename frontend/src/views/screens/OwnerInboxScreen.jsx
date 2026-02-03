@@ -107,15 +107,15 @@ export default function OwnerInboxScreen() {
   };
 
   return (
-    <div className="container py-3">
+    <div className="container py-3 owner-inbox-wrap">
       <div className="d-flex align-items-start justify-content-between gap-2 mb-3">
         <div>
-          <div className="fw-bold" style={{ fontSize: 18 }}>Demandes de réservation</div>
-          <div className="text-muted small">Accepte/refuse avant paiement.</div>
+          <h2 className="owner-inbox-title">Demandes de réservation</h2>
+          <p className="owner-inbox-subtitle">Accepte/refuse avant paiement.</p>
         </div>
 
         <select
-          className="form-select"
+          className="form-select owner-inbox-select"
           style={{ maxWidth: 220 }}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
