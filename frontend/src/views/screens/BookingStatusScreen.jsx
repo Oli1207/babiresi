@@ -207,8 +207,8 @@ const fetchCode = async () => {
         <div className="card-body">
           <div className="d-flex align-items-start justify-content-between gap-2">
             <div>
-              <div className="fw-bold" style={{ fontSize: 18, color:"white" }}>{booking.listing_title}</div>
-              <div className="text-muted small">
+              <div className="fw-bold" style={{ fontSize: 18, color: "#1a1a1a" }}>{booking.listing_title}</div>
+              <div className="small" style={{ color: "#555" }}>
                 Statut : <b>{statusLabel(booking.status)}</b>
               </div>
             </div>
@@ -218,7 +218,7 @@ const fetchCode = async () => {
           </div>
 
           {/* ✅ summary */}
-          <div className="mt-3 small text-light">
+          <div className="mt-3 small" style={{ color: "#1a1a1a" }}>
             <div>Durée : <b>{booking.duration_days}</b> jours · Voyageurs : <b>{booking.guests}</b></div>
             {booking.start_date && booking.end_date ? (
               <div>Dates : <b>{booking.start_date}</b> → <b>{booking.end_date}</b></div>
@@ -229,7 +229,7 @@ const fetchCode = async () => {
 
           {/* ✅ timeline */}
           <div className="mt-4">
-            <div className="fw-bold mb-2" style={{color:"whitesmoke"}}>Progression</div>
+            <div className="fw-bold mb-2" style={{ color: "#1a1a1a" }}>Progression</div>
 
             {booking.status === "rejected" || booking.status === "cancelled" || booking.status === "expired" ? (
               <div className="alert alert-warning mb-0">
@@ -248,7 +248,7 @@ const fetchCode = async () => {
                       >
                         {idx + 1}
                       </span>
-                      <div className={done ? "text-light fw-bold" : "text-muted"}>{s.label}</div>
+                      <div className={done ? "fw-bold" : ""} style={{ color: done ? "#1a1a1a" : "#555" }}>{s.label}</div>
                     </div>
                   );
                 })}
@@ -275,7 +275,7 @@ const fetchCode = async () => {
   </span>
 )}
 
-              <div className="border text-light rounded-3 p-3">
+              <div className="border rounded-3 p-3" style={{ color: "#1a1a1a" }}>
                 <div className="d-flex justify-content-between"><span>Total</span><b>{fmt(booking.total_amount)} FCFA</b></div>
                 <div className="d-flex justify-content-between"><span>Acompte (50%)</span><b>{fmt(booking.deposit_amount)} FCFA</b></div>
                 <div className="d-flex justify-content-between">
