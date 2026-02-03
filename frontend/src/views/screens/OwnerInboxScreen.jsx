@@ -76,7 +76,7 @@ export default function OwnerInboxScreen() {
         start_date: startDate || null, // si null, backend utilise desired_start_date
         owner_note: ownerNote || "",
       });
-      Swal.fire({ icon: "success", title: "Acceptée ✅", text: "Le client peut maintenant payer." });
+      Swal.fire({ icon: "success", title: "Acceptée", text: "Le client peut maintenant payer." });
       setActive(null);
       fetchInbox();
     } catch (e) {

@@ -13,6 +13,10 @@ import MyBookingsScreen from "./views/screens/MyBookingsScreen";
 import PaystackReturnScreen from "./views/screens/PaystackReturnScreen";
 import SellerProfileScreen from "./views/screens/SellerProfileScreen";
 import OwnerProfileScreen from "./views/screens/OwnerProfileScreen";
+import Logout from './views/auth/Logout';
+import ForgotPassword from './views/auth/ForgotPassword';
+import CreateNewPassword from './views/auth/CreateNewPassword';
+
 
 import Navbar from "./views/components/Navbar";
 import Footer from "./views/components/Footer";
@@ -54,7 +58,10 @@ function AppLayout() {
           {/* Auth */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
+           <Route path="/logout" element={<Logout />} />
+         <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/create-new-password" element={<CreateNewPassword />} />
+  
           {/* Create */}
           <Route path="/create" element={<CreateListing />} />
 
