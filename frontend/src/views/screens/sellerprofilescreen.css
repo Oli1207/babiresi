@@ -1,3 +1,44 @@
+/* Bouton Retour : style liquid glass (aligné sur ld-back / ownerp-back) */
+.sellerp-back {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+  color: #1a1a1a;
+  transition: all 0.3s ease;
+}
+
+.sellerp-back:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Bouton secondaire (Explorer, Rafraîchir) : même style glass */
+.sellerp-btn {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  color: #1a1a1a;
+  transition: all 0.3s ease;
+}
+
+.sellerp-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
 .sellerp-header { overflow: hidden; }
 .sellerp-avatar { width: 72px; height: 72px; border-radius: 999px; overflow: hidden; border: 1px solid #eee; }
 .sellerp-avatar img { width: 100%; height: 100%; object-fit: cover; }

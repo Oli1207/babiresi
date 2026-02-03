@@ -60,7 +60,7 @@ export default function SellerProfileScreen() {
     return (
       <div className="container py-4" style={{ maxWidth: 980 }}>
         <div className="alert alert-warning">Vendeur introuvable.</div>
-        <button className="btn btn-outline-dark" onClick={() => navigate(-1)}>
+        <button type="button" className="sellerp-back" onClick={() => navigate(-1)}>
           ← Retour
         </button>
       </div>
@@ -70,10 +70,10 @@ export default function SellerProfileScreen() {
   return (
     <div className="container py-4" style={{ maxWidth: 980 }}>
       <div className="d-flex align-items-center justify-content-between mb-3">
-        <button className="btn btn-link p-0" onClick={() => navigate(-1)}>
+        <button type="button" className="sellerp-back" onClick={() => navigate(-1)}>
           ← Retour
         </button>
-        <button className="btn btn-outline-dark btn-sm" onClick={() => navigate("/")}>
+        <button type="button" className="sellerp-btn" onClick={() => navigate("/")}>
           Explorer
         </button>
       </div>
@@ -111,7 +111,7 @@ export default function SellerProfileScreen() {
         <div className="fw-semibold" style={{ fontSize: 16 }}>
           Résidences du vendeur
         </div>
-        <button className="btn btn-light border btn-sm" onClick={fetchSeller}>
+        <button type="button" className="sellerp-btn" onClick={fetchSeller}>
           Rafraîchir
         </button>
       </div>

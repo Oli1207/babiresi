@@ -13,6 +13,7 @@ import MyBookingsScreen from "./views/screens/MyBookingsScreen";
 import PaystackReturnScreen from "./views/screens/PaystackReturnScreen";
 import SellerProfileScreen from "./views/screens/SellerProfileScreen";
 import OwnerProfileScreen from "./views/screens/OwnerProfileScreen";
+import DashboardScreen from "./views/screens/DashboardScreen";
 import Logout from './views/auth/Logout';
 import ForgotPassword from './views/auth/ForgotPassword';
 import CreateNewPassword from './views/auth/CreateNewPassword';
@@ -67,6 +68,9 @@ function AppLayout() {
 
           {/* Listing */}
           <Route path="/listings/:id" element={<ListingDetailScreen />} />
+
+          {/* Mon Espace (hub client + propriétaire) */}
+          <Route path="/mon-espace" element={<DashboardScreen />} />
 
           {/* Owner flow */}
           <Route path="/owner/inbox" element={<OwnerInboxScreen />} />

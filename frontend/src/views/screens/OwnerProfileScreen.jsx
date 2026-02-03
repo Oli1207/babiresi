@@ -116,15 +116,12 @@ export default function OwnerProfileScreen() {
   return (
     <div className="container py-4" style={{ maxWidth: 980 }}>
       <div className="d-flex align-items-center justify-content-between mb-3">
-        <button className="btn btn-link p-0" onClick={() => navigate(-1)}>
+        <button type="button" className="ownerp-back" onClick={() => navigate(-1)}>
           ← Retour
         </button>
 
         <div className="d-flex gap-2">
-          <button className="btn btn-outline-dark btn-sm" onClick={() => navigate("/residences/create")}>
-            + Publier
-          </button>
-          <button className="btn btn-light border btn-sm" onClick={fetchMe}>
+          <button type="button" className="ownerp-refresh" onClick={fetchMe}>
             Rafraîchir
           </button>
         </div>
@@ -137,7 +134,7 @@ export default function OwnerProfileScreen() {
           </div>
 
           <div className="flex-grow-1">
-            <div className="ownerp-name text-light">{safeName(profile, user)}</div>
+            <div className="ownerp-name">{safeName(profile, user)}</div>
             <div className="ownerp-meta">{user?.email || ""}</div>
 
             {stats ? (
@@ -150,8 +147,8 @@ export default function OwnerProfileScreen() {
           </div>
 
           <div className="text-end d-none d-md-block">
-            <div className="small text-light">Espace gérant</div>
-            <div className="small">Privé</div>
+            <div className="ownerp-right-label">Espace gérant</div>
+            <div className="ownerp-right-meta">Privé</div>
           </div>
         </div>
       </div>
@@ -185,7 +182,7 @@ export default function OwnerProfileScreen() {
                   </div>
 
                   <div className="card-body">
-                    <div className="ownerp-title text-light">{l.title}</div>
+                    <div className="ownerp-title">{l.title}</div>
                     <div className="ownerp-sub">
                       {(l.borough || "")}
                       {l.borough && l.area ? " · " : ""}
@@ -194,7 +191,7 @@ export default function OwnerProfileScreen() {
                     </div>
 
                     <div className="d-flex align-items-center justify-content-between mt-2">
-                      <div className="ownerp-price text-light">{fmt(l.price_per_night)} FCFA</div>
+                      <div className="ownerp-price">{fmt(l.price_per_night)} FCFA</div>
                       <span className={`badge ${l.is_active ? "text-bg-dark" : "text-bg-light border"}`}>
                         {l.is_active ? "Active" : "Inactive"}
                       </span>

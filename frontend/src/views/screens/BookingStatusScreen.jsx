@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import apiInstance from "../../utils/axios";
+import "./BookingStatusScreen.css";
 
 const fmt = (x) => Number(x || 0).toLocaleString();
 
@@ -187,7 +188,7 @@ const fetchCode = async () => {
     return (
       <div className="container py-4">
         <div className="alert alert-warning">Réservation introuvable.</div>
-        <button className="btn btn-outline-dark" onClick={() => navigate("/me/bookings")}>
+        <button type="button" className="bookings-btn" onClick={() => navigate("/me/bookings")}>
           Mes demandes
         </button>
       </div>
@@ -197,8 +198,10 @@ const fetchCode = async () => {
   return (
     <div className="container py-4" style={{ maxWidth: 780 }}>
       <div className="d-flex align-items-center justify-content-between mb-3">
-        <button className="btn btn-link p-0" onClick={() => navigate(-1)}>← Retour</button>
-        <button className="btn btn-outline-dark btn-sm" onClick={() => navigate("/me/bookings")}>
+        <button type="button" className="bookings-back" onClick={() => navigate(-1)}>
+          ← Retour
+        </button>
+        <button type="button" className="bookings-btn" onClick={() => navigate("/me/bookings")}>
           Mes demandes
         </button>
       </div>
@@ -338,7 +341,7 @@ const fetchCode = async () => {
             </div>
           )}
 
-          <button className="btn btn-light border w-100 mt-4" onClick={fetchBooking}>
+          <button type="button" className="bookings-btn w-100 mt-4" onClick={fetchBooking}>
             Rafraîchir
           </button>
         </div>
