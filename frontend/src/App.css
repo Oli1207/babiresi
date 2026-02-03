@@ -9,10 +9,10 @@
   z-index: 1;
 }
 
-/* Override Bootstrap pour le thème sombre avec style immersif */
+/* Override Bootstrap pour le thème clair */
 .btn-dark {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  background: rgba(0, 0, 0, 0.08) !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.15) !important;
   color: var(--color-text-primary) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -31,7 +31,7 @@
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.05);
   transform: translate(-50%, -50%);
   transition: width 0.6s, height 0.6s;
   pointer-events: none;
@@ -56,11 +56,11 @@
 }
 
 .btn-dark:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(0, 0, 0, 0.12) !important;
+  border-color: rgba(0, 0, 0, 0.25) !important;
   transform: translateY(-3px) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 
-              0 0 20px rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 
+              0 0 20px rgba(0, 0, 0, 0.05) !important;
 }
 
 .btn-dark:active {
@@ -69,7 +69,7 @@
 
 .btn-outline-dark {
   background: transparent !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.2) !important;
   color: var(--color-text-primary) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -78,18 +78,18 @@
 }
 
 .btn-outline-dark:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.35) !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.3) !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
-              0 0 15px rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1),
+              0 0 15px rgba(0, 0, 0, 0.04) !important;
 }
 
-/* Champs de formulaire améliorés avec style immersif et professionnel */
+/* Champs de formulaire */
 .form-control,
 .form-select {
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.12) !important;
   color: var(--color-text-primary) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -112,33 +112,33 @@
 
 .form-control:hover,
 .form-select:hover {
-  border-color: rgba(255, 255, 255, 0.18) !important;
-  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.18) !important;
+  background: rgba(255, 255, 255, 1) !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
 }
 
 .form-control:focus,
 .form-select:focus {
-  background: rgba(255, 255, 255, 0.09) !important;
-  border-color: rgba(255, 255, 255, 0.35) !important;
+  background: rgba(255, 255, 255, 1) !important;
+  border-color: rgba(0, 0, 0, 0.25) !important;
   color: var(--color-text-primary) !important;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1),
-              0 8px 24px rgba(0, 0, 0, 0.35),
-              inset 0 1px 0 rgba(255, 255, 255, 0.12),
-              0 0 20px rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.06),
+              0 8px 24px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9),
+              0 0 20px rgba(0, 0, 0, 0.04) !important;
   transform: translateY(-2px) scale(1.01) !important;
   outline: none !important;
 }
 
 .form-control::placeholder {
-  color: rgba(255, 255, 255, 0.4) !important;
+  color: rgba(0, 0, 0, 0.4) !important;
   transition: all 0.3s ease !important;
 }
 
 .form-control:focus::placeholder {
-  color: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(0, 0, 0, 0.35) !important;
   transform: translateY(-2px);
 }
 
@@ -156,7 +156,7 @@ textarea.form-control:focus {
 /* Select amélioré */
 .form-select {
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231a1a1a' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
   background-position: right 16px center !important;
   padding-right: 45px !important;
@@ -166,14 +166,14 @@ textarea.form-control:focus {
 }
 
 .form-select option {
-  background: #1a1a1a;
-  color: #ffffff;
+  background: #ffffff;
+  color: #1a1a1a;
   padding: 12px;
 }
 
-/* Labels améliorés */
+/* Labels */
 .form-label {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(0, 0, 0, 0.8) !important;
   font-weight: 600 !important;
   font-size: 14px !important;
   margin-bottom: 8px !important;
@@ -209,7 +209,7 @@ textarea.form-control:focus {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.02), transparent);
   transition: left 0.6s;
   pointer-events: none;
   z-index: 0;
@@ -220,12 +220,12 @@ textarea.form-control:focus {
 }
 
 .card:hover {
-  background: rgba(255, 255, 255, 0.09) !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
+  background: rgba(255, 255, 255, 1) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
   transform: translateY(-6px) scale(1.01) rotateX(2deg) !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
-              0 0 40px rgba(255, 255, 255, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12),
+              0 0 40px rgba(0, 0, 0, 0.05),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
 }
 
 .card-body {
@@ -233,13 +233,13 @@ textarea.form-control:focus {
   z-index: 1;
 }
 
-/* Badges améliorés */
+/* Badges */
 .badge {
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(0, 0, 0, 0.08) !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  color: #000000 !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  color: var(--color-text-primary) !important;
   padding: 6px 12px !important;
   border-radius: 8px !important;
   font-weight: 600 !important;
@@ -248,42 +248,47 @@ textarea.form-control:focus {
 }
 
 .badge:hover {
-  background: rgba(255, 255, 255, 1) !important;
+  background: rgba(0, 0, 0, 0.12) !important;
   border-color: rgba(0, 0, 0, 0.2) !important;
   transform: scale(1.05);
-  color: #000000 !important;
+  color: var(--color-text-primary) !important;
 }
 
-/* Checkboxes améliorés */
+/* Checkboxes avec coche visible */
 .form-check-input {
-  width: 18px !important;
-  height: 18px !important;
-  background: var(--glass-bg) !important;
+  width: 20px !important;
+  height: 20px !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-size: 14px 14px !important;
+  background-position: center !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
-  border: 1.5px solid var(--glass-border) !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.2) !important;
   border-radius: 6px !important;
   cursor: pointer !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   position: relative !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
 }
 
 .form-check-input:hover {
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(0, 0, 0, 0.25) !important;
+  background: rgba(255, 255, 255, 1) !important;
   transform: scale(1.1);
 }
 
 .form-check-input:checked {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 0 0 3px var(--glass-bg),
-              0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  background-color: rgba(0, 120, 80, 0.15) !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%231a7c4a' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M6 10l3 3l6-6'/%3e%3c/svg%3e") !important;
+  border-color: rgba(0, 120, 80, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(0, 120, 80, 0.1),
+              0 2px 8px rgba(0, 0, 0, 0.08) !important;
 }
 
 .form-check-input:focus {
-  border-color: rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 0 0 3px var(--glass-bg) !important;
+  border-color: rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06) !important;
 }
 
 .form-check-label {
@@ -298,33 +303,33 @@ textarea.form-control:focus {
   color: #ffffff !important;
 }
 
-/* Alertes améliorées */
+/* Alertes */
 .alert {
-  background: var(--glass-bg) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid var(--glass-border) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
   border-radius: 12px !important;
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: var(--color-text-primary) !important;
   padding: 12px 16px !important;
 }
 
 .alert-warning {
-  background: rgba(255, 193, 7, 0.15) !important;
-  border-color: rgba(255, 193, 7, 0.3) !important;
-  color: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 193, 7, 0.2) !important;
+  border-color: rgba(255, 193, 7, 0.4) !important;
+  color: #1a1a1a !important;
 }
 
 .alert-success {
   background: rgba(25, 135, 84, 0.15) !important;
-  border-color: rgba(25, 135, 84, 0.3) !important;
-  color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(25, 135, 84, 0.35) !important;
+  color: #1a1a1a !important;
 }
 
 .alert-danger {
-  background: rgba(220, 53, 69, 0.15) !important;
+  background: rgba(220, 53, 69, 0.12) !important;
   border-color: rgba(220, 53, 69, 0.3) !important;
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: #1a1a1a !important;
 }
 
 /* S'assurer que tous les inputs et selects sont interactifs */

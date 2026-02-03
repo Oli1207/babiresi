@@ -2,11 +2,11 @@
 
 .footer-glass {
   margin-top: auto;
-  background: rgba(10, 10, 10, 0.8);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06);
   padding: 40px 20px 20px;
 }
 
@@ -31,13 +31,13 @@
 .footer-title {
   font-size: 20px;
   font-weight: 900;
-  color: #ffffff;
+  color: #1a1a1a;
   margin: 0;
 }
 
 .footer-description {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(0, 0, 0, 0.55);
   margin: 0;
   line-height: 1.5;
 }
@@ -45,7 +45,7 @@
 .footer-heading {
   font-size: 14px;
   font-weight: 700;
-  color: #ffffff;
+  color: #1a1a1a;
   margin: 0 0 8px 0;
 }
 
@@ -59,25 +59,25 @@
 }
 
 .footer-links li a {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(0, 0, 0, 0.6);
   text-decoration: none;
   font-size: 13px;
   transition: color 0.3s ease;
 }
 
 .footer-links li a:hover {
-  color: #ffffff;
+  color: #1a1a1a;
 }
 
 .footer-bottom {
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
 .footer-copyright {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(0, 0, 0, 0.5);
   margin: 0;
 }
 

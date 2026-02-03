@@ -86,7 +86,7 @@ export default function SellerProfileScreen() {
           </div>
 
           <div className="flex-grow-1">
-            <div className="sellerp-name text-light">{safeName(profile)}</div>
+            <div className="sellerp-name">{safeName(profile)}</div>
             <div className="sellerp-meta">
               {(profile?.city || "")}
               {profile?.city && profile?.country ? " · " : ""}
@@ -100,9 +100,9 @@ export default function SellerProfileScreen() {
             </div>
           </div>
 
-          <div className="text-end d-none d-md-block">
-            <div className="text-muted small">Répond généralement vite</div>
-            <div className="small text-light"> Profil public</div>
+          <div className="text-end d-none d-md-block sellerp-header-right">
+            <div className="small">Répond généralement vite</div>
+            <div className="small">Profil public</div>
           </div>
         </div>
       </div>
@@ -137,7 +137,7 @@ export default function SellerProfileScreen() {
                   </div>
 
                   <div className="card-body">
-                    <div className="sellerp-title text-light">{l.title}</div>
+                    <div className="sellerp-title">{l.title}</div>
                     <div className="sellerp-sub">
                       {(l.borough || "")}
                       {l.borough && l.area ? " · " : ""}
@@ -146,7 +146,7 @@ export default function SellerProfileScreen() {
                     </div>
 
                     <div className="d-flex align-items-center justify-content-between mt-2">
-                      <div className="sellerp-price text-light">{fmt(l.price_per_night)} FCFA</div>
+                      <div className="sellerp-price">{fmt(l.price_per_night)} FCFA</div>
                       <span className="badge text-bg-light border">Max {l.max_guests}</span>
                     </div>
                   </div>

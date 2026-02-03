@@ -4,6 +4,7 @@ import { login } from '../../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth'; 
 import Swal from 'sweetalert2';
+import logoImage from '../../assets/logo.png';
 import './login.css';
 
 function Login() {
@@ -65,7 +66,7 @@ function Login() {
     return (
         <div className="login-container">
             <div className="login-logo">
-                <h2>Babi Resi</h2>
+                <img src={logoImage} alt="Babi Resi" />
             </div>
 
             <div className="login-box">
