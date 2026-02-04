@@ -12,8 +12,12 @@ urlpatterns = [
     path("user/register/", userauths_views.RegisterView.as_view()),
     path("user/profile/<int:user_id>/", userauths_views.ProfileView.as_view()),
     path("user/me/", userauths_views.MeView.as_view(), name="me"),
-    path("user/password-reset/<email>/", userauths_views.PasswordResetEmailVerify.as_view()),
     path(
+        "user/password-reset/",
+        userauths_views.PasswordResetEmailVerify.as_view(),
+        name="password-reset",
+    ),
+   path(
         "user/password-reset-confirm/",
         userauths_views.PasswordResetConfirmAPIView.as_view(),
         name="password-reset-confirm",
