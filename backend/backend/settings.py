@@ -67,7 +67,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env('SECRET_KEY')
 # SECRET_KEY = "django-insecure-%x#0wa&djs3q9)pg*#_%+-3sb7_3p(#1lzs6hun+py+rtn&ej="
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "192.168.1.13", "127.0.0.1", "backend.decrouresi.com", "decrouresi.com"]
 
@@ -200,9 +200,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR, 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATIC_URL = '/static/'
+# STATICFILES_DIRS = [BASE_DIR, 'static']
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
+
+
+
+# Dossier où tu travailles en local (tes sources)
+STATICFILES_DIRS = [
+    BASE_DIR / "static", 
+]
+
+# Dossier où Django va TOUT rassembler pour la production
+# C'est ce dossier qui doit être lié à public_html/static
+STATIC_ROOT = BASE_DIR / 'staticfiles' 
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
