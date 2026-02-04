@@ -290,3 +290,47 @@
   position: relative;
   z-index: 1;
 }
+
+/* Lisibilité globale dans la modale */
+.owner-modal .fw-semibold,
+.owner-modal .small,
+.owner-modal .owner-modal-sub {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.owner-modal .text-muted {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Boutons dans la modale : contraste lisible */
+.owner-modal .btn-dark {
+  background: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  color: #1a1a1a !important;
+  font-weight: 600;
+}
+
+.owner-modal .btn-dark:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  color: #1a1a1a !important;
+}
+
+.owner-modal .btn-outline-dark {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.owner-modal .btn-outline-dark:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+  color: #ffffff !important;
+}
+
+.owner-modal .btn-light {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
