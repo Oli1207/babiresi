@@ -103,7 +103,7 @@ def reverse_geocode_nominatim(latitude: float, longitude: float, timeout: int = 
     }
     headers = {
         # ✅ User-Agent propre (évite les rejets)
-        "User-Agent": "BabiResi/1.0 (Abidjan, CI) reverse-geocode",
+        "User-Agent": "DecrouResi/1.0 (Abidjan, CI) reverse-geocode",
     }
 
     last_err: Optional[Exception] = None
@@ -194,7 +194,7 @@ def forward_geocode_nominatim(query: str, limit: int = 6, timeout: int = 12, ret
         "limit": limit,
         "countrycodes": "ci",  # ✅ CI
     }
-    headers = {"User-Agent": "BabiResi/1.0 (Abidjan, CI) forward-geocode"}
+    headers = {"User-Agent": "DecrouResi/1.0 (Abidjan, CI) forward-geocode"}
 
     last_err: Optional[Exception] = None
 

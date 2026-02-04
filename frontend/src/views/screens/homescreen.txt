@@ -8,24 +8,19 @@ import "./home.css";
 function buildParams(filters, page, pageSize) {
   const p = new URLSearchParams();
 
-  // ✅ 1. TEXTE & LOCALISATION
+  // ✅ text + location
   if (filters.q?.trim()) p.set("q", filters.q.trim());
   if (filters.city?.trim()) p.set("city", filters.city.trim());
   if (filters.area?.trim()) p.set("area", filters.area.trim());
   if (filters.borough?.trim()) p.set("borough", filters.borough.trim());
 
-  // ✅ 2. NUMÉRIQUES
-  if (filters.max_price) p.set("max_price", String(filters.max_price));
-  if (filters.guests) p.set("guests", String(filters.guests));
-  if (filters.min_bedrooms) p.set("min_bedrooms", String(filters.min_bedrooms));
-  if (filters.min_living_rooms) p.set("min_living_rooms", String(filters.min_living_rooms));
+  // ✅ numeric
+  if (filters.max_price !== "") p.set("max_price", String(filters.max_price));
+  if (filters.guests !== "") p.set("guests", String(filters.guests));
+  if (filters.min_bedrooms !== "") p.set("min_bedrooms", String(filters.min_bedrooms));
+  if (filters.min_living_rooms !== "") p.set("min_living_rooms", String(filters.min_living_rooms));
 
-  // ✅ 3. TYPE DE LOGEMENT (Important !)
-  if (filters.listing_type && filters.listing_type !== "all") {
-    p.set("listing_type", filters.listing_type);
-  }
-
-  // ✅ 4. BOOLEENS (amenities)
+  // ✅ bools (send only true)
   [
     "has_wifi",
     "has_ac",
@@ -33,13 +28,11 @@ function buildParams(filters, page, pageSize) {
     "has_garden",
     "has_generator",
     "has_security",
-    // Ajoute ceux manquants si tu veux filtrer aussi dessus :
-    // "has_tv", "has_kitchen", "has_pool" etc.
   ].forEach((k) => {
     if (filters[k]) p.set(k, "true");
   });
 
-  // ✅ 5. PAGINATION
+  // ✅ pagination (DRF)
   p.set("page", String(page));
   p.set("page_size", String(pageSize));
 
@@ -53,17 +46,18 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  // Navigation interne
+  // ✅ navigation interne
   const [tab, setTab] = useState("map");
+
+  // ✅ item actif
   const [activeId, setActiveId] = useState(null);
 
-  // ✅ Source unique de vérité pour les filtres
+  // ✅ NEW: filters au parent (source of truth)
   const [filters, setFilters] = useState({
     q: "",
     city: "",
     area: "",
     borough: "",
-    listing_type: "all", // ✅ Ajouté ici
     max_price: "",
     guests: "",
     min_bedrooms: "",
@@ -76,19 +70,20 @@ export default function HomeScreen() {
     has_parking: false,
   });
 
+  // ✅ pagination
   const [page, setPage] = useState(1);
   const [hasNext, setHasNext] = useState(false);
 
+  // ✅ anti-race (ignore old requests)
   const reqId = useRef(0);
 
-  // Debounce search text only
+  // ✅ debounce search (pro: évite spam API)
   const [debouncedQ, setDebouncedQ] = useState(filters.q);
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQ(filters.q), 350);
     return () => clearTimeout(t);
   }, [filters.q]);
 
-  // Fusion pour l'effect
   const effectiveFilters = useMemo(() => ({ ...filters, q: debouncedQ }), [filters, debouncedQ]);
 
   const fetchPage = async ({ nextPage = 1, append = false } = {}) => {
@@ -101,6 +96,7 @@ export default function HomeScreen() {
       const qs = buildParams(effectiveFilters, nextPage, PAGE_SIZE);
       const { data } = await apiInstance.get(`listings/?${qs}`);
 
+      // ✅ support: paginated OR array (ne casse rien)
       const arr = Array.isArray(data) ? data : (data?.results || []);
       const next = Array.isArray(data) ? null : data?.next;
 
@@ -119,7 +115,7 @@ export default function HomeScreen() {
     }
   };
 
-  // ✅ Re-fetch quand un filtre change (remise à page 1)
+  // ✅ initial + when filters change => reset page 1
   useEffect(() => {
     fetchPage({ nextPage: 1, append: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -128,7 +124,6 @@ export default function HomeScreen() {
     effectiveFilters.city,
     effectiveFilters.area,
     effectiveFilters.borough,
-    effectiveFilters.listing_type, // ✅ Déclenche le refresh
     effectiveFilters.max_price,
     effectiveFilters.guests,
     effectiveFilters.min_bedrooms,

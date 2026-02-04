@@ -23,8 +23,8 @@ export default defineConfig({
       ],
 
       manifest: {
-        name: "Babiresi",
-        short_name: "Babiresi",
+        name: "Decrou Resi",
+        short_name: "Decrou Resi",
         description: "Réservation de résidences à Abidjan",
         theme_color: "#111111",
         background_color: "#ffffff",

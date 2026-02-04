@@ -36,7 +36,7 @@ function Footer() {
 
         <div className="footer-bottom">
           <p className="footer-copyright">
-            © {new Date().getFullYear()} Babi Resi. Tous droits réservés.
+            © {new Date().getFullYear()} Decrou Resi. Tous droits réservés.
           </p>
         </div>
       </div>

@@ -6,10 +6,11 @@ function formatMoney(x) {
   return n.toLocaleString();
 }
 
+// ✅ util: cover depuis backend images[]
 function pickCover(listing) {
   const imgs = listing?.images || [];
   const cover = imgs.find((i) => i.is_cover) || imgs[0] || null;
-  return cover?.image_url || "/listing-fallback.jpg";
+  return cover?.image_url || "/listing-fallback.jpg"; // ✅ fallback local (évite DNS)
 }
 
 function ListingCard({ l, active, onClick }) {
@@ -21,26 +22,26 @@ function ListingCard({ l, active, onClick }) {
 
       <div className="list-meta">
         <div className="list-title">{l?.title || "Résidence"}</div>
-        {l?.test && (
-          <div
-            style={{
-              background: "#fff3cd",
-              border: "1px solid #ffecb5",
-              color: "#664d03",
-              padding: "8px 12px",
-              borderRadius: 8,
-              marginBottom: 12,
-              fontWeight: 600,
-            }}
-          >
-            ⚠️ Résidence de démonstration — annonce fictive
-          </div>
-        )}
+    {l?.test && (
+  <div
+    style={{
+      background: "#fff3cd",
+      border: "1px solid #ffecb5",
+      color: "#664d03",
+      padding: "8px 12px",
+      borderRadius: 8,
+      marginBottom: 12,
+      fontWeight: 600,
+    }}
+  >
+    ⚠️ Résidence de démonstration — annonce fictive
+  </div>
+)}
 
         <div className="list-sub">
-          {l?.borough || ""}
+          {(l?.borough || "")}
           {l?.borough && l?.area ? " · " : ""}
-          {l?.area || ""}
+          {(l?.area || "")}
           {l?.city ? ` · ${l.city}` : ""}
         </div>
 
@@ -53,9 +54,7 @@ function ListingCard({ l, active, onClick }) {
           <div className="list-price">
             {formatMoney(l?.price_per_night)} FCFA <span>/ nuit</span>
           </div>
-          <div className="list-chip">
-            {(l?.listing_type || "Résidence").toUpperCase()}
-          </div>
+          <div className="list-chip">{(l?.listing_type || "Résidence").toUpperCase()}</div>
         </div>
       </div>
     </div>
@@ -86,10 +85,10 @@ function Section({ title, items, activeId, onPick }) {
 export default function ExploreListScreen(props) {
   const {
     loading = false,
-    loadingMore = false,
-    hasNext = false,
-    onLoadMore,
-    listings = [], // ✅ Ces listings viennent du backend DÉJÀ filtrés
+    loadingMore = false, // ✅ NEW
+    hasNext = false, // ✅ NEW
+    onLoadMore, // ✅ NEW
+    listings = [],
     filters,
     setFilters,
     activeId = null,
@@ -99,14 +98,13 @@ export default function ExploreListScreen(props) {
 
   const navigate = useNavigate();
 
-  // ✅ Defaults filters
+  // ✅ defaults (anti-crash)
   const defaultFilters = useMemo(
     () => ({
       q: "",
       city: "",
       area: "",
       borough: "",
-      listing_type: "all",
       max_price: "",
       guests: "",
       min_bedrooms: "",
@@ -128,7 +126,8 @@ export default function ExploreListScreen(props) {
     if (!hasExternalFilters && filters) {
       setLocalFilters((p) => ({ ...p, ...filters }));
     }
-  }, [filters, hasExternalFilters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
 
   const effectiveFilters = useMemo(() => {
     const base = defaultFilters;
@@ -138,61 +137,78 @@ export default function ExploreListScreen(props) {
   }, [defaultFilters, filters, hasExternalFilters, localFilters]);
 
   const setEffectiveFilters = hasExternalFilters ? setFilters : setLocalFilters;
+
   const safeSetActiveId = typeof setActiveId === "function" ? setActiveId : () => {};
   const goMap = typeof onGoMap === "function" ? onGoMap : () => {};
 
-  // ✅ NETTOYAGE : Plus de filtrage client (filtered = useMemo).
-  // On utilise directement `listings` qui est la vérité venant du serveur.
-  const dataList = Array.isArray(listings) ? listings : [];
+  // ✅ type filter local (garde ton UX)
+  const [typeFilter, setTypeFilter] = useState("all");
+
+  /**
+   * ✅ OPTI:
+   * Le backend filtre déjà (q, prix, guests, min rooms, amenities).
+   * Ici on garde seulement:
+   * - typeFilter local (si listing_type n’est pas encore filtré backend)
+   * - un check "guests" correct si jamais tu arrives ici avec un parent sans backend filtering (safe)
+   */
+  const filtered = useMemo(() => {
+    const arr = Array.isArray(listings) ? listings : [];
+    const type = (typeFilter || "all").toLowerCase();
+
+    const guests = effectiveFilters.guests === "" ? null : Number(effectiveFilters.guests);
+
+    return arr.filter((l) => {
+      // ✅ type
+      if (type !== "all" && (l?.listing_type || "").toLowerCase() !== type) return false;
+
+      // ✅ FIX: guests => max_guests (pas guests/capacity)
+      if (guests !== null && Number.isFinite(guests)) {
+        const cap = Number(l?.max_guests ?? 0);
+        if (cap < guests) return false;
+      }
+
+      return true;
+    });
+  }, [listings, typeFilter, effectiveFilters.guests]);
 
   const categories = useMemo(() => {
-    // On trie simplement pour l'affichage, sans filtrer (le backend a déjà filtré)
-    const arr = dataList.slice().sort((a, b) => 
-      Number(a?.price_per_night || 0) - Number(b?.price_per_night || 0)
-    );
+    const arr = filtered
+      .slice()
+      .sort((a, b) => Number(a?.price_per_night || 0) - Number(b?.price_per_night || 0));
 
-    // Si l'utilisateur a filtré par type (ex: Villa), toutes les sections ci-dessous
-    // ne contiendront que des villas. C'est le comportement attendu.
-    
-    // Découpage par prix pour la présentation
-    const budget = arr.filter((l) => Number(l?.price_per_night || 0) <= 20000);
+    const budget = arr.filter((l) => Number(l?.price_per_night || 0) > 0 && Number(l?.price_per_night || 0) <= 20000);
     const mid = arr.filter((l) => Number(l?.price_per_night || 0) > 20000 && Number(l?.price_per_night || 0) <= 50000);
     const premium = arr.filter((l) => Number(l?.price_per_night || 0) > 50000);
 
-    // Recommandées (Algorithme simple de complétude)
-    const recommended = arr
+    const recommended = filtered
       .slice()
       .sort((a, b) => {
-        const sa = ["title", "city", "area", "borough"].reduce((s, k) => s + (a?.[k] ? 1 : 0), 0);
-        const sb = ["title", "city", "area", "borough"].reduce((s, k) => s + (b?.[k] ? 1 : 0), 0);
+        const sa = ["title", "city", "area", "borough", "address_label"].reduce((s, k) => s + (a?.[k] ? 1 : 0), 0);
+        const sb = ["title", "city", "area", "borough", "address_label"].reduce((s, k) => s + (b?.[k] ? 1 : 0), 0);
         return sb - sa;
       })
       .slice(0, 12);
 
-    // Helper pour extraire par type (pour affichage catégorisé si aucun filtre type n'est actif)
-    const byType = (t) => arr.filter((l) => (l?.listing_type || "").toLowerCase() === t).slice(0, 12);
+    const byType = (t) => filtered.filter((l) => (l?.listing_type || "").toLowerCase() === t).slice(0, 12);
 
     return {
-      all: arr, // Cas général
       recommended,
       budget: budget.slice(0, 12),
       mid: mid.slice(0, 12),
       premium: premium.slice(0, 12),
-      // Si on filtre déjà sur "Villa", studio sera vide.
       studio: byType("studio"),
       appartement: byType("appartement"),
       villa: byType("villa"),
       maison: byType("maison"),
     };
-  }, [dataList]);
+  }, [filtered]);
 
   const pick = (l) => {
     safeSetActiveId(l.id);
     navigate(`/listings/${l.id}`);
   };
 
-  const toggleChip = (key) =>
-    setEffectiveFilters((p) => ({ ...p, [key]: !p?.[key] }));
+  const toggleChip = (key) => setEffectiveFilters((p) => ({ ...p, [key]: !p?.[key] }));
 
   const resetFilters = () =>
     setEffectiveFilters({
@@ -200,7 +216,6 @@ export default function ExploreListScreen(props) {
       city: "",
       area: "",
       borough: "",
-      listing_type: "all",
       max_price: "",
       guests: "",
       min_bedrooms: "",
@@ -215,17 +230,12 @@ export default function ExploreListScreen(props) {
 
   const canLoadMore = typeof onLoadMore === "function" && hasNext;
 
-  // Si on a des filtres actifs, on affiche peut-être une vue simplifiée
-  // plutôt que toutes les sections ? Pour l'instant on garde les sections.
-  
   return (
     <div className="list-screen">
       <div className="list-header">
         <div>
           <div className="list-h1">Résidences</div>
-          <div className="list-h2">
-            {loading ? "Chargement..." : `${dataList.length} résultats`}
-          </div>
+          <div className="list-h2">{loading ? "Chargement..." : `${filtered.length} résultats (page courante)`}</div>
         </div>
 
         <button type="button" className="btn btn-outline-dark" onClick={goMap}>
@@ -238,20 +248,11 @@ export default function ExploreListScreen(props) {
         <input
           className="form-control"
           value={effectiveFilters.q}
-          onChange={(e) =>
-            setEffectiveFilters((p) => ({ ...p, q: e.target.value }))
-          }
-          placeholder="Rechercher: titre, quartier, commune..."
+          onChange={(e) => setEffectiveFilters((p) => ({ ...p, q: e.target.value }))}
+          placeholder="Rechercher: titre, quartier, commune, ville..."
         />
 
-        {/* ✅ SELECT bindé directement sur listing_type de l'API */}
-        <select
-          className="form-select"
-          value={effectiveFilters.listing_type || "all"}
-          onChange={(e) =>
-            setEffectiveFilters((p) => ({ ...p, listing_type: e.target.value }))
-          }
-        >
+        <select className="form-select" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
           <option value="all">Tous types</option>
           <option value="appartement">Appartement</option>
           <option value="studio">Studio</option>
@@ -267,9 +268,7 @@ export default function ExploreListScreen(props) {
               className="form-control"
               placeholder="Prix max"
               value={effectiveFilters.max_price}
-              onChange={(e) =>
-                setEffectiveFilters((p) => ({ ...p, max_price: e.target.value }))
-              }
+              onChange={(e) => setEffectiveFilters((p) => ({ ...p, max_price: e.target.value }))}
             />
           </div>
 
@@ -279,9 +278,7 @@ export default function ExploreListScreen(props) {
               className="form-control"
               placeholder="Personnes"
               value={effectiveFilters.guests}
-              onChange={(e) =>
-                setEffectiveFilters((p) => ({ ...p, guests: e.target.value }))
-              }
+              onChange={(e) => setEffectiveFilters((p) => ({ ...p, guests: e.target.value }))}
             />
           </div>
 
@@ -291,9 +288,7 @@ export default function ExploreListScreen(props) {
               className="form-control"
               placeholder="Min chambres"
               value={effectiveFilters.min_bedrooms}
-              onChange={(e) =>
-                setEffectiveFilters((p) => ({ ...p, min_bedrooms: e.target.value }))
-              }
+              onChange={(e) => setEffectiveFilters((p) => ({ ...p, min_bedrooms: e.target.value }))}
             />
           </div>
 
@@ -303,12 +298,7 @@ export default function ExploreListScreen(props) {
               className="form-control"
               placeholder="Min salons"
               value={effectiveFilters.min_living_rooms}
-              onChange={(e) =>
-                setEffectiveFilters((p) => ({
-                  ...p,
-                  min_living_rooms: e.target.value,
-                }))
-              }
+              onChange={(e) => setEffectiveFilters((p) => ({ ...p, min_living_rooms: e.target.value }))}
             />
           </div>
         </div>
@@ -325,69 +315,42 @@ export default function ExploreListScreen(props) {
             <button
               key={key}
               type="button"
-              className={`btn btn-sm ${
-                effectiveFilters[key] ? "btn-dark" : "btn-outline-dark"
-              }`}
+              className={`btn btn-sm ${effectiveFilters[key] ? "btn-dark" : "btn-outline-dark"}`}
               onClick={() => toggleChip(key)}
             >
               {label}
             </button>
           ))}
 
-          <button
-            type="button"
-            className="btn btn-sm btn-outline-secondary"
-            onClick={resetFilters}
-          >
+          <button type="button" className="btn btn-sm btn-outline-secondary" onClick={resetFilters}>
             Reset
           </button>
         </div>
       </div>
 
-      {/* Si l'utilisateur a fait une recherche précise (filtrée), 
-         il vaut souvent mieux afficher une seule liste de résultats.
-         Mais pour garder ton UX, on laisse les sections.
-         Si le user cherche "Villa", la section "Appartements" sera juste vide.
-      */}
+      <Section title="Recommandées" items={categories.recommended} activeId={activeId} onPick={pick} />
+      <Section title="Petits budgets (≤ 20k)" items={categories.budget} activeId={activeId} onPick={pick} />
+      <Section title="Confort (20k – 50k)" items={categories.mid} activeId={activeId} onPick={pick} />
+      <Section title="Premium (50k+)" items={categories.premium} activeId={activeId} onPick={pick} />
 
-      {(effectiveFilters.listing_type === "all" || !effectiveFilters.listing_type) ? (
-         /* Affichage standard catégorisé si pas de filtre type strict */
-         <>
-            <Section title="Recommandées" items={categories.recommended} activeId={activeId} onPick={pick} />
-            <Section title="Petits budgets (≤ 20k)" items={categories.budget} activeId={activeId} onPick={pick} />
-            <Section title="Confort (20k – 50k)" items={categories.mid} activeId={activeId} onPick={pick} />
-            <Section title="Premium (50k+)" items={categories.premium} activeId={activeId} onPick={pick} />
-            
-            <Section title="Studios" items={categories.studio} activeId={activeId} onPick={pick} />
-            <Section title="Appartements" items={categories.appartement} activeId={activeId} onPick={pick} />
-            <Section title="Villas" items={categories.villa} activeId={activeId} onPick={pick} />
-            <Section title="Maisons" items={categories.maison} activeId={activeId} onPick={pick} />
-         </>
-      ) : (
-         /* Si un type est sélectionné, on affiche tout dans une section Résultats */
-         <Section title={`Résultats : ${effectiveFilters.listing_type}`} items={categories.all} activeId={activeId} onPick={pick} />
-      )}
+      <Section title="Studios" items={categories.studio} activeId={activeId} onPick={pick} />
+      <Section title="Appartements" items={categories.appartement} activeId={activeId} onPick={pick} />
+      <Section title="Villas" items={categories.villa} activeId={activeId} onPick={pick} />
+      <Section title="Maisons" items={categories.maison} activeId={activeId} onPick={pick} />
 
-      {/* Load more pro */}
+      {/* ✅ Load more pro */}
       {canLoadMore && (
         <div className="d-flex justify-content-center my-4">
-          <button
-            type="button"
-            className="btn btn-dark"
-            onClick={onLoadMore}
-            disabled={loadingMore}
-          >
+          <button type="button" className="btn btn-dark" onClick={onLoadMore} disabled={loadingMore}>
             {loadingMore ? "Chargement..." : "Charger plus"}
           </button>
         </div>
       )}
 
-      {!loading && dataList.length === 0 && (
+      {!loading && filtered.length === 0 && (
         <div className="list-empty">
           <div className="fw-semibold">Aucun résultat</div>
-          <div className="text-muted small">
-            Essaie un autre quartier ou retire un filtre.
-          </div>
+          <div className="text-muted small">Essaie un autre quartier ou retire un filtre.</div>
         </div>
       )}
     </div>

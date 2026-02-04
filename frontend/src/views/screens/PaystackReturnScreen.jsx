@@ -32,7 +32,7 @@ export default function PaystackReturnScreen() {
         // Optionnel : message rapide
         Swal.fire({
           icon: "success",
-          title: "Paiement confirmé ✅",
+          title: "Paiement confirmé",
           text: "Redirection vers ta réservation…",
           timer: 1400,
           showConfirmButton: false,

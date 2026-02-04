@@ -84,7 +84,7 @@ export default function OwnerProfileScreen() {
     setUpdatingId(listingId);
     try {
       await apiInstance.patch(`listings/${listingId}/`, { is_active: nextActive });
-      Swal.fire({ icon: "success", title: "OK ✅", timer: 900, showConfirmButton: false });
+      Swal.fire({ icon: "success", title: "OK", timer: 900, showConfirmButton: false });
       fetchMe();
     } catch (e) {
       const msg = e?.response?.data?.detail || "Action impossible.";

@@ -21,7 +21,7 @@ function Navbar() {
       <div className="navbar-container">
         {/* Logo / Brand */}
         <Link to="/" className="navbar-brand" onClick={closeMobileMenu}>
-          <img src={logoImage} alt="Babi Resi" className="navbar-logo" />
+          <img src={logoImage} alt="Decrou Resi" className="navbar-logo" />
         </Link>
 
         {/* Menu hamburger pour mobile */}

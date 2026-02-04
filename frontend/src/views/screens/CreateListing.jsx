@@ -236,7 +236,7 @@ if (!userData) {
 
         setCoordsAndAutofill(lat, lng);
         setLoadingGeo(false);
-        Toast.fire({ icon: "success", title: "Position détectée ✅" });
+        Toast.fire({ icon: "success", title: "Position détectée" });
       },
       () => {
         setLoadingGeo(false);
@@ -456,7 +456,7 @@ console.log("REQ Authorization:", apiInstance.defaults.headers?.Authorization);
 const { data } = await apiInstance.post("listings/", fd);
 
       console.log("listing created:", data);
-      Toast.fire({ icon: "success", title: "Résidence publiée ✅" });
+      Toast.fire({ icon: "success", title: "Résidence publiée" });
 navigate("/");
       // ✅ reset partiel
       setForm((p) => ({

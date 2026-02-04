@@ -170,7 +170,7 @@ const fetchCode = async () => {
   const copyCode = async () => {
     try {
       await navigator.clipboard.writeText(String(keyCode));
-      Swal.fire({ icon: "success", title: "Copié ✅", text: "Code copié dans le presse-papier.", timer: 1300, showConfirmButton: false });
+      Swal.fire({ icon: "success", title: "Copié", text: "Code copié dans le presse-papier.", timer: 1300, showConfirmButton: false });
     } catch {
       Swal.fire({ icon: "info", title: "Info", text: "Impossible de copier automatiquement. Sélectionne le code et copie." });
     }

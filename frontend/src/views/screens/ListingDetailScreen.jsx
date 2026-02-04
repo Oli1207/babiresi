@@ -172,7 +172,7 @@ export default function ListingDetailScreen() {
       setBooking(data); // ✅ on garde la réponse (BookingRequestCreateSerializer)
       Swal.fire({
         icon: "success",
-        title: "Demande envoyée ✅",
+        title: "Demande envoyée",
         text: "Le gérant a reçu ta demande. Tu seras notifié dès qu'il répond.",
       }).then(() => {
   navigate(`/bookings/${data.id}`); // ✅ Option A
@@ -577,7 +577,7 @@ export default function ListingDetailScreen() {
                     {/* ✅ Si paid : afficher confirmation + code (si on l'a) */}
                     {booking.status === "paid" && (
                       <div className="alert alert-success mt-3">
-                        <div className="fw-semibold">Acompte payé ✅</div>
+                        <div className="fw-semibold">Acompte payé</div>
                         <div className="small mt-1">
                           Ton code de remise sera demandé à l’arrivée.
                         </div>

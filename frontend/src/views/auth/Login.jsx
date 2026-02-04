@@ -66,7 +66,7 @@ function Login() {
     return (
         <div className="login-container">
             <div className="login-logo">
-                <img src={logoImage} alt="Babi Resi" />
+                <img src={logoImage} alt="Decrou Resi" />
             </div>
 
             <div className="login-box">
