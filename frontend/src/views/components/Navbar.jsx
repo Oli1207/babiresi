@@ -1,22 +1,15 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth';
 import logoImage from '../../assets/logo.png';
 import './Navbar.css';
 
 function Navbar() {
-  const navigate = useNavigate();
+  // Souscription à allUserData pour que la navbar se re-rende au logout (setUser(null))
+  useAuthStore((state) => state.allUserData);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Fonction pour se déconnecter
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-    setMobileMenuOpen(false);
-  };
 
   // Fermer le menu mobile quand on clique sur un lien
   const closeMobileMenu = () => {
@@ -50,6 +43,9 @@ function Navbar() {
           
           {isLoggedIn() ? (
             <>
+              <Link to="/mon-espace" className="navbar-link" onClick={closeMobileMenu}>
+                Mon Espace
+              </Link>
               <Link to="/create" className="navbar-link" onClick={closeMobileMenu}>
                 Publier
               </Link>
@@ -69,12 +65,13 @@ function Navbar() {
                 <span className="navbar-user-name">
                   {user?.full_name || user?.email || 'Utilisateur'}
                 </span>
-                <button 
-                  onClick={handleLogout}
+                <Link 
+                  to="/logout" 
                   className="navbar-logout-btn"
+                  onClick={closeMobileMenu}
                 >
                   Déconnexion
-                </button>
+                </Link>
               </div>
             </>
           ) : (
