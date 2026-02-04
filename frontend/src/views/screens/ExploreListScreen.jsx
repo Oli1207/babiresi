@@ -276,7 +276,7 @@ export default function ExploreListScreen(props) {
             <input
               type="number"
               className="form-control"
-              placeholder="Voyageurs"
+              placeholder="Personnes"
               value={effectiveFilters.guests}
               onChange={(e) => setEffectiveFilters((p) => ({ ...p, guests: e.target.value }))}
             />

@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta# settings.py
+from environs import Env
+
+env = Env()
+env.read_env()
+
 
 # --- Windows: pointer automatiquement vers les DLL GDAL/GEOS/PROJ dans le venv ---
 # if os.name == "nt":
@@ -58,8 +63,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%x#0wa&djs3q9)pg*#_%+-3sb7_3p(#1lzs6hun+py+rtn&ej='
-
+SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -134,9 +138,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# 'USER': 'c2738587c_Olivier',
-# 'PASSWORD': 'L@QDe5az@ks36Di',
-
 # DATABASES = {
 #      'default': {
 #         'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -153,26 +154,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'c2738587c_decrouresi',
-        'USER': 'c2738587c_Olivier',
-        'PASSWORD': 'Blandine1207.',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
 
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.contrib.gis.db.backends.postgis",
-#         "NAME": "decroure_principal",
-#         "USER": "decroure",
-#         "PASSWORD": "h63tIg42Vn",
-#         "HOST": "uk17.acugis-dns.com",
-#         "PORT": "5432",
-#         "CONN_MAX_AGE": 60,  # connexion persistante (perf)
-#     }
-# }
 
 
 # Password validation
@@ -235,8 +224,8 @@ EMAIL_USE_SSL = True  # SSL activé pour le port 465
 EMAIL_USE_TLS = False
 
 # Authentification au serveur SMTP
-EMAIL_HOST_USER = 'support@decrouresi.com'
-EMAIL_HOST_PASSWORD = 'L@QDe5az@ks36Di'  # ⚠️ remplace par ton vrai mot de passe sécurisé
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 # Adresse expéditeur par défaut
 DEFAULT_FROM_EMAIL = 'support@decrouresi.com'
@@ -254,13 +243,13 @@ EMAIL_USE_LOCALTIME = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-PAYSTACK_SECRET_KEY = "sk_test_e645af35c48d9a0997a2a524919c34219268f5de"
-PAYSTACK_BASE_URL = "https://api.paystack.co"
-PAYSTACK_PUBLIC_KEY = "pk_test_8a9eca8b554bb106bdd36dbc0d04b1a8cd9aa6b6"
-PAYSTACK_CALLBACK_URL = "https://decrouresi.com/payments/paystack/return"
+PAYSTACK_SECRET_KEY = env('PAYSTACK_SECRET_KEY')
+PAYSTACK_BASE_URL = env('PAYSTACK_BASE_URL')
+PAYSTACK_PUBLIC_KEY = env('PAYSTACK_PUBLIC_KEY')
+PAYSTACK_CALLBACK_URL = env('PAYSTACK_CALLBACK_URL')
 
-VAPID_PRIVATE_KEY = "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgB1OOxe3aZrgXU4BKF-uODpxfhuLY1XRoDnAGVZ4q-7uhRANCAAR6pEfDwcwYzIY7sYtdHfPLDLGb7JRZfamuu9ZyRmNN6zK-zj7MTxxH2cK_JrANaFKMYa1D1CsE0yBFnoD8Uq9L"
-VAPID_PUBLIC_KEY = "BHqkR8PBzBjMhjuxi10d88sMsZvslFl9qa671nJGY03rMr7OPsxPHEfZwr8msA1oUoxhrUPUKwTTIEWegPxSr0s"
+VAPID_PRIVATE_KEY = env('VAPID_PRIVATE_KEY')
+VAPID_PUBLIC_KEY = env('VAPID_PUBLIC_KEY')
 VAPID_CLAIMS = {"sub": "mailto:kangaholivier58@gmail.com"}
 
 REST_FRAMEWORK = {

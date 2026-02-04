@@ -222,7 +222,7 @@ const fetchCode = async () => {
 
           {/* ✅ summary */}
           <div className="mt-3 small" style={{ color: "#1a1a1a" }}>
-            <div>Durée : <b>{booking.duration_days}</b> jours · Voyageurs : <b>{booking.guests}</b></div>
+            <div>Durée : <b>{booking.duration_days}</b> jours · Personnes : <b>{booking.guests}</b></div>
             {booking.start_date && booking.end_date ? (
               <div>Dates : <b>{booking.start_date}</b> → <b>{booking.end_date}</b></div>
             ) : booking.desired_start_date ? (
@@ -305,6 +305,21 @@ const fetchCode = async () => {
             <div className="mt-4">
               <div className="alert alert-success mb-0">
                 <div className="fw-semibold">Acompte payé</div>
+                <div className="contact-actions">
+  <a href={booking?.owner_contact.phone_raw} className="call-btn">
+    📞 Appeler
+  </a>
+
+  <a
+    href={booking?.owner_contact.whatsapp_url}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="whatsapp-btn"
+  >
+    💬 WhatsApp
+  </a>
+</div>
+
                 <div className="small mt-1">
                   À l’arrivée, le gérant te demandera un code pour valider la remise de la clé.
                 </div>

@@ -543,7 +543,6 @@ class ListingListCreateView(generics.ListCreateAPIView):
         return super().list(request, *args, **kwargs)
 
 
-
 class ListingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer

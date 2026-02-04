@@ -151,7 +151,7 @@ export default function ListingDetailScreen() {
 
     const g = Number(guests);
     if (!g || g < 1 || g > Number(listing.max_guests || 1)) {
-      Swal.fire({ icon: "warning", title: "Voyageurs", text: `Max ${listing.max_guests} voyageurs.` });
+      Swal.fire({ icon: "warning", title: "Personnes", text: `Max ${listing.max_guests} personnes.` });
       return;
     }
 
@@ -367,7 +367,7 @@ export default function ListingDetailScreen() {
     <div>🛋️ Salons : <b>{listing.living_rooms}</b></div>
     <div>🍳 Cuisines : <b>{listing.kitchens}</b></div>
     <div>🛌 Lits : <b>{listing.beds}</b></div>
-    <div>👥 Max voyageurs : <b>{listing.max_guests}</b></div>
+    <div>👥 Max Personnes : <b>{listing.max_guests}</b></div>
   </div>
 </div>
 
@@ -444,18 +444,19 @@ export default function ListingDetailScreen() {
                     </div>
 
                     <div className="col-12">
-                      <label className="form-label">Date souhaitée (optionnel)</label>
+                      <label className="form-label">Date souhaitée </label>
                       <input
                         type="date"
                         className="form-control"
                         value={desiredStartDate}
                         onChange={(e) => setDesiredStartDate(e.target.value)}
+                        required
                       />
                       <div className="form-text">Le gérant pourra confirmer ou proposer d’autres dates.</div>
                     </div>
 
                     <div className="col-12">
-                      <label className="form-label">Voyageurs</label>
+                      <label className="form-label">Personnes</label>
                       <input
                         type="number"
                         min="1"
@@ -464,7 +465,7 @@ export default function ListingDetailScreen() {
                         value={guests}
                         onChange={(e) => setGuests(e.target.value)}
                       />
-                      <div className="form-text">Max {listing.max_guests} voyageurs</div>
+                      <div className="form-text">Max {listing.max_guests} personnes</div>
                     </div>
 
                     <div className="col-12">

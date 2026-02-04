@@ -500,6 +500,16 @@ class BookingPublicSerializer(serializers.ModelSerializer):
     """
     listing_title = serializers.CharField(source="listing.title", read_only=True)
     listing_id = serializers.IntegerField(source="listing.id", read_only=True)
+    
+    owner_contact = serializers.SerializerMethodField()
+    user_full_name = serializers.CharField(
+    source="user.full_name", read_only=True
+    )
+    user_email = serializers.EmailField(
+        source="user.email", read_only=True
+    )
+    user_phone = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Booking
@@ -536,9 +546,78 @@ class BookingPublicSerializer(serializers.ModelSerializer):
             "payout_reference",
             "released_at",
 
+            "owner_contact",
+            "user_full_name",
+            "user_email",
+            "user_phone",
+
+            
             "created_at",
         ]
         read_only_fields = fields
+        
+    def get_owner_contact(self, booking):
+        """
+        🔐 Infos vendeur visibles UNIQUEMENT après paiement
+        + lien appel
+        + bouton WhatsApp
+        """
+        if booking.status not in ["paid", "checked_in", "released"]:
+            return None
+
+        owner = booking.listing.author
+        if not owner:
+            return None
+
+        profile = getattr(owner, "profile", None)
+
+        phone = (
+            profile.phone
+            if profile and profile.phone
+            else owner.phone
+        )
+
+        if not phone:
+            return None
+
+        # 🔹 normalisation basique (WhatsApp exige format international sans espaces)
+        phone_clean = (
+            phone.replace(" ", "")
+                .replace("-", "")
+                .replace("(", "")
+                .replace(")", "")
+        )
+
+        # ⚠️ Si pas de +, on suppose CI (+225)
+        if not phone_clean.startswith("+"):
+            phone_clean = f"+225{phone_clean}"
+
+        # 💬 message WhatsApp pré-rempli
+        message = (
+            f"Bonjour {owner.full_name}, "
+            f"je vous contacte concernant ma réservation "
+            f"#{booking.id} pour {booking.listing.title}."
+        )
+
+        whatsapp_url = (
+            "https://wa.me/"
+            + phone_clean.replace("+", "")
+            + "?text="
+            + urllib.parse.quote(message)
+        )
+
+        return {
+            "full_name": owner.full_name,
+            "phone_display": phone,
+            "phone_raw": f"tel:{phone_clean}",
+            "whatsapp_url": whatsapp_url,
+            "email": owner.email,
+        }
+    def get_user_phone(self, booking):
+        profile = getattr(booking.user, "profile", None)
+        if profile and profile.phone:
+            return profile.phone
+        return booking.user.phone
 
 
 class BookingRequestCreateSerializer(serializers.ModelSerializer):
@@ -568,7 +647,7 @@ class BookingRequestCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"listing": "Résidence indisponible."})
 
         if guests < 1 or guests > listing.max_guests:
-            raise serializers.ValidationError({"guests": f"Max {listing.max_guests} voyageurs."})
+            raise serializers.ValidationError({"guests": f"Max {listing.max_guests} personnes."})
 
         # ✅ si le client propose une date, on peut pré-check disponibilité (optionnel)
         desired = attrs.get("desired_start_date")
