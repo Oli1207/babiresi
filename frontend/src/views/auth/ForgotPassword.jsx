@@ -23,8 +23,10 @@ function ForgotPassword() {
         }
 
         setIsLoading(true)
-        apiInstance
-            .get(`user/password-reset/${email}`)
+        apiInstance.post("user/password-reset/", {
+    email: email
+})
+
             .then(() => {
                 Swal.fire({
                     icon: 'success',
