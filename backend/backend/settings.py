@@ -230,7 +230,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Configuration du serveur SMTP (serveur sortant)
 EMAIL_HOST = 'mail.decrouresi.com'
-EMAIL_PORT = 465
+EMAIL_PORT = 587
 EMAIL_USE_SSL = True  # SSL activé pour le port 465
 
 # Authentification au serveur SMTP

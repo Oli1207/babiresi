@@ -63,8 +63,13 @@ class PasswordResetEmailVerify(generics.RetrieveAPIView):
     
     def get_object(self):
         email = self.kwargs['email']
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            from rest_framework.exceptions import NotFound
+            raise NotFound("Email introuvable")
         user = User.objects.get(email=email)
-        
+            
         if user:
             user.otp = generate_numeric_otp()
             uidb64 = user.pk
@@ -126,3 +131,4 @@ class PasswordResetConfirmAPIView(generics.GenericAPIView):
             return Response({"error": "Lien invalide ou expiré."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)    
+
