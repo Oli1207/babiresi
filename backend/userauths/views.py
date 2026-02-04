@@ -78,7 +78,7 @@ class PasswordResetEmailVerify(generics.RetrieveAPIView):
             user.reset_token_created_at = timezone.now()
             user.save()
 
-            link = f"https://backend.decrouresi.com/create-new-password?otp={user.otp}&uidb64={uidb64}&reset_token={reset_token}"
+            link = f"https://decrouresi.com/create-new-password?otp={user.otp}&uidb64={uidb64}&reset_token={reset_token}"
             
             merge_data = {
                 'link': link, 
