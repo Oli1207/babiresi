@@ -823,7 +823,7 @@ class PaystackVerifyView(APIView):
                     # ✅ notif au client (code affiché côté front via endpoint code)
                     send_push_to_user(
                         booking.user,
-                        title="Paiement confirmé ✅",
+                        title="Paiement confirmé",
                         body="Ton acompte est payé. Tu peux récupérer ton code de remise.",
                         data={"type": "booking_paid", "booking_id": booking.id},
                     )
@@ -915,7 +915,7 @@ class PaystackWebhookView(APIView):
                     # ✅ notif client
                     send_push_to_user(
                         booking.user,
-                        title="Paiement confirmé ✅",
+                        title="Paiement confirmé",
                         body="Ton acompte est payé. Tu peux récupérer ton code de remise.",
                         data={"type": "booking_paid", "booking_id": booking.id},
                     )
@@ -951,7 +951,7 @@ class OwnerValidateKeyView(APIView):
         # ✅ notif client
         send_push_to_user(
             booking.user,
-            title="Check-in validé ✅",
+            title="Check-in validé",
             body="Le gérant a validé ton arrivée.",
             data={"type": "checked_in", "booking_id": booking.id},
         )
@@ -1020,7 +1020,7 @@ class AdminReleaseBookingView(APIView):
             )
         send_push_to_user(
             booking.user,
-            title="Réservation terminée ✅",
+            title="Réservation terminée",
             body="Reversement effectué au gérant. Merci !",
             data={"type": "released", "booking_id": booking.id},
         )

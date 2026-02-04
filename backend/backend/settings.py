@@ -224,6 +224,29 @@ CSRF_TRUSTED_ORIGINS = ['https://decrouresi.com']
 
 
 
+
+# Backend utilisé pour l'envoi des emails
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Configuration du serveur SMTP (serveur sortant)
+EMAIL_HOST = 'mail.decrouresi.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True  # SSL activé pour le port 465
+
+# Authentification au serveur SMTP
+EMAIL_HOST_USER = 'support@decrouresi.com'
+EMAIL_HOST_PASSWORD = 'L@QDe5az@ks36Di'  # ⚠️ remplace par ton vrai mot de passe sécurisé
+
+# Adresse expéditeur par défaut
+DEFAULT_FROM_EMAIL = 'support@decrouresi.com'
+
+# Optionnel : délais maximum avant de couper en cas de non-réponse
+EMAIL_TIMEOUT = 10  # en secondes
+
+# Optionnel : pour gérer les dates d’envoi selon le fuseau local
+EMAIL_USE_LOCALTIME = True
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
