@@ -16,6 +16,12 @@
   color: #1a1a1a;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(0, 0, 0, 0.12);
+  max-width: 160px;
+  padding: 6px 10px;
+  font-size: 13px;
+  min-height: auto;
+  height: auto;
+  border-radius: 10px;
 }
 
 .owner-inbox-wrap .alert {
@@ -289,4 +295,105 @@
   color: rgba(255, 255, 255, 0.8);
   position: relative;
   z-index: 1;
+}
+
+/* ====== LISIBILITÉ MODALE (fond sombre → texte clair) ====== */
+.owner-modal h5,
+.owner-modal .fw-semibold,
+.owner-modal .small,
+.owner-modal .owner-modal-sub {
+  color: #ffffff !important;
+  position: relative;
+  z-index: 1;
+}
+
+.owner-modal .text-muted {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Bloc Client + infos */
+.owner-modal .border.p-2 {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.owner-modal .border.p-2 .fw-semibold {
+  color: #ffffff !important;
+}
+
+.owner-modal .border.p-2 div,
+.owner-modal .border.p-2 a {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.owner-modal .border.p-2 a:hover {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
+/* Alertes dans la modale */
+.owner-modal .alert {
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.owner-modal .alert b,
+.owner-modal .alert .small,
+.owner-modal .alert em {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Bloc statut (cercle/bloc blanc) : texte noir pour lisibilité */
+.owner-modal .alert.alert-info {
+  color: #1a1a1a !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+.owner-modal .alert.alert-info b,
+.owner-modal .alert.alert-info .small,
+.owner-modal .alert.alert-info em {
+  color: #1a1a1a !important;
+}
+
+.owner-modal hr {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Boutons : contraste lisible */
+.owner-modal .btn-dark {
+  background: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  color: #1a1a1a !important;
+  font-weight: 600;
+}
+
+.owner-modal .btn-dark:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+  color: #1a1a1a !important;
+}
+
+.owner-modal .btn-outline-dark {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.owner-modal .btn-outline-dark:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+  color: #ffffff !important;
+}
+
+.owner-modal .btn-light {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.owner-modal .btn-light:hover {
+  background: #ffffff !important;
+  color: #1a1a1a !important;
 }

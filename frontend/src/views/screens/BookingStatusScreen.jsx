@@ -306,19 +306,18 @@ const fetchCode = async () => {
               <div className="alert alert-success mb-0">
                 <div className="fw-semibold">Acompte payé</div>
                 <div className="contact-actions">
-  <a href={booking?.owner_contact?.phone_raw} className="call-btn">
-    📞 Appeler
-  </a>
-
-  <a
-    href={booking?.owner_contact?.whatsapp_url}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="whatsapp-btn"
-  >
-    💬 WhatsApp
-  </a>
-</div>
+                  <a href={booking?.owner_contact?.phone_raw} className="bookings-contact-btn bookings-call-btn">
+                    📞 Appeler
+                  </a>
+                  <a
+                    href={booking?.owner_contact?.whatsapp_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bookings-contact-btn bookings-whatsapp-btn"
+                  >
+                    💬 WhatsApp
+                  </a>
+                </div>
 
                 <div className="small mt-1">
                   À l’arrivée, le gérant te demandera un code pour valider la remise de la clé.
