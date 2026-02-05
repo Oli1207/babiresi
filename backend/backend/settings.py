@@ -15,8 +15,11 @@ from pathlib import Path
 from datetime import timedelta# settings.py
 from environs import env
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-env.read_env()
+
+env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # --- Windows: pointer automatiquement vers les DLL GDAL/GEOS/PROJ dans le venv ---
@@ -55,9 +58,6 @@ env.read_env()
 #         if gdal_path:
 #             GDAL_LIBRARY_PATH = gdal_path
       
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -119,12 +119,13 @@ MIDDLEWARE = [
 ]
 
 STORAGES = {
-    # ...
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
-
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
