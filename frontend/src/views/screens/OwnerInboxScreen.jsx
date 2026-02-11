@@ -78,8 +78,7 @@ export default function OwnerInboxScreen() {
         </div>
 
         <select
-          className="form-select"
-          style={{ maxWidth: 220 }}
+          className="form-select owner-inbox-select"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
