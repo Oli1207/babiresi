@@ -69,16 +69,17 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["localhost", "192.168.1.13", "127.0.0.1", "backend.decrouresi.com", "decrouresi.com"]
+ALLOWED_HOSTS = [
+    "backend.decrouresi.com",
+    "decrouresi.com", "www.decrouresi.com",
+]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Exemple pour React
-    "http://192.168.1.12:5173",
-    "http://192.168.1.13:5173",
-    "https://backend.decrouresi.com",
     "https://decrouresi.com",
-   
+    "https://www.decrouresi.com",
+    "https://backend.decrouresi.com",
 ]
+
 from corsheaders.defaults import default_headers  # ADDED
 
 CORS_ALLOW_HEADERS = list(default_headers) + [    # ADDED
@@ -232,13 +233,15 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 
 AUTH_USER_MODEL = 'userauths.User'
 
-CSRF_TRUSTED_ORIGINS = ['https://decrouresi.com']
-
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://decrouresi.com",
+    "https://www.decrouresi.com",
+    "https://backend.decrouresi.com",
+]
 
 
 # Backend utilisé pour l'envoi des emails
@@ -343,3 +346,4 @@ LOGGING = {
         },
     },
 }
+

@@ -25,6 +25,7 @@ import "./App.css";
 
 import { setUser } from "./utils/auth";
 import { ensurePushSubscription } from "./utils/push";
+import ProfileSettingsScreen from "./views/screens/ProfileSettingsScreen";
 
 function AppLayout() {
   const location = useLocation();
@@ -86,6 +87,7 @@ function AppLayout() {
 
           {/* Public seller */}
           <Route path="/seller/:userId" element={<SellerProfileScreen />} />
+          <Route path="/me/settings" element={<ProfileSettingsScreen />} />
         </Routes>
       </main>
 

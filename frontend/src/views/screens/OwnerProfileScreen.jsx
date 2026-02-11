@@ -121,6 +121,11 @@ export default function OwnerProfileScreen() {
         </button>
 
         <div className="d-flex gap-2">
+          {/* ✅ NEW: accès rapide aux paramètres de compte */}
+          <button type="button" className="ownerp-refresh" onClick={() => navigate("/me/settings")}>
+            Paramètres
+          </button>
+
           <button type="button" className="ownerp-refresh" onClick={fetchMe}>
             Rafraîchir
           </button>

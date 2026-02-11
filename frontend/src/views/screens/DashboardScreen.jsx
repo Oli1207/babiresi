@@ -85,6 +85,12 @@ export default function DashboardScreen() {
       <section className="dashboard-section">
         <h2 className="dashboard-section-title">Compte</h2>
         <div className="dashboard-cards">
+          {/* ✅ NEW: page paramètres (profil + mot de passe) */}
+          <Link to="/me/settings" className="dashboard-card">
+            <span className="dashboard-card-label">Modifier mon profil</span>
+            <span className="dashboard-card-desc">Photo, nom, téléphone, mot de passe…</span>
+          </Link>
+
           {userId != null ? (
             <Link to={`/seller/${userId}`} className="dashboard-card">
               <span className="dashboard-card-label">Mon profil public</span>

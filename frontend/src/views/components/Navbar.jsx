@@ -62,9 +62,9 @@ function Navbar() {
 
               {/* User menu */}
               <div className="navbar-user">
-                <span className="navbar-user-name">
+                {/* <span className="navbar-user-name">
                   {user?.full_name || user?.email || 'Utilisateur'}
-                </span>
+                </span> */}
                 <Link 
                   to="/logout" 
                   className="navbar-logout-btn"

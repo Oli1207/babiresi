@@ -93,11 +93,96 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    # ✅ NEW: URL absolue de l'image (pour le frontend)
+    image_url = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Profile
         fields = '__all__'
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        if not obj.image:
+            return None
+        return request.build_absolute_uri(obj.image.url) if request else obj.image.url
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
         response['user'] = SafeUserSerializer(instance.user).data  # CHANGE: safe user au lieu de tout
         return response
+
+
+# =========================================================
+# ✅ NEW: update profil + changement mot de passe
+# =========================================================
+
+class MeUpdateSerializer(serializers.Serializer):
+    # User
+    full_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    phone = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+
+    # Profile
+    image = serializers.FileField(required=False, allow_null=True)
+    about = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    gender = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    country = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    state = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    city = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    address = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+
+    def update(self, instance, validated_data):
+        """
+        instance = request.user
+        -> on met à jour User + Profile.
+        """
+        user = instance
+        profile, _ = Profile.objects.get_or_create(user=user)
+
+        # ✅ CHANGE: champs User
+        if "full_name" in validated_data:
+            user.full_name = validated_data.get("full_name")
+        if "phone" in validated_data:
+            user.phone = validated_data.get("phone")
+        user.save()
+
+        # ✅ CHANGE: champs Profile
+        for f in ["about", "gender", "country", "state", "city", "address"]:
+            if f in validated_data:
+                setattr(profile, f, validated_data.get(f))
+
+        # ✅ CHANGE: upload image
+        if "image" in validated_data:
+            profile.image = validated_data.get("image")
+
+        profile.full_name = profile.full_name or user.full_name
+        profile.phone = profile.phone or user.phone
+        profile.save()
+
+        return user
+
+    def to_representation(self, instance):
+        """On renvoie user + profile (comme ton OwnerDashboard le fait déjà)."""
+        user = instance
+        profile = getattr(user, "profile", None)
+        if not profile:
+            profile = Profile.objects.filter(user=user).first()
+
+        # IMPORTANT: passer request au ProfileSerializer pour image_url absolue
+        request = self.context.get("request")
+        p_data = ProfileSerializer(profile, context={"request": request}).data if profile else None
+
+        return {
+            "user": SafeUserSerializer(user).data,
+            "profile": p_data,
+        }
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True, write_only=True)
+    new_password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
+    new_password2 = serializers.CharField(required=True, write_only=True)
+
+    def validate(self, attrs):
+        if attrs.get("new_password") != attrs.get("new_password2"):
+            raise serializers.ValidationError({"new_password2": "Les mots de passe ne correspondent pas."})
+        return attrs

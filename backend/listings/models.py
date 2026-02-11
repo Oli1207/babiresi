@@ -1,3 +1,4 @@
+#listings/models.py
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -90,7 +91,7 @@ class Listing(models.Model):
     has_balcony = models.BooleanField(default=False)
     has_generator = models.BooleanField(default=False)  # groupe électrogène / onduleur
     has_security = models.BooleanField(default=False)   # gardien / résidence sécurisée
-
+    has_pool = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
     
