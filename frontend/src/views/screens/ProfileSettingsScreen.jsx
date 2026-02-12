@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react"; // ✅ CHANGE: useRef
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import apiInstance from "../../utils/axios";
@@ -24,13 +24,15 @@ export default function ProfileSettingsScreen() {
   const navigate = useNavigate();
   const userData = UserData();
 
+  const didLoadRef = useRef(false); // ✅ CHANGE: empêche les appels en boucle
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savingPass, setSavingPass] = useState(false);
 
   // Data
-  const [me, setMe] = useState(null); // {id,email,full_name,...}
-  const [profile, setProfile] = useState(null); // ProfileSerializer
+  const [me, setMe] = useState(null);
+  const [profile, setProfile] = useState(null);
 
   // Form: profil
   const [fullName, setFullName] = useState("");
@@ -44,10 +46,18 @@ export default function ProfileSettingsScreen() {
 
   // Photo
   const [photoFile, setPhotoFile] = useState(null);
+
   const photoPreview = useMemo(() => {
     if (photoFile) return URL.createObjectURL(photoFile);
     return profile?.image_url || "/avatar.png";
   }, [photoFile, profile?.image_url]);
+
+  // ✅ CHANGE: éviter fuite mémoire (objectURL)
+  useEffect(() => {
+    if (!photoFile) return;
+    const url = URL.createObjectURL(photoFile);
+    return () => URL.revokeObjectURL(url);
+  }, [photoFile]);
 
   // Form: password
   const [oldPassword, setOldPassword] = useState("");
@@ -55,7 +65,12 @@ export default function ProfileSettingsScreen() {
   const [newPassword2, setNewPassword2] = useState("");
 
   useEffect(() => {
+    // ✅ CHANGE: stop si pas connecté
     if (!userData) return;
+
+    // ✅ CHANGE: stop si déjà chargé (empêche spam)
+    if (didLoadRef.current) return;
+    didLoadRef.current = true;
 
     (async () => {
       setLoading(true);
@@ -94,7 +109,9 @@ export default function ProfileSettingsScreen() {
       <div className="container py-5 text-center">
         <h4>Accès restreint</h4>
         <p className="text-muted">Connecte-toi pour accéder à tes paramètres.</p>
-        <button className="btn btn-dark" onClick={() => navigate("/login")}>Se connecter</button>
+        <button className="btn btn-dark" onClick={() => navigate("/login")}>
+          Se connecter
+        </button>
       </div>
     );
   }
@@ -135,20 +152,23 @@ export default function ProfileSettingsScreen() {
       // ✅ Photo (field name = image, car Profile.image)
       if (photoFile) fd.append("image", photoFile);
 
-      // IMPORTANT: endpoint attend multipart/form-data
       const { data } = await apiInstance.patch("user/me/update/", fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // Le backend renvoie { user, profile }
       if (data?.user) setMe(data.user);
       if (data?.profile) setProfile(data.profile);
 
-      // refresh profile endpoint (au cas où)
       await reloadProfile(me.id);
 
       setPhotoFile(null);
-      Swal.fire({ icon: "success", title: "OK", text: "Profil mis à jour ✅", timer: 1200, showConfirmButton: false });
+      Swal.fire({
+        icon: "success",
+        title: "OK",
+        text: "Profil mis à jour ✅",
+        timer: 1200,
+        showConfirmButton: false,
+      });
     } catch (e2) {
       const msg = e2?.response?.data ? JSON.stringify(e2.response.data) : "Action impossible.";
       Swal.fire({ icon: "error", title: "Erreur", text: msg });
@@ -227,7 +247,7 @@ export default function ProfileSettingsScreen() {
                   <div className="flex-grow-1">
                     <label className="form-label">Photo de profil</label>
                     <input className="form-control" type="file" accept="image/*" onChange={onPickPhoto} />
-                    <div className="small text-muted mt-1">PNG/JPG. Tu peux remplacer à tout moment.</div>
+                    <div className="small text-muted mt-1">PNG/JPG.</div>
                   </div>
                 </div>
 
@@ -323,14 +343,9 @@ export default function ProfileSettingsScreen() {
                   {savingPass ? "..." : "Changer le mot de passe"}
                 </button>
               </form>
-
-              <div className="small text-muted mt-3">
-                Si tu as des soucis de session après changement, déconnecte-toi puis reconnecte-toi.
-              </div>
             </div>
           </div>
 
-          {/* Info email */}
           <div className="alert alert-light border mt-3">
             <div className="small text-muted">Email</div>
             <div className="fw-semibold">{me?.email || ""}</div>
