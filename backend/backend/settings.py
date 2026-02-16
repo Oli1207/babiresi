@@ -232,7 +232,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = BASE_DIR / 'media'
+
+MEDIA_ROOT = "/home/c2738587c/backend.decrouresi.com/media"
+
 
 CORS_ALLOW_ALL_ORIGINS = False
 

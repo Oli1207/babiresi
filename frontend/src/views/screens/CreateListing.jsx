@@ -455,7 +455,7 @@ console.log("REQ Authorization:", apiInstance.defaults.headers?.Authorization);
 
 const { data } = await apiInstance.post("listings/", fd);
 
-      console.log("listing created:", data);
+      // console.log("listing created:", data);
       Toast.fire({ icon: "success", title: "Résidence publiée" });
 navigate("/");
       // ✅ reset partiel
