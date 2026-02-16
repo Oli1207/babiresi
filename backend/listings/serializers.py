@@ -249,6 +249,7 @@ class ListingSerializer(serializers.ModelSerializer):
     # =========================================================
     latitude = serializers.FloatField(required=True)
     longitude = serializers.FloatField(required=True)
+    is_active = serializers.BooleanField(read_only=True)
 
     # Compat frontend (lecture seule)
     lat = serializers.FloatField(source="latitude", read_only=True)
@@ -391,7 +392,8 @@ class ListingSerializer(serializers.ModelSerializer):
         if request and request.user and request.user.is_authenticated:
             validated_data["author"] = request.user
 
-        validated_data.setdefault("is_active", True)
+        validated_data["is_active"] = True
+
 
         listing = super().create(validated_data)
 
