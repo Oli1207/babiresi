@@ -72,12 +72,14 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "backend.decrouresi.com",
     "decrouresi.com", "www.decrouresi.com",
+    "www.backend.decrouresi.com",
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "https://decrouresi.com",
     "https://www.decrouresi.com",
     "https://backend.decrouresi.com",
+    "https://www.backend.decrouresi.com",
 ]
 
 from corsheaders.defaults import default_headers  # ADDED
