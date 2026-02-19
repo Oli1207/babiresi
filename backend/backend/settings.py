@@ -235,7 +235,7 @@ MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
 
-MEDIA_ROOT = "/home/c2738587c/backend.decrouresi.com/media"
+MEDIA_ROOT = "/home/c2738587c/public_html/backend/media"
 
 
 CORS_ALLOW_ALL_ORIGINS = False
