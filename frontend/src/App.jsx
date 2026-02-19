@@ -17,6 +17,7 @@ import DashboardScreen from "./views/screens/DashboardScreen";
 import Logout from './views/auth/Logout';
 import ForgotPassword from './views/auth/ForgotPassword';
 import CreateNewPassword from './views/auth/CreateNewPassword';
+import Cookies from "js-cookie"; // ✅ CHANGE
 
 
 import Navbar from "./views/components/Navbar";
@@ -33,21 +34,35 @@ function AppLayout() {
   const isHome = location.pathname === "/";
   const isAuth = location.pathname === "/login" || location.pathname === "/register";
 
+  // useEffect(() => {
+  //   // ✅ Push: uniquement si clé dispo (et idéalement user connecté)
+  //   const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+
+  //   // 👉 règle simple: on tente seulement si token existe
+  //   // (adapte si toi tu stockes ailleurs)
+  //   const hasToken =
+  //     !!localStorage.getItem("access") ||
+  //     !!localStorage.getItem("token") ||
+  //     !!localStorage.getItem("authToken");
+
+  //   if (!vapidKey || !hasToken) return;
+
+  //   ensurePushSubscription(vapidKey).catch(console.error);
+  // }, []);
+
+
+    // ✅ CHANGE: chez toi le token est stocké en cookie, pas en localStorage
+  const hasToken = () => !!Cookies.get("access_token");
+
   useEffect(() => {
-    // ✅ Push: uniquement si clé dispo (et idéalement user connecté)
-    const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+    // ✅ CHANGE: si pas connecté → pas de subscription (endpoint protégé)
+    if (!hasToken()) return;
 
-    // 👉 règle simple: on tente seulement si token existe
-    // (adapte si toi tu stockes ailleurs)
-    const hasToken =
-      !!localStorage.getItem("access") ||
-      !!localStorage.getItem("token") ||
-      !!localStorage.getItem("authToken");
-
-    if (!vapidKey || !hasToken) return;
-
-    ensurePushSubscription(vapidKey).catch(console.error);
+    // ✅ CHANGE: on tente d'enregistrer la subscription
+    // (nécessaire pour que le backend puisse envoyer une notif au gérant)
+    ensurePushSubscription(import.meta.env.VITE_VAPID_PUBLIC_KEY);
   }, []);
+
 
   return (
     <div className="app-container">

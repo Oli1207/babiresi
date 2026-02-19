@@ -4,3 +4,7 @@ from .models import *
 
 admin.site.register(Listing)
 admin.site.register(Booking)
+admin.site.register(ListingImage)
+admin.site.register(BookingDateProposal)
+admin.site.register(PaymentTransaction)
+admin.site.register(PushSubscription)
