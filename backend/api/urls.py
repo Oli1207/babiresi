@@ -71,6 +71,8 @@ urlpatterns = [
     # PWA Push
     # =======================
     path("push/subscribe/", listings_views.PushSubscribeView.as_view(), name="push-subscribe"),
+    # ✅ AJOUT
+    path("push/vapid-public-key/", listings_views.PushVapidPublicKeyView.as_view(), name="push-vapid-public-key"),
 
     # =======================
     # Owners / Sellers

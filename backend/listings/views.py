@@ -89,6 +89,24 @@ def generate_6_digit_code():
     # ✅ 6 chiffres, pas de lettres
     return "".join(secrets.choice(string.digits) for _ in range(6))
 
+# ✅ AJOUT: endpoint pour exposer la VAPID public key au frontend
+from django.conf import settings
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+
+class PushVapidPublicKeyView(APIView):
+    """
+    ✅ Retourne la VAPID public key au frontend
+    - AllowAny: pas besoin d'être connecté juste pour lire la clé publique
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        return Response({
+            "public_key": getattr(settings, "VAPID_PUBLIC_KEY", "")
+        })
+
 
 from pywebpush import webpush, WebPushException  # ✅ NEW
 import json  # (déjà importé chez toi)

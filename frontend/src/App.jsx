@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import Cookies from "js-cookie"; // ✅ AJOUT: on check le token dans cookies
 
 import HomeScreen from "./views/screens/HomeScreen";
 import Login from "./views/auth/Login";
@@ -17,7 +18,7 @@ import DashboardScreen from "./views/screens/DashboardScreen";
 import Logout from './views/auth/Logout';
 import ForgotPassword from './views/auth/ForgotPassword';
 import CreateNewPassword from './views/auth/CreateNewPassword';
-import Cookies from "js-cookie"; // ✅ CHANGE
+
 
 
 import Navbar from "./views/components/Navbar";
@@ -52,16 +53,20 @@ function AppLayout() {
 
 
     // ✅ CHANGE: chez toi le token est stocké en cookie, pas en localStorage
-  const hasToken = () => !!Cookies.get("access_token");
+useEffect(() => {
+  // ✅ IMPORTANT: toi tu auth via cookies (access_token / refresh_token),
+  // donc localStorage ne doit pas décider si on subscribe ou pas.
+  const hasToken = !!Cookies.get("access_token");
 
-  useEffect(() => {
-    // ✅ CHANGE: si pas connecté → pas de subscription (endpoint protégé)
-    if (!hasToken()) return;
+  if (!hasToken) return;
 
-    // ✅ CHANGE: on tente d'enregistrer la subscription
-    // (nécessaire pour que le backend puisse envoyer une notif au gérant)
-    ensurePushSubscription(import.meta.env.VITE_VAPID_PUBLIC_KEY);
-  }, []);
+  // ✅ On peut passer la clé env si elle existe, sinon push.js ira la fetch via API
+  const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || "";
+
+  ensurePushSubscription(vapidKey).catch((err) => {
+    console.error("❌ Push subscription failed:", err);
+  });
+}, []);
 
 
   return (
