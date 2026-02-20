@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import apiInstance from "../../utils/axios";
 import "./owner.css";
+import { ensurePushSubscription } from "../../utils/push"; // adapte le chemin exact
+
 
 const fmt = (x) => Number(x || 0).toLocaleString();
 
@@ -88,6 +90,22 @@ export default function OwnerInboxScreen() {
           <option value="rejected">Refusées</option>
         </select>
       </div>
+
+<button
+  className="btn btn-outline-primary mb-3"
+  onClick={async () => {
+    try {
+      const ok = await ensurePushSubscription(); // ✅ iOS: user gesture => prompt OK
+      if (ok) alert("✅ Notifications activées !");
+      else alert("⚠️ Notifications non activées (refusées ou non supportées).");
+    } catch (e) {
+      console.error(e);
+      alert("❌ Erreur activation notifications. Voir console.");
+    }
+  }}
+>
+  Activer les notifications
+</button>
 
       {loading ? (
         <div className="alert alert-light border">Chargement...</div>

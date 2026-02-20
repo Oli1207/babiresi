@@ -62,12 +62,16 @@ export async function ensurePushSubscription(vapidPublicKey = "") {
 
   // ✅ 5) Save en DB
   const json = sub.toJSON();
-
-  await apiInstance.post("push/subscribe/", {
-    endpoint: json.endpoint,
-    keys: json.keys,
-    user_agent: navigator.userAgent,
-  });
+  try {
+    await apiInstance.post("push/subscribe/", {
+      endpoint: json.endpoint,
+      keys: json.keys,
+      user_agent: navigator.userAgent,
+    });
+  } catch (e) {
+    console.error("❌ push/subscribe failed:", e?.response?.status, e?.response?.data || e);
+    throw e;
+  }
 
   return true;
 }

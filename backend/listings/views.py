@@ -430,12 +430,16 @@ class BookingRequestCreateView(generics.CreateAPIView):
         # ✅ Notification PWA au gérant (placeholder log)
         owner = booking.listing.author
         if owner:
-            send_push_to_user(
-                owner,
-                title="Nouvelle demande de réservation",
-                body=f"{booking.user} veut réserver {booking.listing.title} ({booking.duration_days} jours)",
-                data={"type": "booking_request", "booking_id": booking.id, "url": "/owner/inbox"},
-            )
+            try:
+                send_push_to_user(
+                    owner,
+                    title="Nouvelle demande de réservation",
+                    body=f"{booking.user} veut réserver {booking.listing.title} ({booking.duration_days} jours)",
+                    data={"type": "booking_request", "booking_id": booking.id, "url": "/owner/inbox"},
+                )
+            except Exception as e:
+                # ✅ Ne jamais casser la création booking à cause du push
+                logger.exception("PUSH_NOTIFY booking_request failed booking=%s err=%s", booking.id, str(e))
 
 
 class MyBookingsView(generics.ListAPIView):
@@ -887,6 +891,26 @@ class AdminReleaseBookingView(APIView):
 # ✅ PWA Push subscription
 # =========================================================
 
+# class PushSubscribeView(generics.CreateAPIView):
+#     """
+#     ✅ Client/Gérant: enregistrer un device pour recevoir notifications PWA
+#     POST /push/subscribe/
+#     body:
+#     {
+#       "endpoint": "...",
+#       "keys": {"p256dh":"...", "auth":"..."},
+#       "user_agent": "..."
+#     }
+#     """
+#     serializer_class = PushSubscriptionSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+
+# listings/views.py
+from rest_framework import generics, permissions
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import PushSubscriptionSerializer
+
 class PushSubscribeView(generics.CreateAPIView):
     """
     ✅ Client/Gérant: enregistrer un device pour recevoir notifications PWA
@@ -900,6 +924,13 @@ class PushSubscribeView(generics.CreateAPIView):
     """
     serializer_class = PushSubscriptionSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        # ✅ IMPORTANT: injecter request dans serializer.context
+        serializer = self.get_serializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"ok": True}, status=status.HTTP_201_CREATED)
 
 
 # ✅ ADD at bottom of listings/views.py

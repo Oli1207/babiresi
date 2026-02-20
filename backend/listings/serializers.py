@@ -870,45 +870,87 @@ class BookingValidateKeySerializer(serializers.Serializer):
         return booking
 
 
+# class PushSubscriptionSerializer(serializers.ModelSerializer):
+#     """
+#     ✅ PWA: enregistre/maj un abonnement web push
+#     """
+#     endpoint = serializers.CharField()
+#     keys = serializers.DictField(write_only=True)  # { p256dh, auth }
+
+#     class Meta:
+#         model = PushSubscription
+#         fields = ["id", "endpoint", "keys", "user_agent", "created_at", "last_seen_at"]
+#         read_only_fields = ["id", "created_at", "last_seen_at"]
+
+#     @transaction.atomic
+#     def create(self, validated_data):
+#         request = self.context.get("request")
+#         user = request.user
+
+#         endpoint = validated_data["endpoint"]
+#         keys = validated_data["keys"] or {}
+#         p256dh = keys.get("p256dh")
+#         auth = keys.get("auth")
+
+#         if not p256dh or not auth:
+#             raise serializers.ValidationError("keys.p256dh et keys.auth sont requis.")
+
+#         user_agent = validated_data.get("user_agent") or request.META.get("HTTP_USER_AGENT", "")
+
+#         # ✅ upsert
+#         sub, _created = PushSubscription.objects.update_or_create(
+#             endpoint=endpoint,
+#             defaults={
+#                 "user": user,
+#                 "p256dh": p256dh,
+#                 "auth": auth,
+#                 "user_agent": user_agent,
+#                 "last_seen_at": timezone.now(),
+#             },
+#         )
+
+#         return sub
+
+
+# listings/serializers.py
+
 class PushSubscriptionSerializer(serializers.ModelSerializer):
-    """
-    ✅ PWA: enregistre/maj un abonnement web push
-    """
-    endpoint = serializers.CharField()
-    keys = serializers.DictField(write_only=True)  # { p256dh, auth }
+    # ✅ Le frontend envoie keys sous forme d'objet
+    keys = serializers.DictField(write_only=True)
+    user_agent = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = PushSubscription
-        fields = ["id", "endpoint", "keys", "user_agent", "created_at", "last_seen_at"]
-        read_only_fields = ["id", "created_at", "last_seen_at"]
+        fields = ["endpoint", "keys", "user_agent"]  # ✅ user/p256dh/auth gérés server-side
 
-    @transaction.atomic
+    def validate_keys(self, value):
+        if not isinstance(value, dict):
+            raise serializers.ValidationError("keys must be an object.")
+        if not value.get("p256dh") or not value.get("auth"):
+            raise serializers.ValidationError("keys must contain p256dh and auth.")
+        return value
+
     def create(self, validated_data):
+        """
+        ✅ Upsert par endpoint
+        - Attache request.user
+        - Déplie keys -> p256dh/auth
+        """
         request = self.context.get("request")
-        user = request.user
+        user = getattr(request, "user", None)
 
-        endpoint = validated_data["endpoint"]
-        keys = validated_data["keys"] or {}
-        p256dh = keys.get("p256dh")
-        auth = keys.get("auth")
+        keys = validated_data.pop("keys", {})
+        endpoint = validated_data.get("endpoint")
 
-        if not p256dh or not auth:
-            raise serializers.ValidationError("keys.p256dh et keys.auth sont requis.")
-
-        user_agent = validated_data.get("user_agent") or request.META.get("HTTP_USER_AGENT", "")
-
-        # ✅ upsert
-        sub, _created = PushSubscription.objects.update_or_create(
+        sub, _ = PushSubscription.objects.update_or_create(
             endpoint=endpoint,
             defaults={
                 "user": user,
-                "p256dh": p256dh,
-                "auth": auth,
-                "user_agent": user_agent,
-                "last_seen_at": timezone.now(),
+                "p256dh": keys.get("p256dh"),
+                "auth": keys.get("auth"),
+                "user_agent": validated_data.get("user_agent", ""),
             },
         )
-
         return sub
 
 

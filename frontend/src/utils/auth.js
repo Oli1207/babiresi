@@ -57,11 +57,7 @@ export const register = async (full_name, email, phone, password, password2) => 
     // Connexion automatique après inscription
     await login(email, password);
 
-    Toast.fire({
-      icon: 'success',
-      title: "Bienvenue chez Découverte !",
-    });
-
+  
     return { data, error: null };
   } catch (error) {
     return {
