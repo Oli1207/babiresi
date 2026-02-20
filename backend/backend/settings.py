@@ -334,20 +334,45 @@ SIMPLE_JWT = {
 }
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'django_error.log'),
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {name} {message}",
+            "style": "{",
         },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-            'propagate': True,
+
+    "handlers": {
+        # ✅ log file dédié (INFO+)
+        "push_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "push.log"),
+            "formatter": "verbose",
+        },
+        # ✅ erreurs django (ERROR+)
+        "django_file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "django_error.log"),
+            "formatter": "verbose",
+        },
+    },
+
+    "loggers": {
+        # ✅ Django errors
+        "django": {
+            "handlers": ["django_file"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+        # ✅ Notre logger push (on va l'utiliser dans views.py)
+        "push": {
+            "handlers": ["push_file"],
+            "level": "INFO",
+            "propagate": False,
         },
     },
 }
