@@ -108,38 +108,75 @@ class PushVapidPublicKeyView(APIView):
         })
 
 
-from pywebpush import webpush, WebPushException  # ✅ NEW
-import json  # (déjà importé chez toi)
-
+import os
+import json
 import logging
+from django.conf import settings
+from django.utils import timezone
+from pywebpush import webpush, WebPushException
+
 logger = logging.getLogger("push")  # ✅ utilise le logger "push" du settings.LOGGING
+
+
+
+
+def _load_vapid_private_key() -> str:
+    """
+    ✅ Charge la clé privée VAPID depuis un fichier PEM (méthode stable en prod).
+    """
+    path = getattr(settings, "VAPID_PRIVATE_KEY_PATH", "") or ""
+    if not path:
+        logger.error("VAPID_PRIVATE_KEY_PATH missing in settings")
+        return ""
+
+    if not os.path.isabs(path):
+        logger.error("VAPID_PRIVATE_KEY_PATH must be absolute. Got: %s", path)
+        return ""
+
+    if not os.path.exists(path):
+        logger.error("VAPID private key file not found: %s", path)
+        return ""
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            key = f.read().strip()
+    except Exception as e:
+        logger.exception("Failed reading VAPID private key file: %s err=%s", path, str(e))
+        return ""
+
+    # ✅ check minimal
+    if "BEGIN PRIVATE KEY" not in key:
+        logger.error("VAPID private key file does not look like a PEM key. path=%s", path)
+        return ""
+
+    return key
 
 
 def send_push_to_user(user, title: str, body: str, data: dict = None):
     """
-    ✅ Envoi Web Push réel (PWA)
+    ✅ Envoi Web Push (PWA)
     - envoie à tous les devices du user
     - supprime les subscriptions expirées (410/404)
+    - logs complets (prod-friendly)
     """
     subs = PushSubscription.objects.filter(user=user)
 
+    logger.info(
+        "PUSH_NOTIFY start user=%s subs_count=%s title=%s",
+        getattr(user, "id", None),
+        subs.count(),
+        title,
+    )
+
     if not subs.exists():
-        logger.warning("PUSH_NOTIFY no subs for user=%s", user.id)
+        logger.warning("PUSH_NOTIFY no subs for user=%s", getattr(user, "id", None))
         return False
 
-    vapid_private = getattr(settings, "VAPID_PRIVATE_KEY", None)
-
-    # ✅ AJOUT: si VAPID_PRIVATE_KEY ressemble à un chemin, on lit le fichier PEM
-    if vapid_private and isinstance(vapid_private, str) and vapid_private.endswith(".pem"):
-        try:
-            with open(vapid_private, "r", encoding="utf-8") as f:
-                vapid_private = f.read()
-        except Exception as e:
-            logger.error("Failed to read VAPID private key file: %s err=%s", settings.VAPID_PRIVATE_KEY, str(e))
-            return False
+    vapid_private = _load_vapid_private_key()
     vapid_claims = getattr(settings, "VAPID_CLAIMS", {"sub": "mailto:support@decrouresi.com"})
-    if not vapid_private or "BEGIN PRIVATE KEY" not in vapid_private:
-        logger.error("VAPID_PRIVATE_KEY missing/invalid in settings (check VAPID_PRIVATE_KEY)")
+
+    if not vapid_private:
+        logger.error("VAPID private key could not be loaded. Aborting push.")
         return False
 
     payload = {
@@ -151,14 +188,20 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
     sent = 0
     removed = 0
 
-    # ✅ log une seule fois
-    logger.info("PUSH_NOTIFY start user=%s subs=%s", user.id, subs.count())
-
     for sub in subs:
         subscription_info = {
             "endpoint": sub.endpoint,
             "keys": {"p256dh": sub.p256dh, "auth": sub.auth},
         }
+
+        # ✅ log subscription details (sans exposer auth/p256dh complet)
+        logger.info(
+            "PUSH_NOTIFY try user=%s sub_id=%s endpoint=%s ua=%s",
+            getattr(user, "id", None),
+            sub.id,
+            (sub.endpoint[:60] + "...") if sub.endpoint else None,
+            sub.user_agent,
+        )
 
         try:
             webpush(
@@ -172,27 +215,30 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
 
         except WebPushException as ex:
             status_code = getattr(ex.response, "status_code", None)
+
             resp_text = None
             try:
                 resp_text = ex.response.text
             except Exception:
                 pass
 
-            # ✅ subscription morte => delete
+            # ✅ sub morte => delete
             if status_code in [404, 410]:
                 sub.delete()
                 removed += 1
                 logger.warning("WEBPUSH expired sub deleted user=%s sub=%s status=%s", user.id, sub.id, status_code)
                 continue
 
-            logger.error("WEBPUSH failed user=%s sub=%s status=%s resp=%s", user.id, sub.id, status_code, resp_text)
+            logger.error(
+                "WEBPUSH failed user=%s sub=%s status=%s resp=%s",
+                user.id, sub.id, status_code, resp_text
+            )
 
         except Exception as e:
             logger.exception("WEBPUSH unknown error user=%s sub=%s err=%s", user.id, sub.id, str(e))
 
     logger.info("PUSH_NOTIFY done user=%s sent=%s removed=%s", user.id, sent, removed)
     return sent > 0
-
 
 # =========================================================
 # ✅ UTILS: GEO
