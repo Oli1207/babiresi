@@ -128,6 +128,15 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
         return False
 
     vapid_private = getattr(settings, "VAPID_PRIVATE_KEY", None)
+
+    # ✅ AJOUT: si VAPID_PRIVATE_KEY ressemble à un chemin, on lit le fichier PEM
+    if vapid_private and isinstance(vapid_private, str) and vapid_private.endswith(".pem"):
+        try:
+            with open(vapid_private, "r", encoding="utf-8") as f:
+                vapid_private = f.read()
+        except Exception as e:
+            logger.error("Failed to read VAPID private key file: %s err=%s", settings.VAPID_PRIVATE_KEY, str(e))
+            return False
     vapid_claims = getattr(settings, "VAPID_CLAIMS", {"sub": "mailto:admin@example.com"})
     if not vapid_private:
         logger.error("VAPID_PRIVATE_KEY missing in settings")
