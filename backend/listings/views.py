@@ -111,6 +111,10 @@ class PushVapidPublicKeyView(APIView):
 from pywebpush import webpush, WebPushException  # ✅ NEW
 import json  # (déjà importé chez toi)
 
+import logging
+logger = logging.getLogger("push")  # ✅ utilise le logger "push" du settings.LOGGING
+
+
 def send_push_to_user(user, title: str, body: str, data: dict = None):
     """
     ✅ Envoi Web Push réel (PWA)
@@ -118,6 +122,7 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
     - supprime les subscriptions expirées (410/404)
     """
     subs = PushSubscription.objects.filter(user=user)
+
     if not subs.exists():
         logger.warning("PUSH_NOTIFY no subs for user=%s", user.id)
         return False
@@ -137,13 +142,13 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
     sent = 0
     removed = 0
 
+    # ✅ log une seule fois
+    logger.info("PUSH_NOTIFY start user=%s subs=%s", user.id, subs.count())
+
     for sub in subs:
         subscription_info = {
             "endpoint": sub.endpoint,
-            "keys": {
-                "p256dh": sub.p256dh,
-                "auth": sub.auth,
-            },
+            "keys": {"p256dh": sub.p256dh, "auth": sub.auth},
         }
 
         try:
@@ -154,26 +159,30 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
                 vapid_claims=vapid_claims,
             )
             sent += 1
-            # ✅ last_seen_at
             PushSubscription.objects.filter(id=sub.id).update(last_seen_at=timezone.now())
 
         except WebPushException as ex:
             status_code = getattr(ex.response, "status_code", None)
+            resp_text = None
+            try:
+                resp_text = ex.response.text
+            except Exception:
+                pass
 
-            # ✅ subscription morte => on supprime
+            # ✅ subscription morte => delete
             if status_code in [404, 410]:
                 sub.delete()
                 removed += 1
+                logger.warning("WEBPUSH expired sub deleted user=%s sub=%s status=%s", user.id, sub.id, status_code)
                 continue
 
-            logger.exception("WEBPUSH failed user=%s sub=%s err=%s", user.id, sub.id, str(ex))
+            logger.error("WEBPUSH failed user=%s sub=%s status=%s resp=%s", user.id, sub.id, status_code, resp_text)
 
         except Exception as e:
             logger.exception("WEBPUSH unknown error user=%s sub=%s err=%s", user.id, sub.id, str(e))
 
-    logger.warning("PUSH_NOTIFY done user=%s sent=%s removed=%s", user.id, sent, removed)
+    logger.info("PUSH_NOTIFY done user=%s sent=%s removed=%s", user.id, sent, removed)
     return sent > 0
-
 
 
 # =========================================================
