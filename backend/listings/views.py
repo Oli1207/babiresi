@@ -139,7 +139,7 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
             return False
     vapid_claims = getattr(settings, "VAPID_CLAIMS", {"sub": "mailto:support@decrouresi.com"})
     if not vapid_private or "BEGIN PRIVATE KEY" not in vapid_private:
-        logger.error("VAPID_PRIVATE_KEY missing/invalid in settings (check VAPID_PRIVATE_KEY_PATH)")
+        logger.error("VAPID_PRIVATE_KEY missing/invalid in settings (check VAPID_PRIVATE_KEY)")
         return False
 
     payload = {

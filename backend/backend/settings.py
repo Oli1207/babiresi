@@ -286,12 +286,12 @@ PAYSTACK_CALLBACK_URL = env('PAYSTACK_CALLBACK_URL')
 VAPID_PUBLIC_KEY = env("VAPID_PUBLIC_KEY")
 
 # ✅ Private key: on lit depuis un fichier PEM (beaucoup plus stable en prod)
-VAPID_PRIVATE_KEY_PATH = env("VAPID_PRIVATE_KEY_PATH", default="")
+VAPID_PRIVATE_KEY = env("VAPID_PRIVATE_KEY", default="")
 
 VAPID_PRIVATE_KEY = ""
-if VAPID_PRIVATE_KEY_PATH:
+if VAPID_PRIVATE_KEY:
     try:
-        with open(VAPID_PRIVATE_KEY_PATH, "r", encoding="utf-8") as f:
+        with open(VAPID_PRIVATE_KEY, "r", encoding="utf-8") as f:
             VAPID_PRIVATE_KEY = f.read().strip()
     except Exception as e:
         # ⚠️ si ça plante, on verra l'erreur dans les logs
