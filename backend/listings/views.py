@@ -137,9 +137,9 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
         except Exception as e:
             logger.error("Failed to read VAPID private key file: %s err=%s", settings.VAPID_PRIVATE_KEY, str(e))
             return False
-    vapid_claims = getattr(settings, "VAPID_CLAIMS", {"sub": "mailto:admin@example.com"})
-    if not vapid_private:
-        logger.error("VAPID_PRIVATE_KEY missing in settings")
+    vapid_claims = getattr(settings, "VAPID_CLAIMS", {"sub": "mailto:support@decrouresi.com"})
+    if not vapid_private or "BEGIN PRIVATE KEY" not in vapid_private:
+        logger.error("VAPID_PRIVATE_KEY missing/invalid in settings (check VAPID_PRIVATE_KEY_PATH)")
         return False
 
     payload = {
