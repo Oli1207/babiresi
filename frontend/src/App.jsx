@@ -68,6 +68,18 @@ useEffect(() => {
   });
 }, []);
 
+useEffect(() => {
+  if (!("serviceWorker" in navigator)) return;
+
+  const handler = (event) => {
+    if (event?.data?.type === "PUSH_RECEIVED") {
+      console.log("✅ PUSH RECEIVED in page:", event.data.payload);
+    }
+  };
+
+  navigator.serviceWorker.addEventListener("message", handler);
+  return () => navigator.serviceWorker.removeEventListener("message", handler);
+}, []);
 
   return (
     <div className="app-container">

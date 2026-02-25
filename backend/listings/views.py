@@ -114,42 +114,10 @@ import logging
 from django.conf import settings
 from django.utils import timezone
 from pywebpush import webpush, WebPushException
-
+import time
+from urllib.parse import urlparse
 logger = logging.getLogger("push")  # ✅ utilise le logger "push" du settings.LOGGING
 
-
-
-
-# def _load_vapid_private_key() -> str:
-#     """
-#     ✅ Charge la clé privée VAPID depuis un fichier PEM (méthode stable en prod).
-#     """
-#     path = getattr(settings, "VAPID_PRIVATE_KEY_PATH", "") or ""
-#     if not path:
-#         logger.error("VAPID_PRIVATE_KEY_PATH missing in settings")
-#         return ""
-
-#     if not os.path.isabs(path):
-#         logger.error("VAPID_PRIVATE_KEY_PATH must be absolute. Got: %s", path)
-#         return ""
-
-#     if not os.path.exists(path):
-#         logger.error("VAPID private key file not found: %s", path)
-#         return ""
-
-#     try:
-#         with open(path, "r", encoding="utf-8") as f:
-#             key = f.read().strip()
-#     except Exception as e:
-#         logger.exception("Failed reading VAPID private key file: %s err=%s", path, str(e))
-#         return ""
-
-#     # ✅ check minimal
-#     if "BEGIN PRIVATE KEY" not in key:
-#         logger.error("VAPID private key file does not look like a PEM key. path=%s", path)
-#         return ""
-
-#     return key
 
 def send_push_to_user(user, title: str, body: str, data: dict = None):
     subs = PushSubscription.objects.filter(user=user)
@@ -167,7 +135,7 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
 
     # ✅ IMPORTANT: on passe un PATH vers le PEM (pas le contenu)
     vapid_private_key_path = getattr(settings, "VAPID_PRIVATE_KEY_PATH", "") or ""
-    vapid_claims = getattr(settings, "VAPID_CLAIMS", {"sub": "mailto:support@decrouresi.com"})
+    base_sub = getattr(settings, "VAPID_CLAIMS", {}).get("sub") or "mailto:support@decrouresi.com"
 
     if not vapid_private_key_path:
         logger.error("VAPID_PRIVATE_KEY_PATH missing in settings")
@@ -198,11 +166,19 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
 
         try:
     # ✅ IMPORTANT: on récupère la réponse HTTP du push service (FCM/APNs)
+            # ✅ VAPID claims PRO: aud + exp doivent matcher le push service (FCM vs Apple)
+            parsed = urlparse(sub.endpoint)
+            aud = f"{parsed.scheme}://{parsed.netloc}"
+            claims = {
+                "sub": base_sub,
+                "aud": aud,
+                "exp": int(time.time()) + 60 * 60,  # ✅ 1h (Apple aime les exp courts)
+            }
             resp = webpush(
                 subscription_info=subscription_info,
                 data=json.dumps(payload),
                 vapid_private_key=vapid_private_key_path,  # tu passes le PATH -> ok
-                vapid_claims=vapid_claims,
+                vapid_claims=claims,
                 ttl=60 * 10,          # ✅ 10 min
             )
 

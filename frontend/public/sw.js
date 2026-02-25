@@ -20,7 +20,18 @@ self.addEventListener("push", (event) => {
     requireInteraction: false,
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  
+  event.waitUntil(
+  (async () => {
+    await self.registration.showNotification(title, options);
+
+    // ✅ DEBUG: informer la page ouverte que le push est arrivé
+    const clientList = await clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const client of clientList) {
+      client.postMessage({ type: "PUSH_RECEIVED", payload });
+    }
+  })()
+);
 });
 
 self.addEventListener("notificationclick", (event) => {
