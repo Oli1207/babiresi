@@ -25,21 +25,14 @@ self.addEventListener("push", (event) => {
   (async () => {
     // ✅ DEBUG: ping backend pour prouver que le SW a reçu le push
 try {
-  event.waitUntil(
-    fetch("https://backend.decrouresi.com/api/v1/push/ping/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ts: Date.now(),
-        from: "sw",
-        title: payload.title,
-        hasBody: !!payload.body,
-        endpointHint: "ok",
-      }),
-    }).catch(() => {})
-  );
-} catch (e) {}
+  const url =
+    "https://backend.decrouresi.com/api/v1/push/ping/?" +
+    "ts=" + Date.now() +
+    "&t=" + encodeURIComponent((payload && payload.title) || "") +
+    "&hasData=" + encodeURIComponent(!!(event.data));
 
+  event.waitUntil(fetch(url, { method: "GET", mode: "no-cors" }));
+} catch (e) {}
     await self.registration.showNotification(title, options);
 
     // ✅ DEBUG: informer la page ouverte que le push est arrivé

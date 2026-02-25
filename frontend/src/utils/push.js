@@ -48,7 +48,7 @@ export async function ensurePushSubscription(vapidPublicKey = "") {
   }
 
   // ✅ 3) Toujours réutiliser un SW déjà prêt si possible
-  const reg = await navigator.serviceWorker.register("/sw.js");
+  const reg = await navigator.serviceWorker.register(`/sw.js?v=${Date.now()}`);
   await navigator.serviceWorker.ready;
 
   // ✅ 4) Subscription

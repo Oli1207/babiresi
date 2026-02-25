@@ -180,6 +180,7 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
                 vapid_private_key=vapid_private_key_path,  # tu passes le PATH -> ok
                 vapid_claims=claims,
                 ttl=60 * 10,          # ✅ 10 min
+                content_encoding="aes128gcm",
             )
 
             # ✅ LOGS COMPLETS côté serveur push
@@ -230,6 +231,10 @@ class PushPingView(APIView):
 
     def post(self, request, *args, **kwargs):
         push_logger.info("SW_PING received: %s", request.data)
+        return Response({"ok": True})
+    
+    def get(self, request, *args, **kwargs):
+        push_logger.info("SW_PING received (GET): %s", dict(request.query_params))
         return Response({"ok": True})
 
 # =========================================================
