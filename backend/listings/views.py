@@ -204,7 +204,6 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
                 vapid_private_key=vapid_private_key_path,  # tu passes le PATH -> ok
                 vapid_claims=vapid_claims,
                 ttl=60 * 10,          # ✅ 10 min
-                urgency="high",       # ✅ (optionnel) mais utile
             )
 
             # ✅ LOGS COMPLETS côté serveur push
