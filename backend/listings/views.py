@@ -218,6 +218,19 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
     logger.info("PUSH_NOTIFY done user=%s sent=%s removed=%s", user.id, sent, removed)
     return sent > 0
 
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+import logging
+
+push_logger = logging.getLogger("push")
+
+class PushPingView(APIView):
+    permission_classes = [AllowAny]  # le SW n'a pas de token JWT simple, donc AllowAny
+
+    def post(self, request, *args, **kwargs):
+        push_logger.info("SW_PING received: %s", request.data)
+        return Response({"ok": True})
 
 # =========================================================
 # ✅ UTILS: GEO

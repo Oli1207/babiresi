@@ -73,7 +73,7 @@ urlpatterns = [
     path("push/subscribe/", listings_views.PushSubscribeView.as_view(), name="push-subscribe"),
     # ✅ AJOUT
     path("push/vapid-public-key/", listings_views.PushVapidPublicKeyView.as_view(), name="push-vapid-public-key"),
-
+    path("push/ping/", listings_views.PushPingView.as_view(), name="push-ping"),
     # =======================
     # Owners / Sellers
     # =======================
