@@ -4,10 +4,20 @@ self.addEventListener("push", (event) => {
     payload = event.data ? event.data.json() : {};
   } catch (e) {}
 
-  const title = payload.title || "Notification";
+  const title = payload.title || "Decrou Resi";
+  const data = payload.data || {};
+
   const options = {
     body: payload.body || "",
-    data: payload.data || {},
+    data,
+    // ✅ IMPORTANT: icônes (mets de vrais chemins existants)
+    icon: "/icon-192x192.png",
+    //badge: "/icons/badge-72.png",
+
+    // ✅ Sur Windows ça aide énormément
+    tag: data.tag || "decrouresi",
+    renotify: true,
+    requireInteraction: false,
   };
 
   event.waitUntil(self.registration.showNotification(title, options));

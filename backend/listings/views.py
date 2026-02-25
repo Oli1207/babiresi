@@ -197,12 +197,26 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
         )
 
         try:
-            webpush(
+    # ✅ IMPORTANT: on récupère la réponse HTTP du push service (FCM/APNs)
+            resp = webpush(
                 subscription_info=subscription_info,
                 data=json.dumps(payload),
-                vapid_private_key=vapid_private_key_path,  # ✅ PATH ICI
+                vapid_private_key=vapid_private_key_path,  # tu passes le PATH -> ok
                 vapid_claims=vapid_claims,
+                ttl=60 * 10,          # ✅ 10 min
+                urgency="high",       # ✅ (optionnel) mais utile
             )
+
+            # ✅ LOGS COMPLETS côté serveur push
+            logger.info(
+                "WEBPUSH resp user=%s sub_id=%s status=%s headers=%s body=%s",
+                getattr(user, "id", None),
+                sub.id,
+                getattr(resp, "status_code", None),
+                dict(getattr(resp, "headers", {}) or {}),
+                (getattr(resp, "text", "")[:300] if getattr(resp, "text", None) else None),
+            )
+
             sent += 1
             PushSubscription.objects.filter(id=sub.id).update(last_seen_at=timezone.now())
 
@@ -225,8 +239,11 @@ def send_push_to_user(user, title: str, body: str, data: dict = None):
         except Exception as e:
             logger.exception("WEBPUSH unknown error user=%s sub=%s err=%s", user.id, sub.id, str(e))
 
+
     logger.info("PUSH_NOTIFY done user=%s sent=%s removed=%s", user.id, sent, removed)
     return sent > 0
+
+
 # =========================================================
 # ✅ UTILS: GEO
 # =========================================================
