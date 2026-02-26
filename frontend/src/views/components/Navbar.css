@@ -1,10 +1,13 @@
 /* Navbar avec style glassmorphism et responsive */
 
 .navbar-glass {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 1000;
+  left: 0;
+  right: 0;
+  z-index: 9999;
   width: 100%;
+  min-height: 68px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);

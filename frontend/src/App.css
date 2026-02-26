@@ -9,6 +9,12 @@
   z-index: 1;
 }
 
+/* Réserve l’espace sous la navbar fixe pour que le contenu ne passe pas en dessous */
+.navbar-spacer {
+  height: 68px;
+  flex-shrink: 0;
+}
+
 /* Override Bootstrap pour le thème clair */
 .btn-dark {
   background: rgba(0, 0, 0, 0.08) !important;

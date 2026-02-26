@@ -84,6 +84,7 @@ useEffect(() => {
   return (
     <div className="app-container">
       {!isAuth && <Navbar />}
+      {!isAuth && <div className="navbar-spacer" />}
 
       <main className={isHome ? "p-0" : "container py-4"}>
         <Routes>
