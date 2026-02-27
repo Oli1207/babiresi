@@ -715,7 +715,7 @@ navigate("/");
   ["has_balcony", "Balcon / Terrasse"],
   ["has_generator", "Groupe électrogène"],
   ["has_security", "Sécurité / Gardien"],
-  ["has_pool", "Piscine"]
+  ["has_pool", "Piscine"],
 
   // ✅ NEW rules
   ["allows_pets", "Animaux acceptés"],
