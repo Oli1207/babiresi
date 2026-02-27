@@ -83,9 +83,10 @@ useEffect(() => {
 
   return (
     <div className="app-container">
-      {!isAuth && <Navbar />}
-      {!isAuth && <div className="navbar-spacer" />}
-
+      {/* {!isAuth && <Navbar />} */}
+      {/* {!isAuth && <div className="navbar-spacer" />} */}
+<Navbar />
+ <div className="navbar-spacer" />
       <main className={isHome ? "p-0" : "container py-4"}>
         <Routes>
           <Route path="/" element={<HomeScreen />} />

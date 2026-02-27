@@ -71,8 +71,15 @@ export default function ListingDetailScreen() {
           setActiveImgIndex(0);
         }
       } catch (e) {
-        console.error("Listing detail fetch error:", e?.response?.data || e?.message);
-        Swal.fire({ icon: "error", title: "Erreur", text: "Impossible de charger cette résidence." });
+        console.error(
+          "Listing detail fetch error:",
+          e?.response?.data || e?.message,
+        );
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: "Impossible de charger cette résidence.",
+        });
       } finally {
         if (mounted) setLoading(false);
       }
@@ -97,7 +104,9 @@ export default function ListingDetailScreen() {
 
     (async () => {
       try {
-        const { data } = await apiInstance.post("payments/paystack/verify/", { reference });
+        const { data } = await apiInstance.post("payments/paystack/verify/", {
+          reference,
+        });
 
         // ✅ data.key_code + data.expires_at (selon notre backend)
         setPayCode(data?.key_code || null);
@@ -113,7 +122,11 @@ export default function ListingDetailScreen() {
         window.history.replaceState({}, "", url.toString());
       } catch (e) {
         console.error("verify error:", e?.response?.data || e?.message);
-        Swal.fire({ icon: "error", title: "Paiement", text: "Vérification paiement impossible." });
+        Swal.fire({
+          icon: "error",
+          title: "Paiement",
+          text: "Vérification paiement impossible.",
+        });
       } finally {
         verifyingRef.current = false;
       }
@@ -128,7 +141,7 @@ export default function ListingDetailScreen() {
   const refreshMyBookingForListing = async (bookingId) => {
     try {
       const { data } = await apiInstance.get("bookings/my/");
-      const arr = Array.isArray(data) ? data : (data?.results || []);
+      const arr = Array.isArray(data) ? data : data?.results || [];
       const found = arr.find((b) => b.id === bookingId);
       if (found) setBooking(found);
     } catch (e) {
@@ -145,13 +158,21 @@ export default function ListingDetailScreen() {
     // ✅ validation UX
     const days = Number(durationDays);
     if (!days || days < 1) {
-      Swal.fire({ icon: "warning", title: "Durée", text: "Le nombre de jours doit être >= 1." });
+      Swal.fire({
+        icon: "warning",
+        title: "Durée",
+        text: "Le nombre de jours doit être >= 1.",
+      });
       return;
     }
 
     const g = Number(guests);
     if (!g || g < 1 || g > Number(listing.max_guests || 1)) {
-      Swal.fire({ icon: "warning", title: "Personnes", text: `Max ${listing.max_guests} personnes.` });
+      Swal.fire({
+        icon: "warning",
+        title: "Personnes",
+        text: `Max ${listing.max_guests} personnes.`,
+      });
       return;
     }
 
@@ -175,8 +196,8 @@ export default function ListingDetailScreen() {
         title: "Demande envoyée",
         text: "Le gérant a reçu ta demande. Tu seras notifié dès qu'il répond.",
       }).then(() => {
-  navigate(`/bookings/${data.id}`); // ✅ Option A
-});
+        navigate(`/bookings/${data.id}`); // ✅ Option A
+      });
     } catch (e) {
       const apiErr = e?.response?.data;
       console.error("booking request error:", apiErr || e?.message);
@@ -197,7 +218,9 @@ export default function ListingDetailScreen() {
   // -----------------------------------------------------
   const fetchPaymentInfo = async () => {
     if (!booking?.id) return null;
-    const { data } = await apiInstance.get(`bookings/${booking.id}/payment-info/`);
+    const { data } = await apiInstance.get(
+      `bookings/${booking.id}/payment-info/`,
+    );
     return data;
   };
 
@@ -210,17 +233,26 @@ export default function ListingDetailScreen() {
       const info = await fetchPaymentInfo();
 
       if (!info || info.status !== "awaiting_payment") {
-        Swal.fire({ icon: "info", title: "Paiement", text: "Paiement non disponible." });
+        Swal.fire({
+          icon: "info",
+          title: "Paiement",
+          text: "Paiement non disponible.",
+        });
         return;
       }
-    
 
       // ✅ init paystack -> redirect user to authorization_url
-      const { data } = await apiInstance.post(`bookings/${booking.id}/paystack/initialize/`);
+      const { data } = await apiInstance.post(
+        `bookings/${booking.id}/paystack/initialize/`,
+      );
       const url = data?.authorization_url;
 
       if (!url) {
-        Swal.fire({ icon: "error", title: "Paystack", text: "Impossible de démarrer le paiement." });
+        Swal.fire({
+          icon: "error",
+          title: "Paystack",
+          text: "Impossible de démarrer le paiement.",
+        });
         return;
       }
 
@@ -245,7 +277,10 @@ export default function ListingDetailScreen() {
   // Images
   // -----------------------------------------------------
   const images = listing?.images || [];
-  const { cover, gallery } = useMemo(() => getCoverAndGallery(images), [images]);
+  const { cover, gallery } = useMemo(
+    () => getCoverAndGallery(images),
+    [images],
+  );
 
   const carousel = useMemo(() => {
     const arr = [];
@@ -300,25 +335,25 @@ export default function ListingDetailScreen() {
         <div className="ld-topmeta">
           <div className="ld-top-title">{listing.title}</div>
           {listing.test && (
-  <div
-    style={{
-      background: "#fff3cd",
-      border: "1px solid #ffecb5",
-      color: "#664d03",
-      padding: "8px 12px",
-      borderRadius: 8,
-      marginBottom: 12,
-      fontWeight: 600,
-    }}
-  >
-    ⚠️ Résidence de démonstration — annonce fictive
-  </div>
-)}
+            <div
+              style={{
+                background: "#fff3cd",
+                border: "1px solid #ffecb5",
+                color: "#664d03",
+                padding: "8px 12px",
+                borderRadius: 8,
+                marginBottom: 12,
+                fontWeight: 600,
+              }}
+            >
+              ⚠️ Résidence de démonstration — annonce fictive
+            </div>
+          )}
 
           <div className="ld-top-sub">
-            {(listing.borough || "")}
+            {listing.borough || ""}
             {listing.borough && listing.area ? " · " : ""}
-            {(listing.area || "")}
+            {listing.area || ""}
             {listing.city ? ` · ${listing.city}` : ""}
           </div>
         </div>
@@ -328,7 +363,10 @@ export default function ListingDetailScreen() {
       <div className="ld-hero">
         <div className="ld-hero-main">
           <img
-            src={activeImage?.image_url || "https://via.placeholder.com/900x600?text=Residence"}
+            src={
+              activeImage?.image_url ||
+              "https://via.placeholder.com/900x600?text=Residence"
+            }
             alt="cover"
           />
         </div>
@@ -354,68 +392,101 @@ export default function ListingDetailScreen() {
             <div className="ld-card">
               <div className="ld-h1">{listing.title}</div>
               <div className="ld-loc">
-                {(listing.address_label || "") || `${listing.borough || ""} ${listing.area || ""} ${listing.city || ""}`}
+                {listing.address_label ||
+                  "" ||
+                  `${listing.borough || ""} ${listing.area || ""} ${listing.city || ""}`}
               </div>
 
-              {listing.description && <div className="ld-desc">{listing.description}</div>}
               <div className="ld-card mt-3">
-  <div className="ld-section-title">Caractéristiques</div>
+                <div className="ld-section-title">Caractéristiques</div>
 
-  <div className="ld-features">
-    <div>🛏️ Chambres : <b>{listing.bedrooms}</b></div>
-    <div>🚿 Salles de bain : <b>{listing.bathrooms}</b></div>
-    <div>🛋️ Salons : <b>{listing.living_rooms}</b></div>
-    <div>🍳 Cuisines : <b>{listing.kitchens}</b></div>
-    <div>🛌 Lits : <b>{listing.beds}</b></div>
-    <div>👥 Max Personnes : <b>{listing.max_guests}</b></div>
-  </div>
-</div>
-
-              <div className="ld-badges">
-                <span className="ld-badge">{(listing.listing_type || "Résidence").toUpperCase()}</span>
+                <div className="ld-features">
+                  <div>
+                    🛏️ Chambres : <b>{listing.bedrooms}</b>
+                  </div>
+                  <div>
+                    🚿 Salles de bain : <b>{listing.bathrooms}</b>
+                  </div>
+                  <div>
+                    🛋️ Salons : <b>{listing.living_rooms}</b>
+                  </div>
+                  <div>
+                    🍳 Cuisines : <b>{listing.kitchens}</b>
+                  </div>
+                  <div>
+                    🛌 Lits : <b>{listing.beds}</b>
+                  </div>
+                  <div>
+                    👥 Max Personnes : <b>{listing.max_guests}</b>
+                  </div>
+                </div>
+              </div>
+                
+                    <div className="ld-badges">
+                <span className="ld-badge">
+                  {(listing.listing_type || "Résidence").toUpperCase()}
+                </span>
                 <span className="ld-badge">Max {listing.max_guests} pers.</span>
-                {listing.has_wifi ? <span className="ld-badge">Wifi</span> : null}
+                {listing.has_wifi ? (
+                  <span className="ld-badge">Wifi</span>
+                ) : null}
                 {listing.has_ac ? <span className="ld-badge">Clim</span> : null}
-                {listing.has_parking ? <span className="ld-badge">Parking</span> : null}
+                {listing.has_parking ? (
+                  <span className="ld-badge">Parking</span>
+                ) : null}
                 {listing.has_tv ? <span className="ld-badge">TV</span> : null}
-                {listing.has_kitchen ? <span className="ld-badge">Cuisine</span> : null}
-                {listing.has_hot_water ? <span className="ld-badge">Eau chaude</span> : null}
+                {listing.has_kitchen ? (
+                  <span className="ld-badge">Cuisine</span>
+                ) : null}
+                {listing.has_hot_water ? (
+                  <span className="ld-badge">Eau chaude</span>
+                ) : null}
+                 {listing.has_pool ? (
+                  <span className="ld-badge">Piscine</span>
+                ) : null}
               </div>
+              
+              {/* ✅ Mini map */}
+              <div className="ld-card mt-3">
+                <div className="ld-section-title">Emplacement</div>
+
+                <div className="ld-map">
+                  <MapContainer
+                    center={[
+                      typeof lat === "number" ? lat : 5.3599,
+                      typeof lng === "number" ? lng : -4.0082,
+                    ]}
+                    zoom={15}
+                    scrollWheelZoom={true}
+                    style={{ height: "100%", width: "100%" }}
+                  >
+                    <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+                    {typeof lat === "number" && typeof lng === "number" && (
+                      <Marker position={[lat, lng]} />
+                    )}
+                  </MapContainer>
+                </div>
+
+                <div className="ld-map-note">
+                  Tu peux zoomer et te déplacer librement.
+                </div>
+              </div>
+
+              {listing.description && (
+                <div className="ld-desc">{listing.description}</div>
+              )}
+
               {/* ✅ Gérant */}
-<div className="mt-3">
-  <div className="text-muted small">Gérant</div>
-  <button
-    type="button"
-    className="btn btn-link p-0"
-    onClick={() => navigate(`/seller/${listing.author_id}`)}
-  >
-    {listing.author_name || "Voir le profil"}
-  </button>
-</div>
-
-            </div>
-
-            {/* ✅ Mini map */}
-            <div className="ld-card mt-3">
-              <div className="ld-section-title">Emplacement</div>
-
-              <div className="ld-map">
-                <MapContainer
-                 center={[
-  typeof lat === "number" ? lat : 5.3599,
-  typeof lng === "number" ? lng : -4.0082,
-]}
-
-                  zoom={15}
-                  scrollWheelZoom={true}
-                  style={{ height: "100%", width: "100%" }}
+              <div className="mt-3">
+                <div className="text-muted small">Gérant</div>
+                <button
+                  type="button"
+                  className="btn btn-link p-0"
+                  onClick={() => navigate(`/seller/${listing.author_id}`)}
                 >
-                  <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
-                  {typeof lat === "number" && typeof lng === "number" && <Marker position={[lat, lng]} />}
-                </MapContainer>
+                  {listing.author_name || "Voir le profil"}
+                </button>
               </div>
-
-              <div className="ld-map-note">Tu peux zoomer et te déplacer librement.</div>
             </div>
           </div>
 
@@ -452,7 +523,9 @@ export default function ListingDetailScreen() {
                         onChange={(e) => setDesiredStartDate(e.target.value)}
                         required
                       />
-                      <div className="form-text">Le gérant pourra confirmer ou proposer d’autres dates.</div>
+                      <div className="form-text">
+                        Le gérant pourra confirmer ou proposer d’autres dates.
+                      </div>
                     </div>
 
                     <div className="col-12">
@@ -465,7 +538,9 @@ export default function ListingDetailScreen() {
                         value={guests}
                         onChange={(e) => setGuests(e.target.value)}
                       />
-                      <div className="form-text">Max {listing.max_guests} personnes</div>
+                      <div className="form-text">
+                        Max {listing.max_guests} personnes
+                      </div>
                     </div>
 
                     <div className="col-12">
@@ -483,11 +558,15 @@ export default function ListingDetailScreen() {
                   <div className="ld-summary">
                     <div>
                       <div className="ld-summary-label">Total estimé</div>
-                      <div className="ld-summary-value">{formatMoney(estTotal)} FCFA</div>
+                      <div className="ld-summary-value">
+                        {formatMoney(estTotal)} FCFA
+                      </div>
                     </div>
                     <div>
                       <div className="ld-summary-label">Acompte (50%)</div>
-                      <div className="ld-summary-value">{formatMoney(estDeposit)} FCFA</div>
+                      <div className="ld-summary-value">
+                        {formatMoney(estDeposit)} FCFA
+                      </div>
                     </div>
                   </div>
 
@@ -511,18 +590,24 @@ export default function ListingDetailScreen() {
                      ============================== */}
                   <div className="ld-form">
                     <div className="ld-status">
-                      <div className="ld-status-pill">{statusLabel(booking.status)}</div>
+                      <div className="ld-status-pill">
+                        {statusLabel(booking.status)}
+                      </div>
                       <div className="ld-status-sub">
                         {booking.start_date && booking.end_date ? (
                           <span>
-                            Dates confirmées : <b>{booking.start_date}</b> → <b>{booking.end_date}</b>
+                            Dates confirmées : <b>{booking.start_date}</b> →{" "}
+                            <b>{booking.end_date}</b>
                           </span>
                         ) : booking.desired_start_date ? (
                           <span>
-                            Date souhaitée : <b>{booking.desired_start_date}</b> · Durée : <b>{booking.duration_days} jours</b>
+                            Date souhaitée : <b>{booking.desired_start_date}</b>{" "}
+                            · Durée : <b>{booking.duration_days} jours</b>
                           </span>
                         ) : (
-                          <span>Durée : <b>{booking.duration_days} jours</b></span>
+                          <span>
+                            Durée : <b>{booking.duration_days} jours</b>
+                          </span>
                         )}
                       </div>
                     </div>
@@ -531,8 +616,13 @@ export default function ListingDetailScreen() {
                     {booking.status === "rejected" && (
                       <div className="alert alert-warning mt-3">
                         <div className="fw-semibold">Refusée</div>
-                        {booking.owner_note ? <div className="small mt-1">{booking.owner_note}</div> : null}
-                        <div className="small mt-2">Tu peux faire une nouvelle demande avec d’autres dates/jours.</div>
+                        {booking.owner_note ? (
+                          <div className="small mt-1">{booking.owner_note}</div>
+                        ) : null}
+                        <div className="small mt-2">
+                          Tu peux faire une nouvelle demande avec d’autres
+                          dates/jours.
+                        </div>
                       </div>
                     )}
 
@@ -549,9 +639,11 @@ export default function ListingDetailScreen() {
                             <b>{formatMoney(booking.deposit_amount)} FCFA</b>
                           </div>
                           <div className="ld-payrow">
-  <span>Frais de service (sécurité)</span>
-  <b>{formatMoney(booking.platform_commission)} FCFA</b>
-</div>
+                            <span>Frais de service (sécurité)</span>
+                            <b>
+                              {formatMoney(booking.platform_commission)} FCFA
+                            </b>
+                          </div>
 
                           <div className="ld-payrow total">
                             <span>À payer</span>
@@ -565,11 +657,14 @@ export default function ListingDetailScreen() {
                           disabled={bookingLoading}
                           onClick={payDeposit}
                         >
-                          {bookingLoading ? "Redirection..." : "Payer l’acompte"}
+                          {bookingLoading
+                            ? "Redirection..."
+                            : "Payer l’acompte"}
                         </button>
 
                         <div className="ld-hint">
-                          Le paiement est sécurisé. La plateforme conserve l’acompte jusqu’à remise de la clé.
+                          Le paiement est sécurisé. La plateforme conserve
+                          l’acompte jusqu’à remise de la clé.
                         </div>
                       </div>
                     )}
@@ -585,7 +680,13 @@ export default function ListingDetailScreen() {
                         {payCode && (
                           <div className="mt-3">
                             <div className="fw-semibold">Code de remise</div>
-                            <div style={{ fontSize: 28, fontWeight: 900, letterSpacing: 3 }}>
+                            <div
+                              style={{
+                                fontSize: 28,
+                                fontWeight: 900,
+                                letterSpacing: 3,
+                              }}
+                            >
                               {payCode}
                             </div>
                             {payExpiresAt && (
@@ -619,8 +720,9 @@ export default function ListingDetailScreen() {
             </div>
 
             <div className="ld-note mt-3">
-              Notifications : le gérant reçoit une alerte dès qu’une demande arrive et peut accepter/refuser.
-              Ensuite, le bouton de paiement apparaît chez le client.
+              Notifications : le gérant reçoit une alerte dès qu’une demande
+              arrive et peut accepter/refuser. Ensuite, le bouton de paiement
+              apparaît chez le client.
             </div>
           </div>
         </div>

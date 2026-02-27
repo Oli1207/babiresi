@@ -631,7 +631,7 @@ navigate("/");
                     className="form-control"
                     value={form.price_per_night}
                     onChange={(e) => setField("price_per_night", e.target.value)}
-                    placeholder="Ex: 25000"
+                    placeholder="Ex: 25000 - veuillez inclure les frais de transaction mobile money"
                   />
                 </div>
                 <div className="row mt-3 g-2">
@@ -715,6 +715,7 @@ navigate("/");
   ["has_balcony", "Balcon / Terrasse"],
   ["has_generator", "Groupe électrogène"],
   ["has_security", "Sécurité / Gardien"],
+  ["has_pool", "Piscine"]
 
   // ✅ NEW rules
   ["allows_pets", "Animaux acceptés"],

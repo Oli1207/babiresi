@@ -531,3 +531,57 @@ button,
   }
 }
 
+/* ===========================
+   FIX Leaflet: hauteur stable
+   =========================== */
+
+/* Le root doit pouvoir donner une hauteur à 100% */
+html, body, #root {
+  height: 100%;
+}
+
+/* Ecran map: prend toute la hauteur visible sous la navbar */
+.map-screen {
+  position: relative;
+  width: 100%;
+
+  /* ✅ iOS/Android moderne (barre d'adresse dynamique) */
+  height: calc(100dvh - 68px);
+
+  /* ✅ fallback anciens navigateurs */
+  min-height: calc(100vh - 68px);
+
+  overflow: hidden;
+}
+
+/* Le canvas doit remplir l'écran */
+.map-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+/* Leaflet doit remplir son parent */
+.map-canvas .leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Ton overlay doit rester au-dessus sans casser la map */
+.map-overlay-top {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  left: 12px;
+  right: 12px;
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+
+  /* ✅ important: l’overlay ne bloque pas la map sauf ses boutons */
+  pointer-events: none;
+}
+
+.map-overlay-top .map-chip,
+.map-overlay-top .map-chip-btn {
+  pointer-events: auto;
+}

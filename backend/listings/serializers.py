@@ -249,7 +249,7 @@ class ListingSerializer(serializers.ModelSerializer):
     # =========================================================
     latitude = serializers.FloatField(required=True)
     longitude = serializers.FloatField(required=True)
-    is_active = serializers.BooleanField(read_only=True)
+    is_active = serializers.BooleanField(required=False)
 
     # Compat frontend (lecture seule)
     lat = serializers.FloatField(source="latitude", read_only=True)

@@ -129,10 +129,42 @@ export default function ExploreMapScreen({
     }, 400);
   };
 
-  const onMapReady = (map) => {
+   const onMapReady = (map) => {
     mapRef.current = map;
+    // ✅ petit boost au tout début
+    setTimeout(() => map.invalidateSize(), 100);
     handleUserMove(map.getBounds());
   };
+
+    // ✅ FIX: Leaflet bug “map coupée / bandeau” (iOS/Safari + layout)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const kick = () => {
+      // 3 recalculs = super stable même sur iOS (barre d’adresse dynamique)
+      requestAnimationFrame(() => map.invalidateSize());
+      setTimeout(() => map.invalidateSize(), 150);
+      setTimeout(() => map.invalidateSize(), 700);
+    };
+
+    const onVis = () => {
+      if (document.visibilityState === "visible") kick();
+    };
+
+    kick();
+    window.addEventListener("resize", kick);
+    window.addEventListener("orientationchange", kick);
+    window.addEventListener("pageshow", kick); // ✅ retour arrière iOS (bfcache)
+    document.addEventListener("visibilitychange", onVis);
+
+    return () => {
+      window.removeEventListener("resize", kick);
+      window.removeEventListener("orientationchange", kick);
+      window.removeEventListener("pageshow", kick);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, []);
 
   /* =======================
      Events
