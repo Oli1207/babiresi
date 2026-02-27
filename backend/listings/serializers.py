@@ -284,6 +284,7 @@ class ListingSerializer(serializers.ModelSerializer):
     has_balcony = serializers.BooleanField(required=False)
     has_generator = serializers.BooleanField(required=False)
     has_security = serializers.BooleanField(required=False)
+    has_pool = serializers.BooleanField(required=False)
 
     allows_smoking = serializers.BooleanField(required=False)
     allows_pets = serializers.BooleanField(required=False)
@@ -340,6 +341,7 @@ class ListingSerializer(serializers.ModelSerializer):
             "has_balcony",
             "has_generator",
             "has_security",
+            "has_pool",
 
             "allows_smoking",
             "allows_pets",
