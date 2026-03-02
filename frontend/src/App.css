@@ -607,3 +607,12 @@ html, body, #root {
   box-shadow: 0 14px 50px rgba(0, 0, 0, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
+/* ✅ Home = écran “app”, pas scroll page */
+.main-home {
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}

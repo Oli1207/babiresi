@@ -239,6 +239,16 @@ function AppLayout() {
     return () => navigator.serviceWorker.removeEventListener("message", handler);
   }, []);
 
+  useEffect(() => {
+  if (!(isHome && isMobile)) return;
+
+  const prev = document.body.style.overflow;
+  document.body.style.overflow = "hidden";
+
+  return () => {
+    document.body.style.overflow = prev;
+  };
+}, [isHome, isMobile]);
   return (
     <div className="app-container">
       {/* ========================================================= */}
@@ -308,7 +318,7 @@ function AppLayout() {
       <Navbar />
       <div className="navbar-spacer" />
 
-      <main className={isHome ? "p-0" : "container py-4"}>
+      <main className={isHome ? "main-home" : "container py-4"}>
         <Routes>
           <Route path="/" element={<HomeScreen />} />
 
@@ -362,7 +372,7 @@ function AppLayout() {
         </Routes>
       </main>
 
-      <Footer />
+     {!(isHome && isMobile) && <Footer />}
     </div>
   );
 }
