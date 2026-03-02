@@ -17,6 +17,17 @@ import OwnerProfileScreen from "./views/screens/OwnerProfileScreen";
 import DashboardScreen from "./views/screens/DashboardScreen";
 import Logout from "./views/auth/Logout";
 import ForgotPassword from "./views/auth/ForgotPassword";
+import AdminLayout from "./admin/AdminLayout";
+import AdminDashboardScreen from "./admin/AdminDashboardScreen";
+import AdminBookingsScreen from "./admin/AdminBookingsScreen";
+import AdminBookingDetailScreen from "./admin/AdminBookingDetailScreen";
+import AdminPayoutsScreen from "./admin/AdminPayoutsScreen";
+import AdminDisputesScreen from "./admin/AdminDisputesScreen";
+import AdminDisputeDetailScreen from "./admin/AdminDisputeDetailScreen";
+import AdminAuditScreen from "./admin/AdminAuditScreen";
+import AdminStatsOwnersScreen from "./admin/AdminStatsOwnersScreen";
+import AdminStatsTopListingsScreen from "./admin/AdminStatsTopListingsScreen";
+import AdminStatsProfitScreen from "./admin/AdminStatsProfitScreen";
 import CreateNewPassword from "./views/auth/CreateNewPassword";
 
 import Navbar from "./views/components/Navbar";
@@ -291,6 +302,19 @@ function AppLayout() {
           <Route path="/owner-profile" element={<OwnerProfileScreen />} />
           <Route path="/dashboard" element={<DashboardScreen />} />
           <Route path="/profile-settings" element={<ProfileSettingsScreen />} />
+          {/* ADMIN */}
+<Route path="/admin" element={<AdminLayout />}>
+  <Route index element={<AdminDashboardScreen />} />
+  <Route path="bookings" element={<AdminBookingsScreen />} />
+  <Route path="bookings/:id" element={<AdminBookingDetailScreen />} />
+  <Route path="payouts" element={<AdminPayoutsScreen />} />
+  <Route path="disputes" element={<AdminDisputesScreen />} />
+  <Route path="disputes/:id" element={<AdminDisputeDetailScreen />} />
+  <Route path="audit" element={<AdminAuditScreen />} />
+  <Route path="stats/owners" element={<AdminStatsOwnersScreen />} />
+  <Route path="stats/top-listings" element={<AdminStatsTopListingsScreen />} />
+  <Route path="stats/profit" element={<AdminStatsProfitScreen />} />
+</Route>
         </Routes>
       </main>
 

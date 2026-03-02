@@ -7,6 +7,7 @@ from django.db.models import Q, Max
 from django.contrib.auth.hashers import make_password, check_password
 import urllib.parse
 from rest_framework import serializers
+from django.db.models import Q, Max, Sum, Count
 
 from .models import (
     Listing,
@@ -15,6 +16,10 @@ from .models import (
     BookingDateProposal,
     PaymentTransaction,
     PushSubscription,
+    Payout,
+    Dispute,
+    DisputeMessage,
+    AuditLog,
 )
 
 
@@ -644,6 +649,13 @@ class BookingRequestCreateSerializer(serializers.ModelSerializer):
         listing = attrs.get("listing")
         duration_days = _safe_int(attrs.get("duration_days"), 0)
         guests = _safe_int(attrs.get("guests"), 1)
+        
+        # ✅ CHANGE: si le gérant a archivé la résidence, on interdit toute nouvelle demande
+# (mais l'annonce reste consultable via son URL)
+        if getattr(listing, "is_active", True) is False:
+            raise serializers.ValidationError(
+                {"detail": "La résidence a été archivée par le gérant. Elle n'est plus disponible."}
+            )
 
         if duration_days < 1:
             raise serializers.ValidationError({"duration_days": "Le nombre de jours doit être >= 1."})

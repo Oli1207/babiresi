@@ -298,6 +298,24 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
   "PAGE_SIZE": 24,
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.ScopedRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        # ✅ Global (filet de sécurité)
+        "anon": "30/min",        # visiteurs non connectés
+        "user": "120/min",       # utilisateurs connectés
+
+        # ✅ Scopes (endpoints sensibles)
+        "auth_login": "10/min",
+        "auth_register": "5/min",
+        "booking_request": "5/min",
+        "booking_actions": "20/min",
+        "search": "60/min",
+        "listing_detail": "120/min",
+    },
 }
 
 SIMPLE_JWT = {
