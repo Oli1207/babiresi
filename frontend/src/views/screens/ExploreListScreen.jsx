@@ -161,13 +161,9 @@ export default function ExploreListScreen(props) {
 
     // Recommandées (Algorithme simple de complétude)
     const recommended = arr
-      .slice()
-      .sort((a, b) => {
-        const sa = ["title", "city", "area", "borough"].reduce((s, k) => s + (a?.[k] ? 1 : 0), 0);
-        const sb = ["title", "city", "area", "borough"].reduce((s, k) => s + (b?.[k] ? 1 : 0), 0);
-        return sb - sa;
-      })
-      .slice(0, 12);
+  .slice()
+  .sort((a, b) => Number(b?.id || 0) - Number(a?.id || 0))
+  .slice(0, 5);
 
     // Helper pour extraire par type (pour affichage catégorisé si aucun filtre type n'est actif)
     const byType = (t) => arr.filter((l) => (l?.listing_type || "").toLowerCase() === t).slice(0, 12);

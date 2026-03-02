@@ -829,3 +829,25 @@ html, body, #root {
   font-size: 14px;
   color: rgba(0, 0, 0, 0.7) !important;
 }
+/* ✅ FIX iOS: éviter le débordement/recadrage sur mobile */
+.list-screen {
+  overflow-x: hidden;
+}
+
+/* ✅ La card ne doit pas déborder */
+.list-card {
+  overflow: hidden; /* au lieu de visible */
+}
+
+/* ✅ Sur mobile/touch: désactiver l'effet hover qui reste "collé" sur iOS */
+@media (hover: none) {
+  .list-card:hover {
+    transform: none !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .list-card:hover .list-thumb img {
+    transform: none !important;
+  }
+}
