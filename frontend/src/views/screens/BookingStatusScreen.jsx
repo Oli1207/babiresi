@@ -79,7 +79,7 @@ const fetchCode = async () => {
       const { data } = await apiInstance.get(`bookings/${bookingId}/`);
       setBooking(data);
     } catch (e) {
-      console.error("booking detail error:", e?.response?.data || e?.message);
+ 
       Swal.fire({ icon: "error", title: "Erreur", text: "Impossible de charger cette réservation." });
       setBooking(null);
     } finally {

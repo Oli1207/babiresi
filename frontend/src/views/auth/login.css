@@ -446,3 +446,127 @@ h2 {
 .sign-up-prompt a:hover::after {
   width: 100%;
 }
+/* =====================================================
+   Modal Politique de confidentialité (Register)
+   ===================================================== */
+.privacy-link-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.privacy-consent {
+  margin-top: 6px;
+}
+
+.payment-safety {
+  margin-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Overlay au-dessus de TOUT (car tes inputs montent à z-index:1000) */
+.privacy-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 20000; /* ✅ plus haut que tes input-field */
+}
+
+.privacy-modal {
+  width: 100%;
+  max-width: 720px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18),
+              0 0 0 1px rgba(0, 0, 0, 0.03) inset;
+  overflow: hidden;
+}
+
+.privacy-modal-header {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.privacy-modal-title {
+  font-weight: 800;
+  color: #1a1a1a;
+}
+
+.privacy-modal-close {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.privacy-modal-body {
+  padding: 16px;
+  max-height: 70vh;
+  overflow-y: auto;
+  color: rgba(0, 0, 0, 0.82);
+}
+
+.privacy-modal-body p {
+  margin: 0 0 10px 0;
+}
+
+.privacy-modal-footer {
+  padding: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.privacy-btn-secondary {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(0, 0, 0, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  font-weight: 700;
+  color: #1a1a1a;
+  transition: all 0.25s ease;
+}
+
+.privacy-btn-secondary:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.26);
+  transform: translateY(-1px);
+}
+
+.privacy-btn-primary {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  font-weight: 800;
+  color: #1a1a1a;
+  transition: all 0.25s ease;
+}
+
+.privacy-btn-primary:hover {
+  background: rgba(0, 0, 0, 0.16);
+  border-color: rgba(0, 0, 0, 0.28);
+  transform: translateY(-1px);
+}

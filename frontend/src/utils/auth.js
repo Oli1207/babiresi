@@ -87,7 +87,7 @@ export const setUser = async () => {
       // on ne reçoit que { access }, donc pas de userFromApi ici
       setAuthUser(response.access, refreshToken);
     } catch (error) {
-      console.error("Failed to refresh token:", error);
+
     }
   } else {
     setAuthUser(accessToken, refreshToken);
@@ -109,7 +109,7 @@ export const setAuthUser = (access_token, refresh_token, userFromApi = null) => 
   try {
     decoded = jwtDecode(access_token);
   } catch (e) {
-    console.error("Error decoding token", e);
+
   }
 
   const finalUser = {
@@ -128,7 +128,7 @@ export const getRefreshToken = async () => {
 
   if (!refresh_token) {
     logout();
-    console.error("Missing refresh token");
+
     throw new Error("Missing refresh token");
   }
 
@@ -140,7 +140,7 @@ export const getRefreshToken = async () => {
     return response.data; // { access: 'new_access_token' }
   } catch (error) {
     logout();
-    console.error("Error refreshing token:", error);
+  
     throw error;
   }
 };

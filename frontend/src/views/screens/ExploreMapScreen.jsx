@@ -111,7 +111,7 @@ export default function ExploreMapScreen({
       if (id !== requestId.current) return;
       setListings(Array.isArray(data) ? data : data.results || []);
     } catch (e) {
-      console.error("Map fetch error", e);
+
     } finally {
       if (id === requestId.current) setLoading(false);
     }

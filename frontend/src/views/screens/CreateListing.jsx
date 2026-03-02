@@ -121,7 +121,7 @@ export default function CreateListing() {
 
   const navigate = useNavigate();
 const userData = UserData();
-console.log(userData)
+
 if (!userData) {
   return (
     <div className="container py-5 text-center">
@@ -151,10 +151,6 @@ if (!userData) {
         longitude,
       });
 
-      // ✅ DEBUG logs
-      console.log("reverse-geocode response:", data);
-      console.log("reverse-geocode raw.address:", data?.raw?.address);
-
       // ✅ timeout => backend renvoie 200 + warning
       if (data?.warning === "geocode_timeout") {
         setGeoError("Connexion lente : tu peux remplir l’adresse manuellement ou réessayer.");
@@ -178,12 +174,7 @@ if (!userData) {
       setGeoError("");
     } catch (e) {
       // ✅ DEBUG logs (si jamais il y a encore une 400 autre que timeout)
-      console.error("reverse-geocode error:", {
-        message: e?.message,
-        status: e?.response?.status,
-        data: e?.response?.data,
-      });
-
+    
       const detail =
         e?.response?.data?.detail ||
         e?.response?.data?.error ||
@@ -294,10 +285,9 @@ const position = [form.latitude, form.longitude];
       setSuggestions(results);
       setShowSuggestions(true);
 
-      // ✅ DEBUG
-      console.log("search-places results:", results);
+  
     } catch (e) {
-      console.error("search-places error:", e?.response?.data || e?.message);
+
       setSuggestions([]);
       setShowSuggestions(false);
     } finally {
@@ -448,14 +438,11 @@ const position = [form.latitude, form.longitude];
       // ✅ images (serializer attend cover_image + gallery_images)
       fd.append("cover_image", coverImage);
       galleryImages.forEach((img) => fd.append("gallery_images", img));
-      console.log("access:", document.cookie.includes("access_token"));
-console.log("refresh:", document.cookie.includes("refresh_token"));
-console.log("REQ Authorization:", apiInstance.defaults.headers?.Authorization);
 
 
 const { data } = await apiInstance.post("listings/", fd);
 
-      // console.log("listing created:", data);
+
       Toast.fire({ icon: "success", title: "Résidence publiée" });
 navigate("/");
       // ✅ reset partiel
@@ -469,7 +456,7 @@ navigate("/");
       setGalleryImages([]);
     } catch (err) {
       const apiErr = err?.response?.data;
-      console.error("create listing error:", apiErr || err?.message);
+    
 
       const msg =
         apiErr?.detail ||

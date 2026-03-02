@@ -31,7 +31,7 @@ export default function SellerProfileScreen() {
       const { data } = await apiInstance.get(`sellers/${sellerId}/`);
       setData(data);
     } catch (e) {
-      console.error("seller page error:", e?.response?.data || e?.message);
+      
       Swal.fire({ icon: "error", title: "Erreur", text: "Impossible de charger la page du vendeur." });
       setData(null);
     } finally {

@@ -110,7 +110,7 @@ export default function HomeScreen() {
       setPage(nextPage);
       setHasNext(Boolean(next));
     } catch (e) {
-      console.error("Home listings fetch error:", e?.response?.data || e?.message);
+
       if (!append) setListings([]);
       setHasNext(false);
     } finally {

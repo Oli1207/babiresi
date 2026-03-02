@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import Swal from "sweetalert2";
 import apiInstance from "../../utils/axios";
 import "./listingdetailscreen.css";
+import UserData from "../plugin/UserData";
 
 // ✅ helpers
 const formatMoney = (x) => Number(x || 0).toLocaleString();
@@ -20,6 +21,7 @@ function getCoverAndGallery(images = []) {
 export default function ListingDetailScreen() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const userData = UserData();
 
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -54,7 +56,7 @@ export default function ListingDetailScreen() {
           setActiveImgIndex(0);
         }
       } catch (e) {
-        console.error("Listing detail fetch error:", e?.response?.data || e?.message);
+    
         Swal.fire({
           icon: "error",
           title: "Erreur",
@@ -76,6 +78,18 @@ export default function ListingDetailScreen() {
   const submitRequest = async () => {
     if (!listing) return;
 
+        // ✅ AUTH GUARD: user doit être connecté
+    if (!userData?.user_id && !userData?.access_token) {
+      Swal.fire({
+        icon: "info",
+        title: "Connexion requise",
+        text: "Vous devez être connecté pour faire une demande de réservation.",
+        confirmButtonText: "Se connecter",
+      }).then(() => {
+        navigate("/login");
+      });
+      return;
+    }
     // ✅ CHANGE: si résidence archivée, on ne laisse pas envoyer une demande
     if (listing?.is_active === false) {
       Swal.fire({
@@ -130,7 +144,7 @@ export default function ListingDetailScreen() {
       });
     } catch (e) {
       const apiErr = e?.response?.data;
-      console.error("booking request error:", apiErr || e?.message);
+ 
 
       const msg =
         apiErr?.detail ||

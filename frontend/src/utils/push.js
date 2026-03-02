@@ -43,7 +43,7 @@ export async function ensurePushSubscription(vapidPublicKey = "") {
   if (!key) key = await fetchVapidPublicKey();
 
   if (!key) {
-    console.error("❌ VAPID public key empty. Check backend settings.VAPID_PUBLIC_KEY");
+    
     return false;
   }
 
@@ -69,7 +69,7 @@ export async function ensurePushSubscription(vapidPublicKey = "") {
       user_agent: navigator.userAgent,
     });
   } catch (e) {
-    console.error("❌ push/subscribe failed:", e?.response?.status, e?.response?.data || e);
+
     throw e;
   }
 

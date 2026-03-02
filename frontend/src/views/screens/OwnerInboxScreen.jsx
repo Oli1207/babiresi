@@ -30,7 +30,7 @@ export default function OwnerInboxScreen() {
       const arr = Array.isArray(data) ? data : data?.results || [];
       setItems(arr);
     } catch (e) {
-      console.error(e);
+   
       setItems([]);
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ export default function OwnerInboxScreen() {
           <option value="rejected">Refusées</option>
         </select>
       </div>
-
+{/* 
 <button
   className="btn btn-outline-primary mb-3"
   onClick={async () => {
@@ -105,7 +105,7 @@ export default function OwnerInboxScreen() {
   }}
 >
   Activer les notifications
-</button>
+</button> */}
 
       {loading ? (
         <div className="alert alert-light border">Chargement...</div>

@@ -43,7 +43,7 @@ export default function OwnerProfileScreen() {
       const { data } = await apiInstance.get("owners/me/dashboard/");
       setData(data);
     } catch (e) {
-      console.error("owner dashboard error:", e?.response?.data || e?.message);
+
       Swal.fire({ icon: "error", title: "Erreur", text: "Impossible de charger ton dashboard." });
       setData(null);
     } finally {

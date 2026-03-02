@@ -12,7 +12,7 @@ export default function UserData() {
     // ✅ on décode access (infos user + exp)
     return jwtDecode(access);
   } catch (e) {
-    console.error("Invalid access token:", e);
+
     return null;
   }
 }

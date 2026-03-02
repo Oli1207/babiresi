@@ -117,7 +117,7 @@ function AppLayout() {
         setShowNotifPopup(false);
       }
     } catch (e) {
-      console.error(e);
+      
       localStorage.setItem("push_prompt_last_ts", String(Date.now())); // ✅ CHANGE
       setShowNotifPopup(false);
     } finally {
@@ -187,7 +187,7 @@ function AppLayout() {
       }
       setDeferredPrompt(null);
     } catch (e) {
-      console.error(e);
+      
       setShowInstallPopup(false);
       setDeferredPrompt(null);
     }

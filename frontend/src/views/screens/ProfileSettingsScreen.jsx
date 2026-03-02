@@ -96,7 +96,7 @@ export default function ProfileSettingsScreen() {
           setAddress(safeText(p.address));
         }
       } catch (e) {
-        console.error("settings load error:", e?.response?.data || e?.message);
+    
         Swal.fire({ icon: "error", title: "Erreur", text: "Impossible de charger ton profil." });
       } finally {
         setLoading(false);

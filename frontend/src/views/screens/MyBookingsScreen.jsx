@@ -46,7 +46,7 @@ export default function MyBookingsScreen() {
       const arr = Array.isArray(data) ? data : (data?.results || []);
       setItems(arr);
     } catch (e) {
-      console.error("my bookings error:", e?.response?.data || e?.message);
+
       Swal.fire({ icon: "error", title: "Erreur", text: "Impossible de charger tes demandes.", position: "center" });
       setItems([]);
     } finally {
