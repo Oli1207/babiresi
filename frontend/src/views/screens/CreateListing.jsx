@@ -720,8 +720,6 @@ navigate("/");
   // ✅ NEW rules
   ["allows_pets", "Animaux acceptés"],
   ["allows_smoking", "Fumeur autorisé"],
-
-
                 ].map(([name, label]) => (
                   <div className="col-6 col-md-4" key={name}>
                     <div className="form-check">

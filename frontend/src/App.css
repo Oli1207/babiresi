@@ -585,3 +585,25 @@ html, body, #root {
 .map-overlay-top .map-chip-btn {
   pointer-events: auto;
 }
+/* ✅ Custom mini-popups (notifications + PWA install) */
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-end; /* look "toast" */
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-card-custom {
+  width: 100%;
+  max-width: 420px;
+  background: #111;
+  color: #fff;
+  border-radius: 14px;
+  padding: 14px 14px 12px;
+  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}

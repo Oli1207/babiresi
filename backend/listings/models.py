@@ -311,3 +311,126 @@ class PushSubscription(models.Model):
 
     def __str__(self):
         return f"PushSub({self.user_id})"
+
+# =========================================================
+# ✅ NEW: Dashboard Admin (payouts, disputes, audit)
+# =========================================================
+
+PAYOUT_METHOD = (
+    ("manual", "Manuel"),
+)
+
+PAYOUT_STATE = (
+    ("pending", "En attente"),
+    ("paid", "Payé"),
+    ("failed", "Échoué"),
+)
+
+DISPUTE_STATUS = (
+    ("open", "Ouverte"),
+    ("in_review", "En cours"),
+    ("resolved", "Résolue"),
+    ("rejected", "Rejetée"),
+)
+
+DISPUTE_PRIORITY = (
+    ("low", "Basse"),
+    ("normal", "Normale"),
+    ("high", "Haute"),
+    ("urgent", "Urgente"),
+)
+
+
+class Payout(models.Model):
+    """✅ Reversement gérant (historique propre, scalable)."""
+
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name="payout")
+    owner = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="payouts")
+
+    amount = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
+    status = models.CharField(max_length=10, choices=PAYOUT_STATE, default="pending")
+    method = models.CharField(max_length=10, choices=PAYOUT_METHOD, default="manual")
+
+    reference = models.CharField(max_length=120, null=True, blank=True)
+    processed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="processed_payouts")
+    processed_at = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["status", "created_at"]),
+            models.Index(fields=["owner", "status"]),
+        ]
+
+    def __str__(self):
+        return f"Payout({self.booking_id}) {self.status} {self.amount}"
+
+
+class Dispute(models.Model):
+    """✅ Réclamation / litige lié à une réservation."""
+
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name="disputes")
+    opened_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="opened_disputes")
+    assigned_to = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="assigned_disputes")
+
+    category = models.CharField(max_length=80, default="general")
+    priority = models.CharField(max_length=10, choices=DISPUTE_PRIORITY, default="normal")
+    status = models.CharField(max_length=15, choices=DISPUTE_STATUS, default="open")
+
+    title = models.CharField(max_length=150, default="Réclamation")
+    description = models.TextField(null=True, blank=True)
+
+    last_message_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["status", "priority", "created_at"]),
+            models.Index(fields=["assigned_to", "status"]),
+            models.Index(fields=["booking", "status"]),
+        ]
+
+    def __str__(self):
+        return f"Dispute({self.id}) booking={self.booking_id} status={self.status}"
+
+
+class DisputeMessage(models.Model):
+    """✅ Thread de messages support (scalable)."""
+
+    dispute = models.ForeignKey(Dispute, on_delete=models.CASCADE, related_name="messages")
+    author = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="dispute_messages")
+    message = models.TextField()
+
+    attachment = models.FileField(upload_to="disputes/", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        indexes = [models.Index(fields=["dispute", "created_at"])]
+
+    def __str__(self):
+        return f"DisputeMessage({self.id}) dispute={self.dispute_id}"
+
+
+class AuditLog(models.Model):
+    """✅ Audit log: qui a fait quoi, quand, sur quel objet."""
+
+    actor = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="audit_logs")
+    action = models.CharField(max_length=80)
+    object_type = models.CharField(max_length=40)
+    object_id = models.CharField(max_length=64)
+    metadata = models.JSONField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["action", "created_at"]),
+            models.Index(fields=["object_type", "object_id"]),
+        ]
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Audit({self.action}) {self.object_type}:{self.object_id}"

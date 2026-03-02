@@ -584,6 +584,7 @@ export default function ListingDetailScreen() {
                   </div>
                 </div>
               ) : (
+
                 <>
                   {/* ==============================
                       ✅ CASE 2+: booking existe
@@ -716,14 +717,15 @@ export default function ListingDetailScreen() {
                     )}
                   </div>
                 </>
+                
               )}
             </div>
 
-            <div className="ld-note mt-3">
+            {/* <div className="ld-note mt-3">
               Notifications : le gérant reçoit une alerte dès qu’une demande
               arrive et peut accepter/refuser. Ensuite, le bouton de paiement
               apparaît chez le client.
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
