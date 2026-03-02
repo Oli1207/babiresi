@@ -4,6 +4,8 @@ html, body, #root {
 /* ====== Layout global avec glassmorphism ====== */
 
 .home-shell {
+  display: flex;
+  flex-direction: column; 
   flex: 1;       /* ✅ ADD */
   height: 100%;  /* ✅ CHANGE */
   min-height: 0; /* ✅ CHANGE */
@@ -495,7 +497,8 @@ html, body, #root {
 /* ====== List Screen ====== */
 .list-screen {
   height: 100%;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   background: transparent;
   position: relative;
@@ -837,10 +840,6 @@ html, body, #root {
 .list-empty .small {
   font-size: 14px;
   color: rgba(0, 0, 0, 0.7) !important;
-}
-/* ✅ FIX iOS: éviter le débordement/recadrage sur mobile */
-.list-screen {
-  overflow-x: hidden;
 }
 
 /* ✅ La card ne doit pas déborder */

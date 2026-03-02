@@ -7,6 +7,7 @@
   flex-direction: column;
   position: relative;
   z-index: 1;
+  height: 100%;
 }
 
 /* Réserve l’espace sous la navbar fixe pour que le contenu ne passe pas en dessous */
