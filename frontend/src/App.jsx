@@ -279,29 +279,39 @@ function AppLayout() {
 
       <main className={isHome ? "p-0" : "container py-4"}>
         <Routes>
-          <Route path="/" element={<HomeScreen />} />
+           <Route path="/" element={<HomeScreen />} />
 
           {/* Auth */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:uid/:token" element={<CreateNewPassword />} />
+           <Route path="/logout" element={<Logout />} />
+         <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/create-new-password" element={<CreateNewPassword />} />
+  
+          {/* Create */}
+          <Route path="/create" element={<CreateListing />} />
 
-          {/* Screens */}
-          <Route path="/create-listing" element={<CreateListing />} />
-          <Route path="/listing/:id" element={<ListingDetailScreen />} />
-          <Route path="/validate-key" element={<ValidateKey />} />
-          <Route path="/owner-inbox" element={<OwnerInboxScreen />} />
-          <Route path="/booking-status/:id" element={<BookingStatusScreen />} />
-          <Route path="/my-bookings" element={<MyBookingsScreen />} />
-          <Route path="/paystack-return" element={<PaystackReturnScreen />} />
+          {/* Listing */}
+          <Route path="/listings/:id" element={<ListingDetailScreen />} />
 
-          {/* Profiles */}
-          <Route path="/seller-profile" element={<SellerProfileScreen />} />
-          <Route path="/owner-profile" element={<OwnerProfileScreen />} />
-          <Route path="/dashboard" element={<DashboardScreen />} />
-          <Route path="/profile-settings" element={<ProfileSettingsScreen />} />
+          {/* Mon Espace (hub client + propriétaire) */}
+          <Route path="/mon-espace" element={<DashboardScreen />} />
+
+          {/* Owner flow */}
+          <Route path="/owner/inbox" element={<OwnerInboxScreen />} />
+          <Route path="/owner/validate-key" element={<ValidateKey />} />
+          <Route path="/dashboard/owner" element={<OwnerProfileScreen />} />
+
+          {/* Booking */}
+          <Route path="/bookings/:id" element={<BookingStatusScreen />} />
+          <Route path="/me/bookings" element={<MyBookingsScreen />} />
+
+          {/* Paystack */}
+          <Route path="/payments/paystack/return" element={<PaystackReturnScreen />} />
+
+          {/* Public seller */}
+          <Route path="/seller/:userId" element={<SellerProfileScreen />} />
+          <Route path="/me/settings" element={<ProfileSettingsScreen />} />
           {/* ADMIN */}
 <Route path="/admin" element={<AdminLayout />}>
   <Route index element={<AdminDashboardScreen />} />

@@ -80,4 +80,30 @@ urlpatterns = [
     path("owners/me/dashboard/", listings_views.OwnerDashboardMeView.as_view(), name="owner-dashboard-me"),
     path("sellers/<int:user_id>/", listings_views.SellerPublicPageView.as_view(), name="seller-public-page"),
     path("owners/me/listings/<int:listing_id>/", listings_views.OwnerListingDeleteView.as_view(), name="owner-listing-delete"),
+    
+     # =========================
+    # ✅ ADMIN DASHBOARD
+    # =========================
+    path("admin/metrics/", listings_views.AdminMetricsView.as_view(), name="admin-metrics"),
+
+    path("admin/bookings/", listings_views.AdminBookingListView.as_view(), name="admin-bookings"),
+    path("admin/bookings/<int:booking_id>/", listings_views.AdminBookingDetailView.as_view(), name="admin-booking-detail"),
+    path("admin/bookings/<int:booking_id>/override-status/", listings_views.AdminBookingOverrideStatusView.as_view(), name="admin-booking-override"),
+
+    path("admin/payouts/", listings_views.AdminPayoutListView.as_view(), name="admin-payouts"),
+    path("admin/payouts/<int:payout_id>/mark-paid/", listings_views.AdminPayoutMarkPaidView.as_view(), name="admin-payout-mark-paid"),
+
+    path("admin/disputes/", listings_views.AdminDisputeListCreateView.as_view(), name="admin-disputes"),
+    path("admin/disputes/<int:pk>/", listings_views.AdminDisputeDetailUpdateView.as_view(), name="admin-dispute-detail"),
+    path("admin/disputes/<int:dispute_id>/messages/", listings_views.AdminDisputeAddMessageView.as_view(), name="admin-dispute-add-message"),
+
+    path("admin/audit/", listings_views.AdminAuditLogListView.as_view(), name="admin-audit"),
+
+    # =========================
+    # ✅ ADMIN STATS
+    # =========================
+    path("admin/stats/owners/", listings_views.AdminStatsOwnerEarningsView.as_view(), name="admin-stats-owners"),
+    path("admin/stats/top-listings/", listings_views.AdminStatsTopListingsView.as_view(), name="admin-stats-top-listings"),
+    path("admin/stats/profit/", listings_views.AdminStatsPlatformProfitView.as_view(), name="admin-stats-profit"),
+
 ]
