@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import Cookies from "js-cookie"; // ✅ AJOUT: on check le token dans cookies
+import { useEffect, useMemo, useState } from "react";
+import Cookies from "js-cookie";
 
 import HomeScreen from "./views/screens/HomeScreen";
 import Login from "./views/auth/Login";
@@ -17,6 +17,7 @@ import OwnerProfileScreen from "./views/screens/OwnerProfileScreen";
 import DashboardScreen from "./views/screens/DashboardScreen";
 import Logout from "./views/auth/Logout";
 import ForgotPassword from "./views/auth/ForgotPassword";
+
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboardScreen from "./admin/AdminDashboardScreen";
 import AdminBookingsScreen from "./admin/AdminBookingsScreen";
@@ -28,6 +29,7 @@ import AdminAuditScreen from "./admin/AdminAuditScreen";
 import AdminStatsOwnersScreen from "./admin/AdminStatsOwnersScreen";
 import AdminStatsTopListingsScreen from "./admin/AdminStatsTopListingsScreen";
 import AdminStatsProfitScreen from "./admin/AdminStatsProfitScreen";
+
 import CreateNewPassword from "./views/auth/CreateNewPassword";
 
 import Navbar from "./views/components/Navbar";
@@ -37,6 +39,9 @@ import "./App.css";
 import { setUser } from "./utils/auth";
 import { ensurePushSubscription } from "./utils/push";
 import ProfileSettingsScreen from "./views/screens/ProfileSettingsScreen";
+
+// ✅ CHANGE: on utilise le store Zustand (puisque iOS peut bloquer cookies JS)
+import { useAuthStore } from "./store/auth";
 
 function AppLayout() {
   const location = useLocation();
@@ -56,21 +61,38 @@ function AppLayout() {
   const [showInstallPopup, setShowInstallPopup] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
-  // ✅ CHANGE: chez toi le token est stocké en cookie
-  const hasToken = !!Cookies.get("access_token");
-
-  // ✅ helpers
+  // ✅ CHANGE: iOS/Safari detection (pour PWA popup sans beforeinstallprompt)
   const isStandalone =
     window.matchMedia?.("(display-mode: standalone)")?.matches ||
     window.matchMedia?.("(display-mode: fullscreen)")?.matches ||
     window.navigator?.standalone === true; // iOS
 
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-  // ✅ If user already allowed notifications, sync subscription silently (no popup)
+  // ✅ CHANGE: fallback auth via Zustand (iOS cookies parfois invisibles)
+  const storeUser = useAuthStore((s) => s.user);
+
+  // ✅ CHANGE: hasToken robuste
+  // - cookies (normal)
+  // - store Zustand (si cookie pas lisible mais user déjà en mémoire)
+  // - (optionnel) localStorage flag si tu veux persister même après refresh iOS
+  const hasToken = useMemo(() => {
+    const cookieToken = !!Cookies.get("access_token");
+    const storeToken = !!storeUser; // si store contient user (setAuthUser)
+    const lsToken = localStorage.getItem("is_logged_in") === "1";
+    return cookieToken || storeToken; // || lsToken
+  }, [storeUser]);
+
+  // =========================================================
+  // ✅ If user already allowed notifications, sync subscription silently
+  // =========================================================
   useEffect(() => {
     if (!hasToken) return;
     if (!("Notification" in window)) return;
+
+    // ✅ iOS: ok aussi, mais permission doit être granted
     if (Notification.permission !== "granted") return;
 
     const already = localStorage.getItem("push_enabled") === "1";
@@ -79,20 +101,22 @@ function AppLayout() {
     const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || "";
     ensurePushSubscription(vapidKey)
       .then((ok) => {
-        if (ok) localStorage.setItem("push_enabled", "1"); // ✅ CHANGE
+        if (ok) localStorage.setItem("push_enabled", "1");
       })
       .catch(() => {});
   }, [hasToken]);
 
-  // ✅ On mount: decide whether to show notification popup (ONLY if user can act)
+  // =========================================================
+  // ✅ Show notification popup (ONLY if user can act)
+  // =========================================================
   useEffect(() => {
     if (!hasToken) return;
-
-    // Si déjà accordé/refusé, on ne redemande pas.
     if (!("Notification" in window)) return;
+
+    // ✅ si déjà accordé/refusé => pas de popup
     if (Notification.permission !== "default") return;
 
-    // ✅ On évite de harceler: si user a cliqué "Plus tard", on attend 24h
+    // ✅ cooldown 24h si "Plus tard"
     const last = Number(localStorage.getItem("push_prompt_last_ts") || 0);
     const oneDay = 24 * 60 * 60 * 1000;
     if (Date.now() - last < oneDay) return;
@@ -107,18 +131,15 @@ function AppLayout() {
       const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || "";
       const ok = await ensurePushSubscription(vapidKey);
 
-      // ✅ Si ok, on ferme et on n'affiche plus
       if (ok) {
-        localStorage.setItem("push_enabled", "1"); // ✅ CHANGE
+        localStorage.setItem("push_enabled", "1");
         setShowNotifPopup(false);
       } else {
-        // user refused or not supported
-        localStorage.setItem("push_prompt_last_ts", String(Date.now())); // ✅ CHANGE
+        localStorage.setItem("push_prompt_last_ts", String(Date.now()));
         setShowNotifPopup(false);
       }
     } catch (e) {
-      
-      localStorage.setItem("push_prompt_last_ts", String(Date.now())); // ✅ CHANGE
+      localStorage.setItem("push_prompt_last_ts", String(Date.now()));
       setShowNotifPopup(false);
     } finally {
       setNotifLoading(false);
@@ -126,30 +147,42 @@ function AppLayout() {
   }
 
   function handleLaterNotifications() {
-    localStorage.setItem("push_prompt_last_ts", String(Date.now())); // ✅ CHANGE
+    localStorage.setItem("push_prompt_last_ts", String(Date.now()));
     setShowNotifPopup(false);
   }
 
   // =========================================================
-  // ✅ PWA install logic
+  // ✅ PWA install logic (ANDROID + iOS)
   // =========================================================
   useEffect(() => {
-    // Only in browser + mobile + not already installed
+    // Only mobile + not already installed
     if (!isMobile) return;
     if (isStandalone) return;
 
+    // ✅ si déjà installé (ou flag) => rien
+    if (localStorage.getItem("pwa_installed") === "1") return;
+
+    // ✅ CHANGE: iOS Safari -> pas de beforeinstallprompt,
+    // donc on affiche un popup "instructions"
+    if (isIOS && isSafari) {
+      const last = Number(localStorage.getItem("pwa_prompt_last_ts") || 0);
+      const oneDay = 24 * 60 * 60 * 1000;
+      if (Date.now() - last < oneDay) return;
+
+      setDeferredPrompt(null);
+      setShowInstallPopup(true);
+      return;
+    }
+
+    // ✅ Android/Chrome -> beforeinstallprompt
     const onBeforeInstall = (e) => {
-      // ✅ IMPORTANT: prevent the mini-infobar, keep event to trigger later
       e.preventDefault();
       setDeferredPrompt(e);
-
-      // ✅ Show our custom popup
       setShowInstallPopup(true);
     };
 
     const onAppInstalled = () => {
-      // ✅ Installed => never show again
-      localStorage.setItem("pwa_installed", "1"); // ✅ CHANGE
+      localStorage.setItem("pwa_installed", "1");
       setShowInstallPopup(false);
       setDeferredPrompt(null);
     };
@@ -157,46 +190,42 @@ function AppLayout() {
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
     window.addEventListener("appinstalled", onAppInstalled);
 
-    // ✅ If previously installed (flag) hide
-    if (localStorage.getItem("pwa_installed") === "1") {
-      setShowInstallPopup(false);
-    }
-
     return () => {
       window.removeEventListener("beforeinstallprompt", onBeforeInstall);
       window.removeEventListener("appinstalled", onAppInstalled);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleInstallPWA() {
     try {
-      if (!deferredPrompt) {
-        // ✅ iOS Safari doesn't fire beforeinstallprompt:
-        // we keep popup but show instructions text in UI
-        return;
-      }
+      // ✅ iOS n'a pas deferredPrompt -> bouton "Installer" n'apparaît pas (instructions only)
+      if (!deferredPrompt) return;
+
       deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
+
       if (choice?.outcome === "accepted") {
-        localStorage.setItem("pwa_installed", "1"); // ✅ CHANGE
+        localStorage.setItem("pwa_installed", "1");
         setShowInstallPopup(false);
       } else {
-        // user dismissed => show again later (not permanently)
         setShowInstallPopup(false);
       }
       setDeferredPrompt(null);
     } catch (e) {
-      
       setShowInstallPopup(false);
       setDeferredPrompt(null);
     }
   }
 
   function handleCloseInstallPopup() {
+    // ✅ CHANGE: évite popup iOS à chaque refresh
+    localStorage.setItem("pwa_prompt_last_ts", String(Date.now()));
     setShowInstallPopup(false);
   }
 
+  // =========================================================
+  // ✅ Debug SW messages
+  // =========================================================
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
 
@@ -250,6 +279,8 @@ function AppLayout() {
         <div className="modal-backdrop-custom">
           <div className="modal-card-custom">
             <h5 style={{ marginBottom: 8 }}>Installe l’app 📲</h5>
+
+            {/* ✅ CHANGE: iOS => instructions, Android => vrai bouton installer */}
             {deferredPrompt ? (
               <p style={{ margin: 0, opacity: 0.9 }}>
                 Installe l’application sur ton téléphone pour une expérience plus rapide (et les notifications plus fiables).
@@ -279,22 +310,22 @@ function AppLayout() {
 
       <main className={isHome ? "p-0" : "container py-4"}>
         <Routes>
-           <Route path="/" element={<HomeScreen />} />
+          <Route path="/" element={<HomeScreen />} />
 
           {/* Auth */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-           <Route path="/logout" element={<Logout />} />
-         <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/create-new-password" element={<CreateNewPassword />} />
-  
+
           {/* Create */}
           <Route path="/create" element={<CreateListing />} />
 
           {/* Listing */}
           <Route path="/listings/:id" element={<ListingDetailScreen />} />
 
-          {/* Mon Espace (hub client + propriétaire) */}
+          {/* Mon Espace */}
           <Route path="/mon-espace" element={<DashboardScreen />} />
 
           {/* Owner flow */}
@@ -311,20 +342,23 @@ function AppLayout() {
 
           {/* Public seller */}
           <Route path="/seller/:userId" element={<SellerProfileScreen />} />
+
+          {/* Settings */}
           <Route path="/me/settings" element={<ProfileSettingsScreen />} />
+
           {/* ADMIN */}
-<Route path="/admin" element={<AdminLayout />}>
-  <Route index element={<AdminDashboardScreen />} />
-  <Route path="bookings" element={<AdminBookingsScreen />} />
-  <Route path="bookings/:id" element={<AdminBookingDetailScreen />} />
-  <Route path="payouts" element={<AdminPayoutsScreen />} />
-  <Route path="disputes" element={<AdminDisputesScreen />} />
-  <Route path="disputes/:id" element={<AdminDisputeDetailScreen />} />
-  <Route path="audit" element={<AdminAuditScreen />} />
-  <Route path="stats/owners" element={<AdminStatsOwnersScreen />} />
-  <Route path="stats/top-listings" element={<AdminStatsTopListingsScreen />} />
-  <Route path="stats/profit" element={<AdminStatsProfitScreen />} />
-</Route>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboardScreen />} />
+            <Route path="bookings" element={<AdminBookingsScreen />} />
+            <Route path="bookings/:id" element={<AdminBookingDetailScreen />} />
+            <Route path="payouts" element={<AdminPayoutsScreen />} />
+            <Route path="disputes" element={<AdminDisputesScreen />} />
+            <Route path="disputes/:id" element={<AdminDisputeDetailScreen />} />
+            <Route path="audit" element={<AdminAuditScreen />} />
+            <Route path="stats/owners" element={<AdminStatsOwnersScreen />} />
+            <Route path="stats/top-listings" element={<AdminStatsTopListingsScreen />} />
+            <Route path="stats/profit" element={<AdminStatsProfitScreen />} />
+          </Route>
         </Routes>
       </main>
 
@@ -335,7 +369,7 @@ function AppLayout() {
 
 export default function App() {
   useEffect(() => {
-    setUser(); // ton auth init
+    setUser(); // ton auth init (cookies -> store)
   }, []);
 
   return (

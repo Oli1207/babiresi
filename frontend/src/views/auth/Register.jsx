@@ -270,18 +270,19 @@ function Register() {
               </span>
             </label>
           </div>
-
+  <div style={{ marginTop: 10, fontSize: 12.5, lineHeight: 1.4, opacity: 0.9 }}>
+            <strong>Sécurité paiement :</strong> Tous les paiements doivent être effectués exclusivement sur{" "}
+            <strong>Decrou Resi</strong>. N’effectuez aucun paiement hors plateforme
+            (Wave/cash/transfert), car Decrou Resi ne pourra pas garantir la transaction ni traiter un remboursement selon
+            nos conditions.
+          </div>
+          
           <button type="submit" className="login-btn" disabled={isLoading}>
             {isLoading ? "Chargement..." : "Créer un compte"}
           </button>
 
           {/* ✅ NEW: message sécurité paiement (juste sous le bouton) */}
-          <div style={{ marginTop: 10, fontSize: 12.5, lineHeight: 1.4, opacity: 0.9 }}>
-            <strong>Sécurité paiement :</strong> Tous les paiements doivent être effectués exclusivement sur{" "}
-            <strong>Decrou Resi</strong> via <strong>Paystack</strong>. N’effectuez aucun paiement hors plateforme
-            (Wave/cash/transfert), car Decrou Resi ne pourra pas garantir la transaction ni traiter un remboursement selon
-            nos conditions.
-          </div>
+        
         </form>
 
         <div className="sign-up-prompt">

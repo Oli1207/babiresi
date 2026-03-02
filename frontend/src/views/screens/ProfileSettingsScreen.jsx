@@ -164,8 +164,8 @@ export default function ProfileSettingsScreen() {
       setPhotoFile(null);
       Swal.fire({
         icon: "success",
-        title: "OK",
-        text: "Profil mis à jour ✅",
+        title: "Profil modifié",
+        text: "Profil mis à jour avec succès",
         timer: 1200,
         showConfirmButton: false,
       });

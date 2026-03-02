@@ -6,7 +6,6 @@ import UserData from "../plugin/UserData";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie"; // ✅ ajoute en haut du fichier
 
-
 import apiInstance from "../../utils/axios";
 
 const Toast = Swal.mixin({
@@ -31,10 +30,10 @@ function MapClickHandler({ onPick }) {
   const map = useMap();
 
   useEffect(() => {
-   const onClick = (e) => {
-  if (!e?.latlng) return;
-  onPick(e.latlng.lat, e.latlng.lng);
-};
+    const onClick = (e) => {
+      if (!e?.latlng) return;
+      onPick(e.latlng.lat, e.latlng.lng);
+    };
 
     map.on("click", onClick);
     return () => map.off("click", onClick);
@@ -71,7 +70,7 @@ export default function CreateListing() {
     has_kitchen: false,
     has_hot_water: false,
 
-        // ✅ NEW: amenities avancées
+    // ✅ NEW: amenities avancées
     has_garden: false,
     has_balcony: false,
     has_generator: false,
@@ -80,7 +79,6 @@ export default function CreateListing() {
     // ✅ NEW: règles
     allows_smoking: false,
     allows_pets: false,
-
 
     latitude: null,
     longitude: null,
@@ -111,7 +109,6 @@ export default function CreateListing() {
   const suggestTimer = useRef(null);
   const lastCoordsRef = useRef({ lat: null, lng: null });
 
-  
   // ✅ default center
   const center = useMemo(() => {
     const lat = typeof form.latitude === "number" ? form.latitude : 5.359952; // Abidjan
@@ -120,19 +117,19 @@ export default function CreateListing() {
   }, [form.latitude, form.longitude]);
 
   const navigate = useNavigate();
-const userData = UserData();
+  const userData = UserData();
 
-if (!userData) {
-  return (
-    <div className="container py-5 text-center">
-      <h4>Accès restreint</h4>
-      <p className="text-muted">Connecte-toi pour publier une résidence.</p>
-      <button className="btn btn-dark" onClick={() => navigate("/login")}>
-        Se connecter
-      </button>
-    </div>
-  );
-}
+  if (!userData) {
+    return (
+      <div className="container py-5 text-center">
+        <h4>Accès restreint</h4>
+        <p className="text-muted">Connecte-toi pour publier une résidence.</p>
+        <button className="btn btn-dark" onClick={() => navigate("/login")}>
+          Se connecter
+        </button>
+      </div>
+    );
+  }
 
   // ✅ fermer dropdown si click dehors
   useEffect(() => {
@@ -153,17 +150,21 @@ if (!userData) {
 
       // ✅ timeout => backend renvoie 200 + warning
       if (data?.warning === "geocode_timeout") {
-        setGeoError("Connexion lente : tu peux remplir l’adresse manuellement ou réessayer.");
+        setGeoError(
+          "Connexion lente : tu peux remplir l’adresse manuellement ou réessayer.",
+        );
         return;
       }
 
       // ✅ auto fill MAIS editable (si user n'a pas pris la main)
       setForm((p) => ({
         ...p,
-        address_label: manualAddressEdit ? p.address_label : (data?.address_label || p.address_label),
-        city: manualAddressEdit ? p.city : (data?.city || p.city),
-        area: manualAddressEdit ? p.area : (data?.area || p.area),
-        borough: manualAddressEdit ? p.borough : (data?.borough || p.borough),
+        address_label: manualAddressEdit
+          ? p.address_label
+          : data?.address_label || p.address_label,
+        city: manualAddressEdit ? p.city : data?.city || p.city,
+        area: manualAddressEdit ? p.area : data?.area || p.area,
+        borough: manualAddressEdit ? p.borough : data?.borough || p.borough,
       }));
 
       // ✅ si user n'a pas édité, on met aussi la barre de recherche
@@ -174,7 +175,7 @@ if (!userData) {
       setGeoError("");
     } catch (e) {
       // ✅ DEBUG logs (si jamais il y a encore une 400 autre que timeout)
-    
+
       const detail =
         e?.response?.data?.detail ||
         e?.response?.data?.error ||
@@ -233,18 +234,20 @@ if (!userData) {
         setLoadingGeo(false);
         setGeoError("Autorisation refusée ou localisation indisponible.");
       },
-      { enableHighAccuracy: true, timeout: 12000 }
+      { enableHighAccuracy: true, timeout: 12000 },
     );
   };
 
   // ✅ Marker draggable
   const MarkerDraggable = () => {
-   if (typeof form.latitude !== "number" || typeof form.longitude !== "number") {
-  return null;
-}
+    if (
+      typeof form.latitude !== "number" ||
+      typeof form.longitude !== "number"
+    ) {
+      return null;
+    }
 
-const position = [form.latitude, form.longitude];
-
+    const position = [form.latitude, form.longitude];
 
     return (
       <Marker
@@ -278,16 +281,13 @@ const position = [form.latitude, form.longitude];
     setLoadingSuggest(true);
     try {
       const { data } = await apiInstance.get(
-        `utils/search-places/?q=${encodeURIComponent(query)}&limit=6`
+        `utils/search-places/?q=${encodeURIComponent(query)}&limit=6`,
       );
 
       const results = data?.results || [];
       setSuggestions(results);
       setShowSuggestions(true);
-
-  
     } catch (e) {
-
       setSuggestions([]);
       setShowSuggestions(false);
     } finally {
@@ -357,11 +357,11 @@ const position = [form.latitude, form.longitude];
 
   const coverPreview = useMemo(
     () => (coverImage ? URL.createObjectURL(coverImage) : null),
-    [coverImage]
+    [coverImage],
   );
   const galleryPreviews = useMemo(
     () => galleryImages.map((f) => URL.createObjectURL(f)),
-    [galleryImages]
+    [galleryImages],
   );
 
   // =========================
@@ -378,8 +378,14 @@ const position = [form.latitude, form.longitude];
       Toast.fire({ icon: "warning", title: "Le titre est obligatoire" });
       return;
     }
-    if (typeof form.latitude !== "number" || typeof form.longitude !== "number") {
-      Toast.fire({ icon: "warning", title: "Choisis la localisation sur la carte" });
+    if (
+      typeof form.latitude !== "number" ||
+      typeof form.longitude !== "number"
+    ) {
+      Toast.fire({
+        icon: "warning",
+        title: "Choisis la localisation sur la carte",
+      });
       return;
     }
     if (!String(form.price_per_night).trim()) {
@@ -400,14 +406,13 @@ const position = [form.latitude, form.longitude];
       fd.append("price_per_night", String(Number(form.price_per_night || 0)));
       fd.append("max_guests", String(Number(form.max_guests || 1)));
 
-            // ✅ NEW: pièces / couchage
+      // ✅ NEW: pièces / couchage
       fd.append("bedrooms", String(Number(form.bedrooms || 0)));
       fd.append("bathrooms", String(Number(form.bathrooms || 0)));
       fd.append("living_rooms", String(Number(form.living_rooms || 0)));
       fd.append("kitchens", String(Number(form.kitchens || 0)));
       fd.append("beds", String(Number(form.beds || 0)));
 
-      
       // ✅ localisation (champs existants backend)
       fd.append("address_label", form.address_label || "");
       fd.append("city", form.city || "");
@@ -422,7 +427,7 @@ const position = [form.latitude, form.longitude];
       fd.append("has_kitchen", String(!!form.has_kitchen));
       fd.append("has_hot_water", String(!!form.has_hot_water));
 
-            // ✅ NEW: amenities avancées + règles
+      // ✅ NEW: amenities avancées + règles
       fd.append("has_garden", String(!!form.has_garden));
       fd.append("has_balcony", String(!!form.has_balcony));
       fd.append("has_generator", String(!!form.has_generator));
@@ -439,12 +444,10 @@ const position = [form.latitude, form.longitude];
       fd.append("cover_image", coverImage);
       galleryImages.forEach((img) => fd.append("gallery_images", img));
 
-
-const { data } = await apiInstance.post("listings/", fd);
-
+      const { data } = await apiInstance.post("listings/", fd);
 
       Toast.fire({ icon: "success", title: "Résidence publiée" });
-navigate("/");
+      navigate("/");
       // ✅ reset partiel
       setForm((p) => ({
         ...p,
@@ -456,7 +459,6 @@ navigate("/");
       setGalleryImages([]);
     } catch (err) {
       const apiErr = err?.response?.data;
-    
 
       const msg =
         apiErr?.detail ||
@@ -482,7 +484,7 @@ navigate("/");
       <div className="mb-3">
         <h3 className="mb-1">Publier une résidence</h3>
         <div className="text-muted">
-          Recherche l’adresse (comme Yango), ou utilise ta position. Tu peux déplacer le pin.
+          Recherche l’adresse ou utilise ta position. Tu peux déplacer le pin.
         </div>
       </div>
 
@@ -505,14 +507,23 @@ navigate("/");
                   className="form-control"
                   onChange={(e) => onPickCover(e.target.files?.[0])}
                 />
-                <div className="form-text">Image principale affichée partout.</div>
+                <div className="form-text">
+                  Image principale affichée partout.
+                </div>
 
                 {coverPreview && (
-                  <div className="mt-3 rounded-3 overflow-hidden border" style={{ height: 220 }}>
+                  <div
+                    className="mt-3 rounded-3 overflow-hidden border"
+                    style={{ height: 220 }}
+                  >
                     <img
                       src={coverPreview}
                       alt="cover preview"
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
                     />
                   </div>
                 )}
@@ -533,11 +544,18 @@ navigate("/");
                   <div className="row g-2 mt-2">
                     {galleryPreviews.map((src, idx) => (
                       <div className="col-4" key={src}>
-                        <div className="border rounded-3 overflow-hidden position-relative" style={{ height: 110 }}>
+                        <div
+                          className="border rounded-3 overflow-hidden position-relative"
+                          style={{ height: 110 }}
+                        >
                           <img
                             src={src}
                             alt={`gallery ${idx}`}
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
                           />
                           <button
                             type="button"
@@ -612,72 +630,82 @@ navigate("/");
 
                 <div className="col-md-6">
                   <label className="form-label">Prix / nuit (FCFA)</label>
+                  <small>veuillez inclure les frais de transaction mobile money</small>
                   <input
                     type="number"
                     min="0"
                     className="form-control"
                     value={form.price_per_night}
-                    onChange={(e) => setField("price_per_night", e.target.value)}
-                    placeholder="Ex: 25000 - veuillez inclure les frais de transaction mobile money"
+                    onChange={(e) =>
+                      setField("price_per_night", e.target.value)
+                    }
+                    placeholder="Ex: 25000"
                   />
                 </div>
                 <div className="row mt-3 g-2">
-  <div className="col-md-4">
-    <label className="form-label">Chambres</label>
-    <input
-      type="number"
-      min="0"
-      className="form-control"
-      value={form.bedrooms}
-      onChange={(e) => setField("bedrooms", Number(e.target.value))}
-    />
-  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">Chambres</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="form-control"
+                      value={form.bedrooms}
+                      onChange={(e) =>
+                        setField("bedrooms", Number(e.target.value))
+                      }
+                    />
+                  </div>
 
-  <div className="col-md-4">
-    <label className="form-label">Douches / SDB</label>
-    <input
-      type="number"
-      min="0"
-      className="form-control"
-      value={form.bathrooms}
-      onChange={(e) => setField("bathrooms", Number(e.target.value))}
-    />
-  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">Douches / SDB</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="form-control"
+                      value={form.bathrooms}
+                      onChange={(e) =>
+                        setField("bathrooms", Number(e.target.value))
+                      }
+                    />
+                  </div>
 
-  <div className="col-md-4">
-    <label className="form-label">Salons</label>
-    <input
-      type="number"
-      min="0"
-      className="form-control"
-      value={form.living_rooms}
-      onChange={(e) => setField("living_rooms", Number(e.target.value))}
-    />
-  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">Salons</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="form-control"
+                      value={form.living_rooms}
+                      onChange={(e) =>
+                        setField("living_rooms", Number(e.target.value))
+                      }
+                    />
+                  </div>
 
-  <div className="col-md-6">
-    <label className="form-label">Cuisines</label>
-    <input
-      type="number"
-      min="0"
-      className="form-control"
-      value={form.kitchens}
-      onChange={(e) => setField("kitchens", Number(e.target.value))}
-    />
-  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Cuisines</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="form-control"
+                      value={form.kitchens}
+                      onChange={(e) =>
+                        setField("kitchens", Number(e.target.value))
+                      }
+                    />
+                  </div>
 
-  <div className="col-md-6">
-    <label className="form-label">Lits</label>
-    <input
-      type="number"
-      min="0"
-      className="form-control"
-      value={form.beds}
-      onChange={(e) => setField("beds", Number(e.target.value))}
-    />
-  </div>
-</div>
-
+                  <div className="col-md-6">
+                    <label className="form-label">Lits</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="form-control"
+                      value={form.beds}
+                      onChange={(e) => setField("beds", Number(e.target.value))}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -689,24 +717,23 @@ navigate("/");
 
               <div className="row g-2">
                 {[
-                 
-  ["has_wifi", "Wifi"],
-  ["has_ac", "Climatisation"],
-  ["has_parking", "Parking"],
-  ["has_tv", "TV"],
-  ["has_kitchen", "Cuisine"],
-  ["has_hot_water", "Eau chaude"],
+                  ["has_wifi", "Wifi"],
+                  ["has_ac", "Climatisation"],
+                  ["has_parking", "Parking"],
+                  ["has_tv", "TV"],
+                  ["has_kitchen", "Cuisine"],
+                  ["has_hot_water", "Eau chaude"],
 
-  // ✅ NEW
-  ["has_garden", "Jardin"],
-  ["has_balcony", "Balcon / Terrasse"],
-  ["has_generator", "Groupe électrogène"],
-  ["has_security", "Sécurité / Gardien"],
-  ["has_pool", "Piscine"],
+                  // ✅ NEW
+                  ["has_garden", "Jardin"],
+                  ["has_balcony", "Balcon / Terrasse"],
+                  ["has_generator", "Groupe électrogène"],
+                  ["has_security", "Sécurité / Gardien"],
+                  ["has_pool", "Piscine"],
 
-  // ✅ NEW rules
-  ["allows_pets", "Animaux acceptés"],
-  ["allows_smoking", "Fumeur autorisé"],
+                  // ✅ NEW rules
+                  ["allows_pets", "Animaux acceptés"],
+                  ["allows_smoking", "Fumeur autorisé"],
                 ].map(([name, label]) => (
                   <div className="col-6 col-md-4" key={name}>
                     <div className="form-check">
@@ -724,10 +751,8 @@ navigate("/");
                   </div>
                 ))}
               </div>
-
-              <button className="btn btn-dark mt-4" disabled={loadingSubmit} type="submit">
-                {loadingSubmit ? "Publication..." : "Publier"}
-              </button>
+{/* ✅ CHANGE: bouton déplacé en bas du form (hors colonne gauche)
+    -> sur mobile, la section Localisation ne passe plus *après* le bouton */}
             </div>
           </div>
         </div>
@@ -749,10 +774,15 @@ navigate("/");
                 </button>
               </div>
 
-              {geoError && <div className="alert alert-warning py-2">{geoError}</div>}
+              {geoError && (
+                <div className="alert alert-warning py-2">{geoError}</div>
+              )}
 
               {/* ✅ SEARCH INPUT (Yango style) */}
-              <div className="position-relative" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="position-relative"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <label className="form-label">Rechercher une adresse</label>
                 <input
                   className="form-control"
@@ -765,8 +795,12 @@ navigate("/");
                     setManualAddressEdit(true);
 
                     // ✅ debounce search
-                    if (suggestTimer.current) clearTimeout(suggestTimer.current);
-                    suggestTimer.current = setTimeout(() => searchPlaces(v), 350);
+                    if (suggestTimer.current)
+                      clearTimeout(suggestTimer.current);
+                    suggestTimer.current = setTimeout(
+                      () => searchPlaces(v),
+                      350,
+                    );
                   }}
                   onFocus={() => {
                     if (suggestions.length > 0) setShowSuggestions(true);
@@ -774,7 +808,9 @@ navigate("/");
                   placeholder="Ex: Angré, Riviera, Yopougon..."
                 />
 
-                {loadingSuggest && <div className="small text-muted mt-1">Recherche...</div>}
+                {loadingSuggest && (
+                  <div className="small text-muted mt-1">Recherche...</div>
+                )}
 
                 {showSuggestions && suggestions.length > 0 && (
                   <div
@@ -800,7 +836,10 @@ navigate("/");
                 )}
               </div>
 
-              <div className="rounded-3 overflow-hidden border mt-3" style={{ height: 380 }}>
+              <div
+                className="rounded-3 overflow-hidden border mt-3"
+                style={{ height: 380 }}
+              >
                 <MapContainer
                   center={[center.lat, center.lng]}
                   zoom={15}
@@ -811,11 +850,10 @@ navigate("/");
                     attribution="&copy; OpenStreetMap"
                   />
 
-                 {typeof form.latitude === "number" &&
- typeof form.longitude === "number" && (
-  <Recenter lat={form.latitude} lng={form.longitude} />
-)}
-
+                  {typeof form.latitude === "number" &&
+                    typeof form.longitude === "number" && (
+                      <Recenter lat={form.latitude} lng={form.longitude} />
+                    )}
 
                   {/* click map -> set coords */}
                   <MapClickHandler
@@ -830,8 +868,12 @@ navigate("/");
               </div>
 
               <div className="mt-2 small">
-                <span className="badge text-bg-light me-2">Lat: {center.lat.toFixed(6)}</span>
-                <span className="badge text-bg-light">Lng: {center.lng.toFixed(6)}</span>
+                <span className="badge text-bg-light me-2">
+                  Lat: {center.lat.toFixed(6)}
+                </span>
+                <span className="badge text-bg-light">
+                  Lng: {center.lng.toFixed(6)}
+                </span>
               </div>
 
               {/* ✅ Champs auto-remplis mais modifiables */}
@@ -890,11 +932,24 @@ navigate("/");
               </div>
 
               <div className="small text-muted mt-2">
-                Tape une adresse puis sélectionne. Ou clique sur la carte / déplace le pin.
+                Tape une adresse puis sélectionne. Ou clique sur la carte /
+                déplace le pin.
               </div>
             </div>
           </div>
         </div>
+        {/* ✅ CHANGE: bouton submit en pleine largeur à la fin du form
+    -> desktop: reste sous les 2 colonnes
+    -> mobile: apparaît après Localisation (logique et UX) */}
+<div className="col-12 d-grid">
+  <button
+    className="btn btn-dark btn-lg"
+    disabled={loadingSubmit}
+    type="submit"
+  >
+    {loadingSubmit ? "Publication..." : "Publier"}
+  </button>
+</div>
       </form>
     </div>
   );

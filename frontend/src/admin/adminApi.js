@@ -1,6 +1,6 @@
 import apiInstance from "../utils/axios";
 
-const ADMIN = "/api/v1/admin";
+const ADMIN = "/admin";
 
 export const adminApi = {
   metrics: () => apiInstance.get(`${ADMIN}/metrics/`),

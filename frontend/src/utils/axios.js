@@ -22,6 +22,7 @@ function isTokenExpired(token) {
 let refreshPromise = null;
 
 async function refreshAccessToken() {
+  
   const refresh = Cookies.get("refresh_token");
   if (!refresh) throw new Error("No refresh token");
 
@@ -30,8 +31,14 @@ async function refreshAccessToken() {
       .post(`${BASE_URL}user/token/refresh/`, { refresh })
       .then(({ data }) => {
         const access = data?.access;
+        const newRefresh = data?.refresh; // ✅ AJOUT: si rotation active, peut arriver
+
         if (!access) throw new Error("No access in refresh response");
-        Cookies.set("access_token", access, { expires: 1, secure: false });
+        Cookies.set("access_token", access, { expires: 30, secure: true, sameSite: "Lax" }); // ✅ CHANGE
+         // ✅ AJOUT: si refresh renvoyé, le sauver pour ne pas se faire déconnecter
+  if (newRefresh) {
+    Cookies.set("refresh_token", newRefresh, { expires: 200, secure: true, sameSite: "Lax" });
+  }
         return access;
       })
       .finally(() => {
