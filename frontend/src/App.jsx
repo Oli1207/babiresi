@@ -306,7 +306,7 @@ function AppLayout() {
                 Fermer
               </button>
               {deferredPrompt && (
-                <button className="btn btn-dark btn-sm" onClick={handleInstallPWA}>
+                <button className="btn btn-light btn-sm" onClick={handleInstallPWA}>
                   Installer
                 </button>
               )}
