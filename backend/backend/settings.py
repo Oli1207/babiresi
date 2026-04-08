@@ -73,9 +73,11 @@ ALLOWED_HOSTS = [
     "backend.decrouresi.com",
     "decrouresi.com", "www.decrouresi.com",
     "www.backend.decrouresi.com",
+    "localhost",
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
     "https://decrouresi.com",
     "https://www.decrouresi.com",
     "https://backend.decrouresi.com",
@@ -246,6 +248,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://decrouresi.com",
     "https://www.decrouresi.com",
     "https://backend.decrouresi.com",
+    "http://localhost:5173"
 ]
 
 
