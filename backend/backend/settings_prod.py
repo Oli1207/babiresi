@@ -17,6 +17,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     'decrouresi.com',
     'www.decrouresi.com',
+    'backend.decrouresi.com',
     '127.0.0.1',
 ]
 
