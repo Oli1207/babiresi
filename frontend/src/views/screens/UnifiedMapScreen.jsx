@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import {
   Layers, Video, Home, Zap, Utensils, Compass, Palette,
@@ -12,10 +12,15 @@ import './home.css';
 
 // ─── Bounds watcher ───────────────────────────────────────────
 function BoundsWatcher({ onBoundsChange }) {
-  useMapEvents({
+  const map = useMapEvents({
     moveend: (e) => onBoundsChange(e.target.getBounds()),
     zoomend: (e) => onBoundsChange(e.target.getBounds()),
   });
+  // Fire once on mount for initial fetch
+  useEffect(() => {
+    onBoundsChange(map.getBounds());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return null;
 }
 
@@ -217,11 +222,7 @@ export default function UnifiedMapScreen({ onGoList }) {
     scheduleFetch(b, activeLayers);
   }, [scheduleFetch, activeLayers]);
 
-  const handleMapCreated = useCallback((map) => {
-    mapRef.current = map;
-    const b = map.getBounds();
-    handleBoundsChange(b);
-  }, [handleBoundsChange]);
+  // mapRef is set via ref={mapRef} on MapContainer (react-leaflet v4+)
 
   // Refetch when layer filter changes
   useEffect(() => {
@@ -333,7 +334,7 @@ export default function UnifiedMapScreen({ onGoList }) {
         <MapContainer
           center={center}
           zoom={12}
-          whenCreated={handleMapCreated}
+          ref={mapRef}
           style={{ height: '100%', width: '100%' }}
         >
           <TileLayer
@@ -343,7 +344,7 @@ export default function UnifiedMapScreen({ onGoList }) {
           <BoundsWatcher onBoundsChange={handleBoundsChange} />
 
           {/* Custom markers via useEffect on map after creation */}
-          <MarkersLayer markers={markers} onPinClick={handlePinClick} mapRef={mapRef} />
+          <MarkersLayer markers={markers} onPinClick={handlePinClick} />
         </MapContainer>
       </div>
 
@@ -374,21 +375,20 @@ export default function UnifiedMapScreen({ onGoList }) {
 }
 
 // ─── Markers layer (uses Leaflet directly, outside React tree) ─
-function MarkersLayer({ markers, onPinClick, mapRef }) {
+function MarkersLayer({ markers, onPinClick }) {
+  const map = useMap();
   const layerRef = useRef(null);
 
   useEffect(() => {
-    const map = mapRef.current;
     if (!map) return;
 
-    // Remove previous layer
     if (layerRef.current) {
       layerRef.current.clearLayers();
     } else {
       layerRef.current = L.layerGroup().addTo(map);
     }
 
-    markers.forEach(({ key, lat, lng, icon, pin }) => {
+    markers.forEach(({ lat, lng, icon, pin }) => {
       if (typeof lat !== 'number' || typeof lng !== 'number') return;
       const marker = L.marker([lat, lng], { icon });
       marker.on('click', () => onPinClick(pin));
