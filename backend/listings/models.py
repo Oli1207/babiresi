@@ -219,7 +219,7 @@ class Booking(models.Model):
         ]
         constraints = [
             models.CheckConstraint(
-                condition=(
+                check=(
                     Q(start_date__isnull=True) |
                     Q(end_date__isnull=True) |
                     Q(end_date__gt=models.F("start_date"))

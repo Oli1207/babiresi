@@ -173,7 +173,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='booking',
-            constraint=models.CheckConstraint(condition=models.Q(('start_date__isnull', True), ('end_date__isnull', True), ('end_date__gt', models.F('start_date')), _connector='OR'), name='booking_valid_range_if_dates_set'),
+            constraint=models.CheckConstraint(check=models.Q(('start_date__isnull', True), ('end_date__isnull', True), ('end_date__gt', models.F('start_date')), _connector='OR'), name='booking_valid_range_if_dates_set'),
         ),
         migrations.AddIndex(
             model_name='listingimage',
