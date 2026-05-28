@@ -1,109 +1,116 @@
-/**
- * DashboardScreen.jsx
- * Page "Mon Espace" : hub central pour les actions client (réservations, explorer)
- * et propriétaire (annonces, inbox, publier) + lien vers le profil public.
- * Route : /mon-espace — réservée aux utilisateurs connectés.
- */
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  Video, PlusCircle, Star, Trophy,
+  Plane, ClipboardList,
+  Map, Calendar, Building2, Inbox, Key, Home,
+  Compass, LayoutGrid,
+  Settings, IdCard, LogOut,
+} from 'lucide-react';
+import { useAuthStore } from '../../store/auth';
+import './DashboardScreen.css';
 
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../store/auth";
-import "./DashboardScreen.css";
+function Section({ title, Icon, children }) {
+  return (
+    <section className="ds-section">
+      <h2 className="ds-section-title">
+        <Icon size={14} />
+        {title}
+      </h2>
+      <div className="ds-cards">{children}</div>
+    </section>
+  );
+}
+
+function Card({ to, Icon, label, desc, accent, danger }) {
+  const cls = `ds-card${accent ? ' ds-card-accent' : ''}${danger ? ' ds-card-danger' : ''}`;
+  return (
+    <Link to={to} className={cls}>
+      <Icon size={22} className="ds-card-icon" strokeWidth={1.8} />
+      <span className="ds-card-label">{label}</span>
+      <span className="ds-card-desc">{desc}</span>
+    </Link>
+  );
+}
 
 export default function DashboardScreen() {
-  const navigate = useNavigate();
+  const navigate   = useNavigate();
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const getUser    = useAuthStore((s) => s.user);
+  const user       = typeof getUser === 'function' ? getUser() : getUser;
 
-  // Récupération du user : le store expose user comme une fonction qui retourne l'objet
-  const getUser = useAuthStore((state) => state.user);
-  const user = typeof getUser === "function" ? getUser() : getUser;
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-
-  // Redirection si non connecté (évite d'afficher le dashboard en étant déco)
   useEffect(() => {
-    if (!isLoggedIn()) {
-      navigate("/login", { replace: true });
-    }
+    if (!isLoggedIn()) navigate('/login', { replace: true });
   }, [isLoggedIn, navigate]);
 
-  // Id du user pour le lien "Mon profil public" (page vendeur /seller/:userId)
-  const userId = user?.id ?? user?.user_id ?? null;
+  if (!isLoggedIn()) return null;
 
-  // Ne rien afficher le temps de la redirection (évite un flash de contenu)
-  if (!isLoggedIn()) {
-    return null;
-  }
+  const userId  = user?.id ?? user?.user_id ?? null;
+  const isOwner = user?.is_owner;
 
   return (
-    <div className="dashboard-container">
-      {/* En-tête : titre + sous-titre */}
-      <header className="dashboard-header">
-        <h1 className="dashboard-title">Mon Espace</h1>
-        <p className="dashboard-subtitle">
-          Gérez vos réservations et vos annonces.
-        </p>
+    <div className="ds-container">
+      {/* Header */}
+      <header className="ds-header">
+        <div className="ds-avatar">
+          {(user?.full_name || user?.email || 'U')[0].toUpperCase()}
+        </div>
+        <div>
+          <h1 className="ds-greeting">
+            Bonjour{user?.full_name ? `, ${user.full_name.split(' ')[0]}` : ''}
+          </h1>
+          <p className="ds-subtitle">Portail touristique Côte d'Ivoire</p>
+        </div>
       </header>
 
-      {/* Bloc : En tant que client */}
-      <section className="dashboard-section">
-        <h2 className="dashboard-section-title">En tant que client</h2>
-        <div className="dashboard-cards">
-          <Link to="/me/bookings" className="dashboard-card">
-            <span className="dashboard-card-label">Mes réservations</span>
-            <span className="dashboard-card-desc">Voir et suivre mes demandes de réservation</span>
-          </Link>
-          <Link to="/" className="dashboard-card">
-            <span className="dashboard-card-label">Explorer les résidences</span>
-            <span className="dashboard-card-desc">Carte et liste des logements disponibles</span>
-          </Link>
-        </div>
-      </section>
+      {/* 1. Vlogs */}
+      <Section title="Vlogs & Création" Icon={Video}>
+        <Card to="/"              Icon={Video}        label="Explorer"         desc="Feed vidéo CI"        accent />
+        <Card to="/vlogs/create"  Icon={PlusCircle}   label="Poster un vlog"   desc="Partager mon voyage" />
+        <Card to="/vlogs/creator" Icon={Star}         label="Mes points"       desc="Revenus & retraits" />
+        <Card to="/vlogs/challenges" Icon={Trophy}    label="Challenges"       desc="Concours en cours" />
+      </Section>
 
-      {/* Bloc : En tant que propriétaire */}
-      <section className="dashboard-section">
-        <h2 className="dashboard-section-title">En tant que propriétaire</h2>
-        <div className="dashboard-cards">
-          <Link to="/dashboard/owner" className="dashboard-card">
-            <span className="dashboard-card-label">Mes annonces</span>
-            <span className="dashboard-card-desc">Gérer mes résidences publiées</span>
-          </Link>
-          <Link to="/owner/inbox" className="dashboard-card">
-            <span className="dashboard-card-label">Boîte de réception</span>
-            <span className="dashboard-card-desc">Demandes de réservation reçues</span>
-          </Link>
-          <Link to="/create" className="dashboard-card">
-            <span className="dashboard-card-label">Publier une résidence</span>
-            <span className="dashboard-card-desc">Créer une nouvelle annonce</span>
-          </Link>
-          <Link to="/owner/validate-key" className="dashboard-card">
-            <span className="dashboard-card-label">Valider la remise de clé</span>
-            <span className="dashboard-card-desc">Saisir le code à 6 chiffres donné par le client</span>
-          </Link>
-        </div>
-      </section>
+      {/* 2. Voyages */}
+      <Section title="Mes voyages" Icon={Plane}>
+        <Card to="/voyager"             Icon={Plane}         label="Planifier"       desc="Nouveau séjour"   accent />
+        <Card to="/voyager/mes-voyages" Icon={ClipboardList} label="Mes demandes"    desc="Devis & suivi" />
+      </Section>
 
-      {/* Bloc : Compte */}
-      <section className="dashboard-section">
-        <h2 className="dashboard-section-title">Compte</h2>
-        <div className="dashboard-cards">
-          {/* ✅ NEW: page paramètres (profil + mot de passe) */}
-          <Link to="/me/settings" className="dashboard-card">
-            <span className="dashboard-card-label">Modifier mon profil</span>
-            <span className="dashboard-card-desc">Photo, nom, téléphone, mot de passe…</span>
-          </Link>
+      {/* 3. Hébergements */}
+      <Section title="Hébergements" Icon={Home}>
+        <Card to="/residences"    Icon={Map}       label="Carte"             desc="Trouver un logement" />
+        <Card to="/me/bookings"   Icon={Calendar}  label="Mes réservations"  desc="Historique & statuts" />
+        {isOwner ? (
+          <>
+            <Card to="/dashboard/owner"    Icon={Building2} label="Mes annonces"      desc="Gérer mes logements" />
+            <Card to="/owner/inbox"        Icon={Inbox}     label="Demandes reçues"   desc="Approuver / Refuser" />
+            <Card to="/owner/validate-key" Icon={Key}       label="Valider clé"       desc="Code client" />
+            <Card to="/create"             Icon={PlusCircle} label="Publier"          desc="Nouvelle annonce"  accent />
+          </>
+        ) : (
+          <Card to="/create" Icon={PlusCircle} label="Devenir hôte" desc="Publier ma résidence" />
+        )}
+      </Section>
 
-          {userId != null ? (
-            <Link to={`/seller/${userId}`} className="dashboard-card">
-              <span className="dashboard-card-label">Mon profil public</span>
-              <span className="dashboard-card-desc">Voir mon profil vendeur tel qu’il apparaît aux autres</span>
-            </Link>
-          ) : (
-            <div className="dashboard-card dashboard-card-disabled">
-              <span className="dashboard-card-label">Mon profil public</span>
-              <span className="dashboard-card-desc">Profil indisponible (id manquant)</span>
-            </div>
-          )}
-        </div>
-      </section>
+      {/* 4. Services */}
+      <Section title="Services & Destinations" Icon={Compass}>
+        <Card to="/services"  Icon={LayoutGrid} label="Services"      desc="Guides, activités, artisans" />
+        <Card to="/decouvrir" Icon={Compass}    label="Destinations"  desc="Régions & lieux de CI" />
+      </Section>
+
+      {/* 5. Compte */}
+      <Section title="Mon compte" Icon={Settings}>
+        <Card to="/me/settings" Icon={Settings} label="Paramètres"    desc="Profil & mot de passe" />
+        {userId != null && (
+          <Card to={`/seller/${userId}`} Icon={IdCard} label="Profil public" desc="Vue des autres" />
+        )}
+        <Link to="/logout" className="ds-card ds-card-danger">
+          <LogOut size={22} className="ds-card-icon" strokeWidth={1.8} />
+          <span className="ds-card-label">Déconnexion</span>
+          <span className="ds-card-desc">Quitter mon espace</span>
+        </Link>
+      </Section>
     </div>
   );
 }

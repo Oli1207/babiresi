@@ -1,8 +1,9 @@
-#api/models.py
+#api/urls.py
 from django.urls import path
 from userauths import views as userauths_views
 from rest_framework_simplejwt.views import TokenRefreshView
 from listings import views as listings_views
+from api import views as api_views
 
 urlpatterns = [
     # =======================
@@ -105,5 +106,16 @@ urlpatterns = [
     path("admin/stats/owners/", listings_views.AdminStatsOwnerEarningsView.as_view(), name="admin-stats-owners"),
     path("admin/stats/top-listings/", listings_views.AdminStatsTopListingsView.as_view(), name="admin-stats-top-listings"),
     path("admin/stats/profit/", listings_views.AdminStatsPlatformProfitView.as_view(), name="admin-stats-profit"),
+
+    # =========================
+    # ✅ NOTIFICATIONS
+    # =========================
+    path("notifications/", userauths_views.NotificationListView.as_view(), name="notifications"),
+    path("notifications/mark-read/", userauths_views.NotificationMarkReadView.as_view(), name="notifications-mark-read"),
+
+    # =========================
+    # ✅ UNIFIED MAP PINS
+    # =========================
+    path("map/pins/", api_views.MapPinsView.as_view(), name="map-pins"),
 
 ]

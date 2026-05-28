@@ -1,14 +1,94 @@
 html, body, #root {
   height: 100%;
 }
-/* ====== Layout global avec glassmorphism ====== */
 
+/* ============================================================
+   RESIDENCES PAGE (/residences) — map + list tabs
+   ============================================================ */
+.res-shell {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 68px);   /* fill below navbar */
+  min-height: 0;
+  overflow: hidden;
+}
+
+.res-tabbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: rgba(255,255,255,.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0,0,0,.08);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.res-tabbar-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.res-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.res-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(0,0,0,.12);
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.res-tab:hover { background: rgba(0,0,0,.04); }
+.res-tab.active {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+/* Map mode: fill remaining height */
+.res-body--map {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* List mode: scrollable */
+.res-body--list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix map-screen inside res-body: use 100% not dvh */
+.res-body--map .map-screen {
+  height: 100%;
+  min-height: 0;
+}
+
+/* ============================================================
+   LAYOUT GLOBAL (legacy home-shell kept for reference)
+   ============================================================ */
 .home-shell {
   display: flex;
-  flex-direction: column; 
-  flex: 1;       /* ✅ ADD */
-  height: 100%;  /* ✅ CHANGE */
-  min-height: 0; /* ✅ CHANGE */
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
 }
 /* 
@@ -492,6 +572,286 @@ html, body, #root {
   display: flex;
   gap: 8px;
   margin-top: 10px;
+}
+
+/* ============================================================
+   UNIFIED MAP — Layer pills + custom pins + new drawer
+   ============================================================ */
+
+/* ── Layer pills strip (below Leaflet top chrome) ── */
+.umap-layer-pills {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  gap: 7px;
+  padding: 0 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  pointer-events: auto;
+}
+.umap-layer-pills::-webkit-scrollbar { display: none; }
+
+.umap-layer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 22px;
+  border: 1.5px solid rgba(0,0,0,.15);
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  transition: background .18s, color .18s, border-color .18s, transform .12s;
+}
+.umap-layer-pill:active { transform: scale(.95); }
+.umap-layer-pill.active {
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 3px 12px rgba(0,0,0,.25);
+}
+
+/* ── Vlog pin (thumbnail circle) ── */
+.map-pin-vlog {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background-size: cover;
+  background-position: center;
+  background-color: #f97316;
+  box-shadow: 0 3px 12px rgba(0,0,0,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform .15s;
+}
+.map-pin-vlog:hover { transform: scale(1.08); }
+.map-pin-vlog-empty { font-size: 1.4rem; }
+.map-pin-play {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: rgba(0,0,0,.65);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  color: #fff;
+  border: 1.5px solid #fff;
+}
+/* Snap-style "tail" dot under the circle */
+.map-pin-vlog::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,.25);
+}
+
+/* ── Price pin (listings — AirBnB style) ── */
+.map-pin-price {
+  background: #fff;
+  border: 2px solid #0ea5e9;
+  color: #0369a1;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 14px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  cursor: pointer;
+  transition: transform .12s;
+}
+.map-pin-price:hover { transform: scale(1.06); background: #0ea5e9; color: #fff; }
+
+/* ── Service pin (activities / restaurants / guides / artisans) ── */
+.map-pin-service {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.28);
+  cursor: pointer;
+  transition: transform .12s;
+}
+.map-pin-service:hover { transform: scale(1.12); }
+
+/* ── Unified map drawer (replaces old .map-drawer for new content) ── */
+.umap-drawer {
+  position: absolute;
+  bottom: -260px;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: rgba(255,255,255,.98);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(0,0,0,.08);
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -16px 48px rgba(0,0,0,.14);
+  padding: 0 16px 20px;
+  transition: bottom .3s ease;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+.umap-drawer.open { bottom: 0; }
+
+.umap-drawer-handle {
+  width: 48px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(0,0,0,.18);
+  margin: 10px auto 14px;
+  cursor: pointer;
+}
+
+.umap-drawer-empty {
+  padding: 28px 16px;
+  text-align: center;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+/* Vlog drawer */
+.umap-drawer-vlog {}
+.umap-drawer-vthumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #111;
+}
+.umap-drawer-vthumb img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.umap-drawer-vthumb-empty {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem; background: #222;
+}
+.umap-drawer-vgrad {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 60%);
+}
+.umap-drawer-vinfo {
+  position: absolute;
+  bottom: 10px; left: 12px; right: 12px;
+}
+.umap-dv-author {
+  font-size: 0.75rem; color: rgba(255,255,255,.75); margin: 0 0 2px;
+}
+.umap-dv-title {
+  font-size: 1rem; font-weight: 700; color: #fff; margin: 0 0 4px;
+  line-height: 1.25;
+}
+.umap-dv-stats {
+  display: flex; gap: 10px;
+  font-size: 0.72rem; color: rgba(255,255,255,.7);
+}
+
+/* Service/listing drawer */
+.umap-drawer-service {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding-top: 4px;
+}
+.umap-drawer-sthumb {
+  width: 96px; flex-shrink: 0;
+  height: 80px; border-radius: 12px; overflow: hidden;
+  background: #f5f5f5;
+}
+.umap-drawer-sthumb img { width: 100%; height: 100%; object-fit: cover; }
+.umap-drawer-sthumb-empty {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center; font-size: 2rem;
+}
+.umap-drawer-sinfo { flex: 1; min-width: 0; }
+.umap-drawer-sinfo h3 {
+  font-size: 0.95rem; font-weight: 700; margin: 0 0 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.umap-ds-loc  { font-size: 0.75rem; color: #777; margin: 0 0 2px; }
+.umap-ds-rating { font-size: 0.75rem; color: #f59e0b; margin: 0 0 4px; }
+.umap-ds-price {
+  font-size: 0.9rem; font-weight: 700; color: #111; margin: 0 0 8px;
+}
+.umap-ds-price span { font-weight: 500; font-size: 0.75rem; color: #888; }
+
+/* Drawer action buttons */
+.umap-drawer-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.umap-btn-primary {
+  width: 100%; padding: 10px 0;
+  background: #f97316; color: #fff;
+  border: none; border-radius: 22px;
+  font-weight: 700; font-size: 0.9rem; cursor: pointer;
+  transition: background .15s;
+}
+.umap-btn-primary:hover { background: #ea6c0a; }
+.umap-btn-secondary {
+  width: 100%; padding: 9px 0;
+  background: none; color: #555;
+  border: 1.5px solid #ddd; border-radius: 22px;
+  font-weight: 600; font-size: 0.85rem; cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.umap-btn-secondary:hover { border-color: #999; color: #111; }
+
+/* ── Back-to-map button in TikTok feed topbar ── */
+.tt-back-map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.3);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Zone label in topbar when feed launched from map */
+.tt-zone-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
 }
 
 /* ====== List Screen ====== */

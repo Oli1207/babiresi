@@ -29,8 +29,29 @@ import AdminAuditScreen from "./admin/AdminAuditScreen";
 import AdminStatsOwnersScreen from "./admin/AdminStatsOwnersScreen";
 import AdminStatsTopListingsScreen from "./admin/AdminStatsTopListingsScreen";
 import AdminStatsProfitScreen from "./admin/AdminStatsProfitScreen";
+import AdminVlogsScreen from "./admin/AdminVlogsScreen";
+import AdminWithdrawalsScreen from "./admin/AdminWithdrawalsScreen";
+import AdminTravelScreen from "./admin/AdminTravelScreen";
+import AdminDestinationsScreen from "./admin/AdminDestinationsScreen";
 
 import CreateNewPassword from "./views/auth/CreateNewPassword";
+
+import PlanMyTripScreen from "./views/screens/travel/PlanMyTripScreen";
+import MyTripRequestsScreen from "./views/screens/travel/MyTripRequestsScreen";
+import TripRequestDetailScreen from "./views/screens/travel/TripRequestDetailScreen";
+
+import ServicesScreen from "./views/screens/services/ServicesScreen";
+import ArtisanShopScreen from "./views/screens/services/ArtisanShopScreen";
+import ServiceDetailScreen from "./views/screens/services/ServiceDetailScreen";
+
+import ExploreCIScreen from "./views/screens/destinations/ExploreCIScreen";
+import DestinationScreen from "./views/screens/destinations/DestinationScreen";
+
+import ExploreVlogsScreen from "./views/screens/vlogs/ExploreVlogsScreen";
+import VlogDetailScreen from "./views/screens/vlogs/VlogDetailScreen";
+import CreateVlogScreen from "./views/screens/vlogs/CreateVlogScreen";
+import CreatorDashboardScreen from "./views/screens/vlogs/CreatorDashboardScreen";
+import ChallengesScreen from "./views/screens/vlogs/ChallengesScreen";
 
 import Navbar from "./views/components/Navbar";
 import Footer from "./views/components/Footer";
@@ -46,8 +67,9 @@ import { useAuthStore } from "./store/auth";
 function AppLayout() {
   const location = useLocation();
 
-  const isHome = location.pathname === "/";
-  const isAuth = location.pathname === "/login" || location.pathname === "/register";
+  const isVlogFeed = location.pathname === "/";
+  const isHome     = false;  // no longer used for full-screen lock
+  const isAuth     = location.pathname === "/login" || location.pathname === "/register";
 
   // =========================================================
   // ✅ Push permission popup (custom) + subscribe only on accept
@@ -240,15 +262,12 @@ function AppLayout() {
   }, []);
 
   useEffect(() => {
-  if (!(isHome && isMobile)) return;
-
-  const prev = document.body.style.overflow;
-  document.body.style.overflow = "hidden";
-
-  return () => {
-    document.body.style.overflow = prev;
-  };
-}, [isHome, isMobile]);
+    // Lock scroll on map/list home screen on mobile
+    if (!(isHome && isMobile)) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [isHome, isMobile]);
   return (
     <div className="app-container">
       {/* ========================================================= */}
@@ -315,12 +334,16 @@ function AppLayout() {
         </div>
       )}
 
-      <Navbar />
-      <div className="navbar-spacer" />
+      {/* Hide navbar on fullscreen vlog feed (it locks scroll itself) */}
+      {!isVlogFeed && <Navbar />}
+      {!isVlogFeed && <div className="navbar-spacer" />}
 
-      <main className={isHome ? "main-home" : "container py-4"}>
+      <main className={isVlogFeed ? "main-vlogs" : "container py-4"}>
         <Routes>
-          <Route path="/" element={<HomeScreen />} />
+          {/* "/" = TikTok vlog feed */}
+          <Route path="/" element={<ExploreVlogsScreen />} />
+          {/* "/residences" = map + list des logements */}
+          <Route path="/residences" element={<HomeScreen />} />
 
           {/* Auth */}
           <Route path="/login" element={<Login />} />
@@ -356,6 +379,26 @@ function AppLayout() {
           {/* Settings */}
           <Route path="/me/settings" element={<ProfileSettingsScreen />} />
 
+          {/* Travel */}
+          <Route path="/voyager" element={<PlanMyTripScreen />} />
+          <Route path="/voyager/mes-voyages" element={<MyTripRequestsScreen />} />
+          <Route path="/voyager/ma-demande/:id" element={<TripRequestDetailScreen />} />
+
+          {/* Services */}
+          <Route path="/services" element={<ServicesScreen />} />
+          <Route path="/services/:type/:id" element={<ServiceDetailScreen />} />
+          <Route path="/services/artisans/:id" element={<ArtisanShopScreen />} />
+
+          {/* Destinations */}
+          <Route path="/decouvrir" element={<ExploreCIScreen />} />
+          <Route path="/destinations/:slug" element={<DestinationScreen />} />
+
+          {/* Vlogs — static routes BEFORE :id to avoid conflicts */}
+          <Route path="/vlogs/create"     element={<CreateVlogScreen />} />
+          <Route path="/vlogs/creator"    element={<CreatorDashboardScreen />} />
+          <Route path="/vlogs/challenges" element={<ChallengesScreen />} />
+          <Route path="/vlogs/:id"        element={<VlogDetailScreen />} />
+
           {/* ADMIN */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboardScreen />} />
@@ -368,11 +411,15 @@ function AppLayout() {
             <Route path="stats/owners" element={<AdminStatsOwnersScreen />} />
             <Route path="stats/top-listings" element={<AdminStatsTopListingsScreen />} />
             <Route path="stats/profit" element={<AdminStatsProfitScreen />} />
+            <Route path="vlogs" element={<AdminVlogsScreen />} />
+            <Route path="withdrawals" element={<AdminWithdrawalsScreen />} />
+            <Route path="travel" element={<AdminTravelScreen />} />
+            <Route path="destinations" element={<AdminDestinationsScreen />} />
           </Route>
         </Routes>
       </main>
 
-     {!(isHome && isMobile) && <Footer />}
+     {/* {!(isHome && isMobile) && <Footer />} */}
     </div>
   );
 }

@@ -190,3 +190,52 @@ class PasswordResetConfirmAPIView(generics.GenericAPIView):
             return Response({"error": "Lien invalide ou expiré."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ============================================================
+# Notifications
+# ============================================================
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status as drf_status, permissions
+from .models import Notification
+
+
+def notify(user, type, title, message, link=""):
+    """Helper pour créer une notification in-app."""
+    Notification.objects.create(user=user, type=type, title=title, message=message, link=link)
+
+
+class NotificationListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        notifs = Notification.objects.filter(user=request.user)[:50]
+        data = [
+            {
+                "id": n.id,
+                "type": n.type,
+                "title": n.title,
+                "message": n.message,
+                "link": n.link,
+                "is_read": n.is_read,
+                "created_at": n.created_at.isoformat(),
+            }
+            for n in notifs
+        ]
+        unread = Notification.objects.filter(user=request.user, is_read=False).count()
+        return Response({"results": data, "unread_count": unread})
+
+
+class NotificationMarkReadView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        notif_ids = request.data.get("ids", [])
+        if notif_ids:
+            Notification.objects.filter(user=request.user, id__in=notif_ids).update(is_read=True)
+        else:
+            Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+        return Response({"marked": True})
+

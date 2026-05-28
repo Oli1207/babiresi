@@ -1,0 +1,17 @@
+.lang-switcher {
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  color: inherit;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.lang-switcher:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.7);
+}

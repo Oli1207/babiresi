@@ -1,0 +1,290 @@
+/* ============================================================
+   TRAVEL — styles
+   ============================================================ */
+
+.travel-screen {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.travel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.travel-header h1 { font-size: 1.6rem; font-weight: 700; }
+
+/* ---- Trip Planner ---- */
+.trip-planner {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.1);
+  overflow: hidden;
+}
+
+.planner-header {
+  background: linear-gradient(135deg, #1e3a5f, #0f5f3b);
+  color: #fff;
+  padding: 32px 24px;
+  text-align: center;
+}
+.planner-header h1 { font-size: 1.7rem; font-weight: 800; margin-bottom: 6px; }
+.planner-header p { opacity: .85; margin: 0; }
+
+.planner-progress { padding: 20px 24px 0; }
+.planner-progress-bar { height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
+.planner-progress-fill { height: 100%; background: linear-gradient(90deg, #f97316, #ea580c); border-radius: 3px; transition: width .4s; }
+.planner-steps { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.step-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #999;
+}
+.step-dot.current { background: #f97316; color: #fff; }
+.step-dot.done { background: #16a34a; color: #fff; }
+.step-label { text-align: center; color: #666; font-size: 0.85rem; margin: 0; }
+
+.planner-body { padding: 24px; min-height: 280px; }
+
+.step-content h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; }
+.step-hint { color: #888; font-size: 0.85rem; margin-bottom: 12px; }
+
+/* form reuse */
+.form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.form-group label { font-weight: 600; font-size: 0.9rem; color: #444; }
+.form-input { border: 1.5px solid #ddd; border-radius: 10px; padding: 10px 14px; font-size: 0.95rem; outline: none; background: #fafafa; }
+.form-input:focus { border-color: #f97316; background: #fff; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; }
+
+/* ---- Chips ---- */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.chip {
+  background: #f0f0f0;
+  border: 1.5px solid #ddd;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #444;
+  font-weight: 500;
+}
+.chip.active { background: #fff7f0; border-color: #f97316; color: #f97316; font-weight: 700; }
+
+/* ---- Counter ---- */
+.counter {
+  display: flex; align-items: center; gap: 12px;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 8px 16px;
+  width: fit-content;
+}
+.counter button {
+  background: #f0f0f0;
+  border: none;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+.counter span { font-size: 1.2rem; font-weight: 700; min-width: 24px; text-align: center; }
+
+/* ---- Toggle ---- */
+.toggle-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+.toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border-radius: 10px; }
+.toggle-btn {
+  background: #f0f0f0;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #666;
+}
+.toggle-btn.active { background: #f97316; color: #fff; }
+
+/* ---- Summary ---- */
+.planner-summary { background: #f8fafc; border-radius: 12px; padding: 16px; margin-top: 16px; }
+.planner-summary h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+.summary-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+.summary-row:last-child { border: none; }
+
+/* ---- Planner navigation ---- */
+.planner-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 24px 24px;
+  border-top: 1px solid #f0f0f0;
+  gap: 12px;
+}
+.btn-prev { background: #f0f0f0; color: #444; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+.btn-next { background: #1e3a5f; color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; margin-left: auto; }
+.btn-submit-trip {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: auto;
+}
+.btn-submit-trip:disabled { opacity: .6; }
+
+/* ---- Requests list ---- */
+.requests-list { display: flex; flex-direction: column; gap: 12px; }
+.request-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.07);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: transform .1s;
+}
+.request-card:hover { transform: translateY(-2px); }
+.request-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.request-card-header h3 { font-size: 1rem; font-weight: 700; margin: 0 0 4px; }
+.request-card-header p { font-size: 0.85rem; color: #666; margin: 0; }
+.request-card-footer { display: flex; gap: 16px; font-size: 0.8rem; color: #888; }
+.status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+.new-msg-badge { background: #eff6ff; color: #3b82f6; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+
+/* ---- Request detail ---- */
+.request-detail-header { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,.07); margin-bottom: 20px; }
+.request-detail-header h1 { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+.request-meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; color: #666; }
+
+/* ---- Quotes ---- */
+.quote-card { background: #fff; border-radius: 14px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.07); margin-bottom: 12px; }
+.quote-card.accepted { border: 2px solid #16a34a; }
+.quote-card-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.quote-card-header h3 { font-size: 1rem; font-weight: 700; margin: 0 0 2px; }
+.quote-card-header p { font-size: 0.85rem; color: #666; margin: 0; }
+.quote-total { font-size: 1.2rem; font-weight: 800; color: #1e293b; }
+.quote-body { margin-top: 12px; border-top: 1px solid #f0f0f0; padding-top: 12px; }
+.quote-line { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 4px 0; }
+.quote-summary { color: #555; font-size: 0.85rem; margin-top: 8px; }
+.quote-notes { background: #fff7f0; border: 1px solid #fed7aa; border-radius: 8px; padding: 10px; font-size: 0.85rem; color: #9a3412; margin-top: 8px; }
+.quote-actions { display: flex; gap: 10px; margin-top: 12px; }
+.btn-accept-quote { background: #16a34a; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; flex: 1; }
+.btn-reject-quote { background: #fee2e2; color: #dc2626; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; flex: 1; }
+
+/* ---- Trip Room ---- */
+.trip-room { display: flex; flex-direction: column; gap: 20px; }
+.trip-room-section h4 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+.trip-room-json { background: #f8fafc; border-radius: 10px; padding: 12px; font-size: 0.8rem; overflow-x: auto; max-height: 200px; }
+.messages-list { display: flex; flex-direction: column; gap: 10px; }
+.message-item { padding: 10px 14px; border-radius: 12px; background: #f8fafc; }
+.message-item.client { background: #eff6ff; }
+.message-item.consultant { background: #f0fdf4; }
+.message-sender { font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 4px; }
+.message-text { margin: 0 0 4px; font-size: 0.9rem; }
+.message-date { font-size: 0.75rem; color: #999; }
+
+/* ---- Payment ---- */
+.payment-schedule { }
+.payment-schedule h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; }
+.payment-card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,.07); display: flex; flex-direction: column; gap: 16px; }
+.payment-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; }
+.payment-row:last-child { border: none; padding-bottom: 0; }
+.payment-row h4 { font-size: 1rem; font-weight: 700; margin: 0 0 4px; }
+.payment-row p { font-size: 0.85rem; color: #666; margin: 0; }
+.payment-amount { font-size: 1.2rem; font-weight: 800; color: #1e293b; }
+.btn-pay {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+/* status chips */
+.status-chip { font-size: 0.75rem; padding: 3px 10px; border-radius: 10px; font-weight: 600; }
+.status-pending { background: #fef3c7; color: #92400e; }
+.status-paid { background: #d1fae5; color: #065f46; }
+.status-accepted { background: #d1fae5; color: #065f46; }
+.status-rejected { background: #fee2e2; color: #991b1b; }
+.status-sent { background: #eff6ff; color: #1d4ed8; }
+.status-superseded { background: #f3f4f6; color: #6b7280; }
+.status-draft { background: #f3f4f6; color: #6b7280; }
+
+.no-data-card { text-align: center; background: #f9fafb; border-radius: 14px; padding: 40px; color: #666; }
+.loading-spinner {
+  width: 36px; height: 36px;
+  border: 3px solid #f3f3f3;
+  border-top-color: #f97316;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: 40px auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   KIT VOYAGE
+   ============================================================ */
+
+.kit-voyage-panel {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.kit-voyage-card {
+  background: #fff;
+  border: 2px solid #e8f5e9;
+  border-radius: 16px;
+  padding: 32px 28px;
+  max-width: 560px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+}
+
+.kit-voyage-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.kit-voyage-card h2 {
+  font-size: 1.4rem;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+}
+
+.kit-voyage-card p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.kit-checklist {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+  background: #f7fdf7;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+}
+
+.kit-checklist li {
+  font-size: 0.9rem;
+  color: #333;
+  padding: 4px 0;
+  line-height: 1.5;
+}

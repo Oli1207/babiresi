@@ -155,6 +155,18 @@
   border-color: rgba(0, 0, 0, 0.2);
 }
 
+/* Active link highlight */
+.navbar-link.active {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.08);
+  border-color: rgba(249, 115, 22, 0.25);
+}
+
+/* Divider (mobile only) */
+.navbar-divider {
+  display: none;
+}
+
 /* Responsive - Tablet */
 @media (max-width: 992px) {
   .navbar-container {
@@ -213,6 +225,14 @@
 
   .navbar-links.mobile-open {
     right: 0;
+  }
+
+  .navbar-divider {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+    margin: 4px 0;
   }
 
   .navbar-link {

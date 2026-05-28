@@ -81,3 +81,17 @@
 
 .admin-table{ background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:16px; overflow:hidden; }
 .admin-table .table{ margin:0; }
+.admin-section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; }
+.admin-loading { text-align: center; padding: 40px; color: #999; }
+.toggle-small { background: none; border: 1.5px solid #ddd; padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
+.toggle-small.on { border-color: #16a34a; background: #f0fdf4; }
+.toggle-small.off { border-color: #ddd; background: #f9f9f9; }
+.admin-select { border: 1.5px solid #ddd; border-radius: 8px; padding: 4px 8px; font-size: 0.85rem; background: #fff; cursor: pointer; outline: none; }
+.status-chip { font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.status-pending { background: #fef3c7; color: #92400e; }
+.status-assigned { background: #eff6ff; color: #1d4ed8; }
+.status-in_progress { background: #f5f3ff; color: #7c3aed; }
+.status-quoted { background: #ecfeff; color: #0891b2; }
+.status-confirmed { background: #d1fae5; color: #065f46; }
+.status-completed { background: #f3f4f6; color: #6b7280; }
+.status-cancelled { background: #fee2e2; color: #991b1b; }

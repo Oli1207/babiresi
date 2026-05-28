@@ -545,13 +545,8 @@ html, body, #root {
 .map-screen {
   position: relative;
   width: 100%;
-
-  /* ✅ iOS/Android moderne (barre d'adresse dynamique) */
-  height: calc(100dvh - 68px);
-
-  /* ✅ fallback anciens navigateurs */
-  min-height: calc(100vh - 68px);
-
+  height: 100%;     /* fill parent (.res-body--map) */
+  min-height: 300px;
   overflow: hidden;
 }
 
@@ -616,4 +611,11 @@ html, body, #root {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+/* Vlog feed at “/” = completely fullscreen (no navbar, no padding) */
+.main-vlogs {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
 }

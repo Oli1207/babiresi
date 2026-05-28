@@ -23,6 +23,13 @@ export default function AdminSidebar() {
         <NavLink to="/admin/stats/owners" className={linkClass}>Stats · Gérants</NavLink>
         <NavLink to="/admin/stats/top-listings" className={linkClass}>Stats · Top résidences</NavLink>
         <NavLink to="/admin/stats/profit" className={linkClass}>Stats · Bénéfice</NavLink>
+
+        <div className="admin-nav-sep" />
+
+        <NavLink to="/admin/vlogs" className={linkClass}>🎬 Vlogs modération</NavLink>
+        <NavLink to="/admin/withdrawals" className={linkClass}>💸 Retraits points</NavLink>
+        <NavLink to="/admin/travel" className={linkClass}>✈️ Demandes voyage</NavLink>
+        <NavLink to="/admin/destinations" className={linkClass}>📍 Destinations</NavLink>
       </div>
     </div>
   );

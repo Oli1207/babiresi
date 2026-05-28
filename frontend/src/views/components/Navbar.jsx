@@ -1,86 +1,75 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { Globe, Map, Briefcase, Plane, User, LogIn, UserPlus, LogOut, Menu, X } from 'lucide-react';
 import { useAuthStore } from '../../store/auth';
+import NotificationBell from './NotificationBell';
+import LanguageSwitcher from './LanguageSwitcher';
 import logoImage from '../../assets/logo.png';
 import './Navbar.css';
 
 function Navbar() {
-  // Souscription à allUserData pour que la navbar se re-rende au logout (setUser(null))
   useAuthStore((state) => state.allUserData);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const user = useAuthStore((state) => state.user);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location   = useLocation();
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
 
-  // Fermer le menu mobile quand on clique sur un lien
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-  };
+  const active = (path) =>
+    location.pathname === path || location.pathname.startsWith(path + '/')
+      ? 'navbar-link active'
+      : 'navbar-link';
 
   return (
     <nav className="navbar-glass">
       <div className="navbar-container">
-        {/* Logo / Brand */}
-        <Link to="/" className="navbar-brand" onClick={closeMobileMenu}>
-          <img src={logoImage} alt="Decrou Resi" className="navbar-logo" />
+
+        {/* Brand */}
+        <Link to="/" className="navbar-brand" onClick={close}>
+          <img src={logoImage} alt="Babiresi" className="navbar-logo" />
         </Link>
 
-        {/* Menu hamburger pour mobile */}
-        <button 
-          className="navbar-toggle"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          <span className={mobileMenuOpen ? 'active' : ''}></span>
-          <span className={mobileMenuOpen ? 'active' : ''}></span>
-          <span className={mobileMenuOpen ? 'active' : ''}></span>
+        {/* Hamburger */}
+        <button className="navbar-toggle" onClick={() => setOpen(o => !o)} aria-label="Menu">
+          {open ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        {/* Navigation links */}
-        <div className={`navbar-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-          <Link to="/" className="navbar-link" onClick={closeMobileMenu}>
-            Accueil
+        {/* Links */}
+        <div className={`navbar-links ${open ? 'mobile-open' : ''}`}>
+
+          <Link to="/decouvrir" className={active('/decouvrir')} onClick={close}>
+            <Globe size={15} /> Destinations
           </Link>
-          
+          <Link to="/residences" className={active('/residences')} onClick={close}>
+            <Map size={15} /> Carte
+          </Link>
+          <Link to="/services" className={active('/services')} onClick={close}>
+            <Briefcase size={15} /> Services
+          </Link>
+          <Link to="/voyager" className={`${active('/voyager')} navbar-link-primary`} onClick={close}>
+            <Plane size={15} /> Planifier
+          </Link>
+
+          <div className="navbar-divider" />
+
           {isLoggedIn() ? (
             <>
-              <Link to="/mon-espace" className="navbar-link" onClick={closeMobileMenu}>
-                Mon Espace
+              <Link to="/mon-espace" className={active('/mon-espace')} onClick={close}>
+                <User size={15} /> Mon espace
               </Link>
-              <Link to="/create" className="navbar-link" onClick={closeMobileMenu}>
-                Publier
+              <NotificationBell />
+              <LanguageSwitcher />
+              <Link to="/logout" className="navbar-logout-btn" onClick={close}>
+                <LogOut size={14} /> Déconnexion
               </Link>
-              
-              {user?.is_owner && (
-                <Link to="/owner/inbox" className="navbar-link" onClick={closeMobileMenu}>
-                  Mes réservations
-                </Link>
-              )}
-              
-              <Link to="/me/bookings" className="navbar-link" onClick={closeMobileMenu}>
-                Mes réservations
-              </Link>
-
-              {/* User menu */}
-              <div className="navbar-user">
-                {/* <span className="navbar-user-name">
-                  {user?.full_name || user?.email || 'Utilisateur'}
-                </span> */}
-                <Link 
-                  to="/logout" 
-                  className="navbar-logout-btn"
-                  onClick={closeMobileMenu}
-                >
-                  Déconnexion
-                </Link>
-              </div>
             </>
           ) : (
             <>
-              <Link to="/login" className="navbar-link" onClick={closeMobileMenu}>
-                Connexion
+              <LanguageSwitcher />
+              <Link to="/login" className="navbar-link" onClick={close}>
+                <LogIn size={15} /> Connexion
               </Link>
-              <Link to="/register" className="navbar-link navbar-link-primary" onClick={closeMobileMenu}>
-                Inscription
+              <Link to="/register" className="navbar-link navbar-link-primary" onClick={close}>
+                <UserPlus size={15} /> S'inscrire
               </Link>
             </>
           )}

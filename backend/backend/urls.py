@@ -40,9 +40,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('api.urls')),
-
-    #Documentation
-    #path("", schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/v1/destinations/', include('destinations.urls')),
+    path('api/v1/vlogs/', include('vlogs.urls')),
+    path('api/v1/services/', include('services.urls')),
+    path('api/v1/travel/', include('travel.urls')),
 ]
 
 if settings.DEBUG:
