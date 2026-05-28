@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from core.utils import hybrid_image_url
 from .models import (
     Guide, GuideAvailability, GuideBooking,
     Restaurant, RestaurantImage,
@@ -29,7 +30,8 @@ class GuideSerializer(serializers.ModelSerializer):
 
     def get_user_photo(self, obj):
         try:
-            return obj.user.profile.image.url if obj.user.profile.image else None
+            request = self.context.get("request")
+            return hybrid_image_url(obj.user.profile.image, request)
         except Exception:
             return None
 

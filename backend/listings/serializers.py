@@ -8,6 +8,7 @@ from django.contrib.auth.hashers import make_password, check_password
 import urllib.parse
 from rest_framework import serializers
 from django.db.models import Q, Max, Sum, Count
+from core.utils import hybrid_image_url
 
 from .models import (
     Listing,
@@ -35,21 +36,7 @@ class ListingImageSerializer(serializers.ModelSerializer):
         fields = ["id", "image_url", "is_cover", "order", "created_at"]
 
     def get_image_url(self, obj):
-        import os
-        from django.conf import settings as django_settings
-        request = self.context.get("request")
-        if not obj.image or not obj.image.name:
-            return None
-        # Ancienne image stockée localement → servir depuis MEDIA_URL du backend
-        local_path = os.path.join(str(django_settings.MEDIA_ROOT), obj.image.name)
-        if os.path.exists(local_path):
-            path = django_settings.MEDIA_URL + obj.image.name
-            return request.build_absolute_uri(path) if request else path
-        # Nouvelle image Cloudinary → URL absolue Cloudinary
-        url = obj.image.url
-        if url.startswith("http://") or url.startswith("https://"):
-            return url
-        return request.build_absolute_uri(url) if request else url
+        return hybrid_image_url(obj.image, self.context.get("request"))
 
 
 # class ListingSerializer(serializers.ModelSerializer):
@@ -1004,19 +991,7 @@ class PublicProfileSerializer(serializers.ModelSerializer):
         fields = ["id", "user", "image_url", "full_name", "about", "city", "country", "phone"]
 
     def get_image_url(self, obj):
-        import os
-        from django.conf import settings as django_settings
-        request = self.context.get("request")
-        if not obj.image or not obj.image.name:
-            return None
-        local_path = os.path.join(str(django_settings.MEDIA_ROOT), obj.image.name)
-        if os.path.exists(local_path):
-            path = django_settings.MEDIA_URL + obj.image.name
-            return request.build_absolute_uri(path) if request else path
-        url = obj.image.url
-        if url.startswith("http://") or url.startswith("https://"):
-            return url
-        return request.build_absolute_uri(url) if request else url
+        return hybrid_image_url(obj.image, self.context.get("request"))
 
 
 class SellerPageSerializer(serializers.Serializer):

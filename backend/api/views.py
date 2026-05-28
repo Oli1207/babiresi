@@ -5,6 +5,7 @@ from rest_framework import permissions
 from vlogs.models import Vlog
 from services.models import Guide, Activity, Artisan, Restaurant
 from listings.models import Listing
+from core.utils import hybrid_image_url
 
 
 def _bounds_filter(qs, params, lat_field="latitude", lng_field="longitude"):
@@ -27,13 +28,7 @@ def _bounds_filter(qs, params, lat_field="latitude", lng_field="longitude"):
 
 
 def _cover_url(request, field):
-    """Build absolute URL for an ImageField, or return None."""
-    if not field:
-        return None
-    try:
-        return request.build_absolute_uri(field.url)
-    except Exception:
-        return None
+    return hybrid_image_url(field, request)
 
 
 class MapPinsView(APIView):
