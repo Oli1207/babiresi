@@ -72,10 +72,10 @@ export const AMBIANCES = [
 ];
 
 export const CREATOR_LEVELS = {
-  bronze: { label: 'Bronze', color: '#cd7f32', emoji: '🥉', minPoints: 0 },
-  silver: { label: 'Silver', color: '#c0c0c0', emoji: '🥈', minPoints: 5000 },
-  gold: { label: 'Gold', color: '#ffd700', emoji: '🥇', minPoints: 25000 },
-  platinum: { label: 'Platinum', color: '#e5e4e2', emoji: '💎', minPoints: 100000 },
+  bronze:   { label: 'Bronze',   color: '#cd7f32', minPoints: 0 },
+  silver:   { label: 'Silver',   color: '#c0c0c0', minPoints: 5000 },
+  gold:     { label: 'Gold',     color: '#ffd700', minPoints: 25000 },
+  platinum: { label: 'Platinum', color: '#a78bfa', minPoints: 100000 },
 };
 
 export function formatPoints(n) {

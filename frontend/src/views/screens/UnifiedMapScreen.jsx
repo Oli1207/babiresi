@@ -42,10 +42,9 @@ function makeVlogIcon(thumb) {
   return L.divIcon({ html, className: '', iconSize: [52, 52], iconAnchor: [26, 52] });
 }
 
-function makePriceIcon(price) {
-  const label = price
-    ? `${Number(price).toLocaleString('fr-CI')} FCFA`
-    : `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
+function makeListingIcon(listing) {
+  const raw   = listing.title || listing.listing_type || 'Résidence';
+  const label = raw.length > 16 ? raw.slice(0, 15) + '…' : raw;
   return L.divIcon({
     html: `<div class="map-pin-price">${label}</div>`,
     className: '',
@@ -264,7 +263,7 @@ export default function UnifiedMapScreen({ onGoList }) {
     }
     if (show('listings')) {
       (pins.listings || []).forEach(l => {
-        const icon = makePriceIcon(l.price_per_night);
+        const icon = makeListingIcon(l);
         els.push({ key: `l-${l.id}`, lat: l.lat, lng: l.lng, icon, pin: { ...l, _type: 'listing' } });
       });
     }

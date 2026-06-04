@@ -110,7 +110,7 @@ export default function CreateVlogScreen() {
   return (
     <div className="create-vlog-screen">
       <div className="create-vlog-container">
-        <h1 className="create-vlog-title">🎬 Poster un Vlog</h1>
+        <h1 className="create-vlog-title">Poster un Vlog</h1>
         <p className="create-vlog-subtitle">Partage ton expérience en Côte d'Ivoire et gagne des points !</p>
 
         <form onSubmit={handleSubmit} className="create-vlog-form">
@@ -133,7 +133,7 @@ export default function CreateVlogScreen() {
                 ) : preview ? (
                   <img src={preview} alt="preview" className="upload-preview" />
                 ) : null}
-                <p>✅ Média uploadé</p>
+                <p>Média uploadé</p>
                 <button type="button" onClick={(e) => { e.stopPropagation(); setForm(f => ({ ...f, cloudinary_url: '', cloudinary_public_id: '', thumbnail_url: '' })); setPreview(null); }}>
                   Changer
                 </button>
@@ -217,11 +217,11 @@ export default function CreateVlogScreen() {
           {error && <div className="form-error">{error}</div>}
 
           <div className="points-hint">
-            💡 Ce vlog peut te rapporter des points : <strong>1pt/vue · 5pts/like · 10pts/commentaire · 15pts/partage</strong>
+            Ce vlog peut te rapporter des points : <strong>1pt/vue · 5pts/like · 10pts/commentaire · 15pts/partage</strong>
           </div>
 
           <button type="submit" disabled={submitting || uploading} className="btn-submit-vlog">
-            {submitting ? 'Publication...' : '🚀 Publier le Vlog'}
+            {submitting ? 'Publication...' : 'Publier le Vlog'}
           </button>
         </form>
       </div>

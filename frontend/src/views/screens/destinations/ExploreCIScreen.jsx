@@ -33,7 +33,7 @@ export default function ExploreCIScreen() {
       {/* Hero */}
       <div className="ci-hero">
         <div className="ci-hero-content">
-          <h1>{t('destinations.explore')} 🌍</h1>
+          <h1>{t('destinations.explore')}</h1>
           <p>14 régions, des centaines de merveilles à explorer</p>
           <div className="hero-search">
             <input

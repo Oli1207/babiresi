@@ -5,8 +5,9 @@ import {
   Compass, Zap, Palette, Home, Star, MapPin, X,
   Heart, MessageCircle, Bookmark, Share2, VolumeX, Volume2,
   Search, Flame, Trash2, SlidersHorizontal, RefreshCw,
-  Music, Plus, Film, Video, ArrowLeft,
+  Music, Plus, Film, Video, ArrowLeft, Send,
 } from 'lucide-react';
+import { useAuthStore } from '../../../store/auth';
 import { useVlogStore } from '../../../store/vlogs';
 import { vlogsApi, VLOG_CATEGORIES, REGIONS_CI, AMBIANCES, formatFCFA } from '../../../utils/vlogs';
 import { servicesApi } from '../../../utils/services';
@@ -146,6 +147,83 @@ function ContextDrawer({ data, onClose }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
+   Comments bottom-sheet drawer (TikTok-style inline)
+───────────────────────────────────────────────────────────── */
+function CommentsDrawer({ vlogId, commentCount, onNewComment, onClose }) {
+  const { isLoggedIn } = useAuthStore();
+  const [comments, setComments] = useState([]);
+  const [loading,  setLoading]  = useState(true);
+  const [text,     setText]     = useState('');
+  const [posting,  setPosting]  = useState(false);
+  const listRef = useRef(null);
+
+  useEffect(() => {
+    vlogsApi.getComments(vlogId)
+      .then(r => setComments(r.data.results || r.data || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [vlogId]);
+
+  const post = async () => {
+    if (!text.trim() || posting) return;
+    setPosting(true);
+    try {
+      const r = await vlogsApi.postComment(vlogId, text.trim());
+      setComments(c => [r.data, ...c]);
+      setText('');
+      onNewComment?.();
+      listRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch {}
+    finally { setPosting(false); }
+  };
+
+  return (
+    <>
+      <div className="cmt-backdrop" onClick={onClose} />
+      <div className="cmt-drawer">
+        <div className="cmt-handle" />
+        <div className="cmt-header">
+          <span>{commentCount} commentaire{commentCount !== 1 ? 's' : ''}</span>
+          <button className="cmt-close" onClick={onClose}><X size={18} /></button>
+        </div>
+        <div className="cmt-list" ref={listRef}>
+          {loading ? (
+            <p className="cmt-empty">Chargement…</p>
+          ) : comments.length === 0 ? (
+            <p className="cmt-empty">Sois le premier à commenter ✍️</p>
+          ) : comments.map(c => (
+            <div key={c.id} className="cmt-item">
+              <div className="cmt-avatar">{(c.author_name || c.user?.full_name || '?')[0].toUpperCase()}</div>
+              <div className="cmt-body">
+                <span className="cmt-author">{c.author_name || c.user?.full_name}</span>
+                <p className="cmt-text">{c.message || c.content}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        {isLoggedIn ? (
+          <div className="cmt-input-row">
+            <input
+              className="cmt-input"
+              value={text}
+              onChange={e => setText(e.target.value)}
+              placeholder="Ajouter un commentaire…"
+              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && post()}
+              maxLength={500}
+            />
+            <button className="cmt-send" onClick={post} disabled={!text.trim() || posting}>
+              <Send size={17} />
+            </button>
+          </div>
+        ) : (
+          <p className="cmt-login-hint">Connecte-toi pour commenter</p>
+        )}
+      </div>
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
    Single TikTok item
 ───────────────────────────────────────────────────────────── */
 function TikTokItem({ vlog, onLike, onSave, isActive }) {
@@ -158,6 +236,8 @@ function TikTokItem({ vlog, onLike, onSave, isActive }) {
   const [muted,        setMuted]        = useState(true);
   const [playing,      setPlaying]      = useState(false);
   const [descExpanded, setDescExpanded] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [cmtCount,     setCmtCount]     = useState(vlog.comments_count || 0);
 
   /* — context notifications — */
   const [contextItems,  setContextItems]  = useState([]);
@@ -410,9 +490,9 @@ function TikTokItem({ vlog, onLike, onSave, isActive }) {
           <span className="tt-action-count">{vlog.likes_count}</span>
         </button>
 
-        <button className="tt-action-btn" onClick={() => navigate(`/vlogs/${vlog.id}`)}>
+        <button className="tt-action-btn" onClick={(e) => { e.stopPropagation(); setShowComments(true); }}>
           <MessageCircle size={26} className="tt-action-icon" strokeWidth={1.8} />
-          <span className="tt-action-count">{vlog.comments_count}</span>
+          <span className="tt-action-count">{cmtCount}</span>
         </button>
 
         <button
@@ -446,6 +526,18 @@ function TikTokItem({ vlog, onLike, onSave, isActive }) {
           CONTEXT MINI-DRAWER
       ───────────────────────────────────────────────── */}
       {drawerData && <ContextDrawer data={drawerData} onClose={closeDrawer} />}
+
+      {/* ─────────────────────────────────────────────────
+          COMMENTS BOTTOM DRAWER
+      ───────────────────────────────────────────────── */}
+      {showComments && (
+        <CommentsDrawer
+          vlogId={vlog.id}
+          commentCount={cmtCount}
+          onNewComment={() => setCmtCount(c => c + 1)}
+          onClose={() => setShowComments(false)}
+        />
+      )}
     </div>
   );
 }

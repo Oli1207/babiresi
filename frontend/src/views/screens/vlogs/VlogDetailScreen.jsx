@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../store/auth';
 import { vlogsApi, VLOG_CATEGORIES, formatFCFA } from '../../../utils/vlogs';
 import { setSEO } from '../../../utils/seo';
+import { Heart, MessageCircle, Share2, Bookmark, VolumeX, Volume2, MapPin, User, Eye, ArrowLeft } from 'lucide-react';
 import './vlogs.css';
 
 export default function VlogDetailScreen() {
@@ -124,33 +125,33 @@ export default function VlogDetailScreen() {
         ) : vlog.thumbnail_url ? (
           <img src={vlog.thumbnail_url} alt={vlog.title} className="vlog-detail-video" />
         ) : (
-          <div className="vlog-no-media">📹 Aucun média</div>
+          <div className="vlog-no-media">Aucun média</div>
         )}
 
         {/* Player controls overlay */}
         <div className="vlog-player-controls">
-          <button onClick={() => navigate(-1)} className="btn-back">← Retour</button>
+          <button onClick={() => navigate(-1)} className="btn-back"><ArrowLeft size={16} /> Retour</button>
           <button onClick={() => setMuted(!muted)} className="btn-mute">
-            {muted ? '🔇' : '🔊'}
+            {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
           </button>
         </div>
 
         {/* Side actions */}
         <div className="vlog-side-actions">
           <button className={`side-action-btn ${vlog.is_liked ? 'active' : ''}`} onClick={handleLike}>
-            <span className="side-icon">❤️</span>
+            <Heart size={26} strokeWidth={1.8} fill={vlog.is_liked ? 'currentColor' : 'none'} />
             <span className="side-count">{vlog.likes_count}</span>
           </button>
           <button className="side-action-btn" onClick={() => setShowComments(!showComments)}>
-            <span className="side-icon">💬</span>
+            <MessageCircle size={26} strokeWidth={1.8} />
             <span className="side-count">{vlog.comments_count}</span>
           </button>
           <button className="side-action-btn" onClick={handleShare}>
-            <span className="side-icon">↗️</span>
+            <Share2 size={26} strokeWidth={1.8} />
             <span className="side-count">{vlog.shares_count}</span>
           </button>
           <button className={`side-action-btn ${vlog.is_saved ? 'active' : ''}`} onClick={handleSave}>
-            <span className="side-icon">🔖</span>
+            <Bookmark size={26} strokeWidth={1.8} fill={vlog.is_saved ? 'currentColor' : 'none'} />
             <span className="side-count">{vlog.saves_count}</span>
           </button>
         </div>
@@ -160,16 +161,16 @@ export default function VlogDetailScreen() {
       <div className="vlog-detail-info">
         <div className="vlog-detail-meta">
           <Link to={`/seller/${vlog.author_id}`} className="vlog-author-link">
-            <span className="author-avatar">👤</span>
+            <User size={18} strokeWidth={1.6} className="author-avatar" />
             <span>@{vlog.author_name}</span>
           </Link>
           {catLabel && <span className="vlog-chip">{catLabel}</span>}
-          {vlog.region && <span className="vlog-chip">📍 {vlog.region}</span>}
+          {vlog.region && <span className="vlog-chip"><MapPin size={11} /> {vlog.region}</span>}
         </div>
         <h1 className="vlog-detail-title">{vlog.title}</h1>
         {vlog.description && <p className="vlog-detail-desc">{vlog.description}</p>}
         <div className="vlog-detail-stats">
-          <span>👁 {vlog.views_count} vues</span>
+          <span><Eye size={13} strokeWidth={1.6} /> {vlog.views_count} vues</span>
         </div>
       </div>
 

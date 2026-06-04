@@ -9,7 +9,7 @@ function LevelBadge({ level }) {
   const info = CREATOR_LEVELS[level] || CREATOR_LEVELS.bronze;
   return (
     <span className="creator-level-badge" style={{ background: info.color + '22', color: info.color, border: `1.5px solid ${info.color}` }}>
-      {info.emoji} {info.label}
+      {info.label}
     </span>
   );
 }
@@ -92,7 +92,7 @@ export default function CreatorDashboardScreen() {
       <div className="creator-dashboard">
         {/* Header */}
         <div className="creator-header">
-          <h1>🎬 Espace Créateur</h1>
+          <h1>Espace Créateur</h1>
           <Link to="/vlogs/create" className="btn-create-vlog">+ Nouveau vlog</Link>
         </div>
 
@@ -113,7 +113,7 @@ export default function CreatorDashboardScreen() {
                   next={nextLevel[1].minPoints - levelInfo.minPoints}
                   color={levelInfo.color}
                 />
-                <small>{formatPoints(nextLevel[1].minPoints - pts.total_points)} pts avant {nextLevel[1].label} {nextLevel[1].emoji}</small>
+                <small>{formatPoints(nextLevel[1].minPoints - pts.total_points)} pts avant {nextLevel[1].label}</small>
               </div>
             )}
           </div>
@@ -173,7 +173,7 @@ export default function CreatorDashboardScreen() {
                 {Object.entries(CREATOR_LEVELS).map(([k, info]) => (
                   <div key={k} className="points-row">
                     <LevelBadge level={k} />
-                    <span>{info.emoji === '🥉' ? '0.3' : info.emoji === '🥈' ? '0.5' : info.emoji === '🥇' ? '0.8' : '1.2'} FCFA/pt</span>
+                    <span>{({ bronze: '0.3', silver: '0.5', gold: '0.8', platinum: '1.2' })[k] || '0.3'} FCFA/pt</span>
                   </div>
                 ))}
               </div>
