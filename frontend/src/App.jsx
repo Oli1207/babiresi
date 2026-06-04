@@ -43,6 +43,7 @@ import TripRequestDetailScreen from "./views/screens/travel/TripRequestDetailScr
 import ServicesScreen from "./views/screens/services/ServicesScreen";
 import ArtisanShopScreen from "./views/screens/services/ArtisanShopScreen";
 import ServiceDetailScreen from "./views/screens/services/ServiceDetailScreen";
+import RegisterServiceScreen from "./views/screens/services/RegisterServiceScreen";
 
 import ExploreCIScreen from "./views/screens/destinations/ExploreCIScreen";
 import DestinationScreen from "./views/screens/destinations/DestinationScreen";
@@ -386,6 +387,7 @@ function AppLayout() {
 
           {/* Services */}
           <Route path="/services" element={<ServicesScreen />} />
+          <Route path="/services/register" element={<RegisterServiceScreen />} />
           <Route path="/services/:type/:id" element={<ServiceDetailScreen />} />
           <Route path="/services/artisans/:id" element={<ArtisanShopScreen />} />
 

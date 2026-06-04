@@ -17,7 +17,22 @@
   margin-bottom: 20px;
 }
 .services-header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; }
-.services-header p { opacity: .85; margin: 0; }
+.services-header p { opacity: .85; margin: 0 0 16px; }
+.btn-become-provider {
+  display: inline-block;
+  margin-top: 12px;
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,.4);
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: .88rem;
+  font-weight: 600;
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+  transition: background .18s;
+}
+.btn-become-provider:hover { background: rgba(255,255,255,.28); color: #fff; }
 
 .services-search {
   display: flex;

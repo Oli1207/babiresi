@@ -384,3 +384,60 @@ class ReviewListCreateView(APIView):
             serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# =========================================================
+# Profils prestataires — endpoints "me/" (créer/modifier son propre profil)
+# =========================================================
+
+GUIDE_EDITABLE = [
+    "bio", "photo", "specialties", "languages",
+    "half_day_price", "full_day_price", "multi_day_price",
+    "is_available", "latitude", "longitude",
+]
+ARTISAN_EDITABLE = [
+    "bio", "story", "craft_type", "location", "photo",
+    "latitude", "longitude",
+]
+RESTAURANT_EDITABLE = [
+    "name", "description", "address", "phone", "category",
+    "price_range", "opening_hours", "signature_dishes", "instagram",
+    "cover_image", "latitude", "longitude",
+]
+ACTIVITY_EDITABLE = [
+    "title", "description", "category", "price_per_person",
+    "duration_hours", "min_persons", "max_persons",
+    "included_services", "meeting_point", "cover_image",
+    "latitude", "longitude",
+]
+
+
+def _me_view(model, serializer_class, editable_fields, user_field="user"):
+    """Factory: renvoie une APIView GET/PATCH pour le profil prestataire."""
+
+    class MeView(APIView):
+        permission_classes = [permissions.IsAuthenticated]
+
+        def _get_or_create(self, request):
+            return model.objects.get_or_create(**{user_field: request.user})
+
+        def get(self, request):
+            obj, _ = self._get_or_create(request)
+            return Response(serializer_class(obj, context={"request": request}).data)
+
+        def patch(self, request):
+            obj, _ = self._get_or_create(request)
+            data = {k: v for k, v in request.data.items() if k in editable_fields}
+            serializer = serializer_class(obj, data=data, partial=True, context={"request": request})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    return MeView
+
+
+GuideMeView      = _me_view(Guide,      GuideSerializer,      GUIDE_EDITABLE,      "user")
+ArtisanMeView    = _me_view(Artisan,    ArtisanSerializer,    ARTISAN_EDITABLE,    "user")
+RestaurantMeView = _me_view(Restaurant, RestaurantSerializer, RESTAURANT_EDITABLE, "owner")
+ActivityMeView   = _me_view(Activity,   ActivitySerializer,   ACTIVITY_EDITABLE,   "provider")

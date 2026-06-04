@@ -184,6 +184,9 @@ export default function ServicesScreen() {
       <div className="services-header">
         <h1>{t('services.title')}</h1>
         <p>Guides certifiés, restaurants authentiques, activités inoubliables</p>
+        <Link to="/services/register" className="btn-become-provider">
+          + Devenir prestataire
+        </Link>
       </div>
 
       {/* Search */}

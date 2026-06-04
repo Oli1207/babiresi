@@ -33,4 +33,10 @@ urlpatterns = [
 
     # Reviews
     path("reviews/", views.ReviewListCreateView.as_view(), name="review-list"),
+
+    # Profils prestataires (créer / modifier son propre profil)
+    path("guides/me/",      views.GuideMeView.as_view(),      name="guide-me"),
+    path("artisans/me/",    views.ArtisanMeView.as_view(),    name="artisan-me"),
+    path("restaurants/me/", views.RestaurantMeView.as_view(), name="restaurant-me"),
+    path("activities/me/",  views.ActivityMeView.as_view(),   name="activity-me"),
 ]
