@@ -74,6 +74,7 @@ class VlogCreateSerializer(serializers.ModelSerializer):
             "title", "description",
             "cloudinary_url", "cloudinary_public_id", "thumbnail_url", "duration_seconds",
             "destination", "region", "city",
+            "latitude", "longitude",
             "category", "ambiance", "tags",
             "series", "series_order",
             "is_published",

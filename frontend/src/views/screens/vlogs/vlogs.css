@@ -932,11 +932,112 @@
 .no-comments { color: #666; text-align: center; padding: 16px; }
 
 /* ---- Create Vlog Screen ---- */
-.create-vlog-screen { max-width: 640px; margin: 0 auto; padding: 24px 16px; }
-.create-vlog-container { background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 2px 20px rgba(0,0,0,.08); }
-.create-vlog-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
-.create-vlog-subtitle { color: #888; margin-bottom: 24px; }
+.create-vlog-screen { padding: 24px 16px; }
+.create-vlog-container { max-width: 1100px; margin: 0 auto; }
+.create-vlog-wide { max-width: 1100px; }
+.create-vlog-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+.create-vlog-subtitle { color: #888; margin-bottom: 20px; font-size: .9rem; }
 .create-vlog-form { display: flex; flex-direction: column; gap: 16px; }
+
+/* Grid 2 colonnes */
+.cvf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+@media (max-width: 768px) { .cvf-grid { grid-template-columns: 1fr; } }
+
+.cvf-left, .cvf-right { display: flex; flex-direction: column; gap: 16px; }
+
+.cvf-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cvf-card-title {
+  font-size: .95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 4px;
+}
+.cvf-label { font-size: .82rem; font-weight: 600; color: #555; margin-bottom: 2px; display: block; }
+.cvf-input {
+  width: 100%;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-size: .9rem;
+  outline: none;
+  background: #fafafa;
+  box-sizing: border-box;
+}
+.cvf-input:focus { border-color: #f97316; background: #fff; }
+.cvf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .cvf-row { grid-template-columns: 1fr; } }
+
+/* Location */
+.cvf-loc-header { display: flex; justify-content: space-between; align-items: center; }
+.cvf-loc-hint { font-size: .8rem; color: #888; margin: 0; }
+.cvf-gps-btn {
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: .8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.cvf-gps-btn:disabled { opacity: .5; cursor: not-allowed; }
+.cvf-geo-error { background: #fef2f2; color: #dc2626; border-radius: 8px; padding: 8px 12px; font-size: .82rem; }
+
+.cvf-search-wrap { position: relative; }
+.cvf-searching { color: #888; font-size: .78rem; display: block; margin-top: 2px; }
+.cvf-suggestions {
+  position: absolute;
+  top: 100%; left: 0; right: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  z-index: 999;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.cvf-suggest-item {
+  display: flex; flex-direction: column;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
+  gap: 2px;
+}
+.cvf-suggest-item strong { font-size: .88rem; color: #111; }
+.cvf-suggest-item small  { font-size: .78rem; color: #888; }
+.cvf-suggest-item:hover  { background: #fdf6f0; }
+
+.cvf-map-wrap {
+  height: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid #e5e7eb;
+}
+.cvf-city-row { display: flex; flex-direction: column; gap: 4px; }
+.cvf-coords {
+  display: flex;
+  gap: 12px;
+  font-size: .78rem;
+  color: #888;
+  font-family: monospace;
+}
 
 .upload-zone {
   border: 2.5px dashed #ddd;
