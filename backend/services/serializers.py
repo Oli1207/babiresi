@@ -23,6 +23,7 @@ class GuideSerializer(serializers.ModelSerializer):
             "half_day_price", "full_day_price", "multi_day_price",
             "is_anglophone_certified", "is_verified", "is_available",
             "rating_avg", "total_reviews", "total_bookings",
+            "latitude", "longitude",
         ]
 
     def get_user_name(self, obj):
@@ -93,6 +94,7 @@ class ActivitySerializer(serializers.ModelSerializer):
             "category", "duration_hours", "price_per_person",
             "min_persons", "max_persons", "included_services", "meeting_point",
             "cover_image", "is_verified", "rating_avg", "total_reviews",
+            "latitude", "longitude",
         ]
 
     def get_destination_name(self, obj):
@@ -194,6 +196,7 @@ class ArtisanSerializer(serializers.ModelSerializer):
             "photo", "video_intro_url",
             "is_verified", "made_in_ci_badge",
             "rating_avg", "total_reviews", "products_count", "products",
+            "latitude", "longitude",
         ]
 
     def get_user_name(self, obj):
