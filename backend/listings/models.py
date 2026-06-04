@@ -219,11 +219,14 @@ class Booking(models.Model):
         ]
         constraints = [
             models.CheckConstraint(
-                check=(
-                    Q(start_date__isnull=True) |
-                    Q(end_date__isnull=True) |
-                    Q(end_date__gt=models.F("start_date"))
-                ),
+                **{
+                    # Django 5.0 → check=, Django 5.1+ → condition=
+                    ("check" if __import__("django").VERSION < (5, 1) else "condition"): (
+                        Q(start_date__isnull=True) |
+                        Q(end_date__isnull=True) |
+                        Q(end_date__gt=models.F("start_date"))
+                    )
+                },
                 name="booking_valid_range_if_dates_set"
             ),
         ]

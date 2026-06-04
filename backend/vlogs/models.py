@@ -313,3 +313,127 @@ class ChallengeEntry(models.Model):
     class Meta:
         unique_together = ("user", "challenge")
         indexes = [models.Index(fields=["challenge", "created_at"])]
+
+
+# ─────────────────────────────────────────────────────────────
+# NOUVEAU SYSTÈME DE CONCOURS (remplace VlogChallenge/ChallengeEntry)
+# ─────────────────────────────────────────────────────────────
+
+METRIC_TYPE_CHOICES = [
+    ("vlog_likes",   "Likes sur un vlog (max)"),
+    ("total_points", "Points totaux gagnés"),
+    ("vlog_comments","Commentaires sur un vlog (max)"),
+    ("vlog_views",   "Vues sur un vlog (max)"),
+    ("composite",    "Score composite pondéré"),
+]
+
+CONTEST_TYPE_CHOICES = [
+    ("threshold", "Premier à atteindre le seuil"),
+    ("ranking",   "Classement en fin de période"),
+]
+
+CONTEST_STATUS_CHOICES = [
+    ("draft",    "Brouillon"),
+    ("active",   "Actif"),
+    ("extended", "Prolongé"),
+    ("ended",    "Terminé"),
+]
+
+PAYOUT_STATUS_CHOICES = [
+    ("pending", "En attente"),
+    ("paid",    "Payé"),
+]
+
+
+class Contest(models.Model):
+    """Concours configurable — threshold ou ranking, métrique libre."""
+    title              = models.CharField(max_length=150)
+    description        = models.TextField()
+    rules              = models.TextField(blank=True)
+    cover_image        = models.ImageField(upload_to="contests/", null=True, blank=True)
+
+    # Métrique et type
+    metric_type        = models.CharField(max_length=20, choices=METRIC_TYPE_CHOICES, default="vlog_likes")
+    contest_type       = models.CharField(max_length=10, choices=CONTEST_TYPE_CHOICES, default="threshold")
+    threshold          = models.PositiveIntegerField(null=True, blank=True,
+                            help_text="Seuil à atteindre (threshold uniquement)")
+    scoring_weights    = models.JSONField(default=dict, blank=True,
+                            help_text='Composite: {"vlog_likes":1,"vlog_comments":5,"vlog_views":0.1}')
+
+    # Conditions de participation
+    min_vlogs_required = models.PositiveIntegerField(default=0,
+                            help_text="Nb min de vlogs publiés PENDANT la période")
+
+    # Prix
+    max_winners        = models.PositiveIntegerField(default=1)
+    prize_amount       = models.PositiveIntegerField(default=0,
+                            help_text="Montant en FCFA par gagnant")
+
+    # Dates
+    start_date         = models.DateTimeField()
+    end_date           = models.DateTimeField(null=True, blank=True,
+                            help_text="Null = ouvert jusqu'à ce que max_winners soient trouvés")
+    status             = models.CharField(max_length=10, choices=CONTEST_STATUS_CHOICES, default="draft")
+
+    created_at         = models.DateTimeField(auto_now_add=True)
+    updated_at         = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-start_date"]
+        indexes  = [models.Index(fields=["status", "start_date"])]
+
+    def __str__(self):
+        return f"{self.title} [{self.get_status_display()}]"
+
+    @property
+    def is_open(self):
+        now = timezone.now()
+        if self.status not in ("active", "extended"):
+            return False
+        if self.end_date and now > self.end_date:
+            return False
+        return True
+
+    @property
+    def winners_count(self):
+        return self.winners.count()
+
+    @property
+    def is_full(self):
+        return self.winners_count >= self.max_winners
+
+
+class ContestWinner(models.Model):
+    """Enregistrement automatique quand un utilisateur remplit les conditions."""
+    contest            = models.ForeignKey(Contest, on_delete=models.CASCADE, related_name="winners")
+    user               = models.ForeignKey(User, on_delete=models.CASCADE, related_name="contest_wins")
+    best_vlog          = models.ForeignKey("Vlog", null=True, blank=True, on_delete=models.SET_NULL,
+                            related_name="contest_wins",
+                            help_text="Le vlog ayant déclenché la victoire")
+
+    # Timing (millisecondes importantes pour départager)
+    threshold_reached_at = models.DateTimeField(null=True, blank=True,
+                            help_text="Quand le vlog a franchi le seuil")
+    won_at             = models.DateTimeField(null=True, blank=True,
+                            help_text="Effectif = max(threshold_reached_at, qualified_at)")
+    rank               = models.PositiveSmallIntegerField(null=True, blank=True)
+    score              = models.PositiveIntegerField(default=0,
+                            help_text="Score au moment de la victoire")
+
+    # Paiement Wave
+    payout_status      = models.CharField(max_length=10, choices=PAYOUT_STATUS_CHOICES, default="pending")
+    payout_wave_ref    = models.CharField(max_length=120, blank=True)
+    payout_amount      = models.PositiveIntegerField(default=0)
+    paid_at            = models.DateTimeField(null=True, blank=True)
+    paid_by            = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL,
+                            related_name="payouts_made")
+
+    created_at         = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("contest", "user")
+        ordering        = ["won_at", "rank"]
+        indexes         = [models.Index(fields=["contest", "won_at"])]
+
+    def __str__(self):
+        return f"{self.user} — {self.contest.title} (#{self.rank})"

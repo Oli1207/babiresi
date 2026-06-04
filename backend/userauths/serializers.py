@@ -127,6 +127,12 @@ class MeUpdateSerializer(serializers.Serializer):
     state = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     city = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     address = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    # Réseaux sociaux + Wave
+    tiktok_handle    = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    instagram_handle = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    facebook_handle  = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    twitter_handle   = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    wave_number      = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     def update(self, instance, validated_data):
         """
@@ -144,7 +150,9 @@ class MeUpdateSerializer(serializers.Serializer):
         user.save()
 
         # ✅ CHANGE: champs Profile
-        for f in ["about", "gender", "country", "state", "city", "address"]:
+        for f in ["about", "gender", "country", "state", "city", "address",
+                  "tiktok_handle", "instagram_handle", "facebook_handle",
+                  "twitter_handle", "wave_number"]:
             if f in validated_data:
                 setattr(profile, f, validated_data.get(f))
 

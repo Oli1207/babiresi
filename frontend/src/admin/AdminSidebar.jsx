@@ -26,10 +26,11 @@ export default function AdminSidebar() {
 
         <div className="admin-nav-sep" />
 
-        <NavLink to="/admin/vlogs" className={linkClass}>🎬 Vlogs modération</NavLink>
-        <NavLink to="/admin/withdrawals" className={linkClass}>💸 Retraits points</NavLink>
-        <NavLink to="/admin/travel" className={linkClass}>✈️ Demandes voyage</NavLink>
-        <NavLink to="/admin/destinations" className={linkClass}>📍 Destinations</NavLink>
+        <NavLink to="/admin/contests" className={linkClass}>Concours & Récompenses</NavLink>
+        <NavLink to="/admin/vlogs" className={linkClass}>Vlogs modération</NavLink>
+        <NavLink to="/admin/withdrawals" className={linkClass}>Retraits points</NavLink>
+        <NavLink to="/admin/travel" className={linkClass}>Demandes voyage</NavLink>
+        <NavLink to="/admin/destinations" className={linkClass}>Destinations</NavLink>
       </div>
     </div>
   );

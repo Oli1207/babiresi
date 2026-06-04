@@ -43,6 +43,12 @@ export default function ProfileSettingsScreen() {
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
+  // Réseaux sociaux + Wave (pour concours)
+  const [tiktok,    setTiktok]    = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [facebook,  setFacebook]  = useState("");
+  const [twitter,   setTwitter]   = useState("");
+  const [wave,      setWave]      = useState("");
 
   // Photo
   const [photoFile, setPhotoFile] = useState(null);
@@ -94,6 +100,11 @@ export default function ProfileSettingsScreen() {
           setState(safeText(p.state));
           setCity(safeText(p.city));
           setAddress(safeText(p.address));
+          setTiktok(safeText(p.tiktok_handle));
+          setInstagram(safeText(p.instagram_handle));
+          setFacebook(safeText(p.facebook_handle));
+          setTwitter(safeText(p.twitter_handle));
+          setWave(safeText(p.wave_number));
         }
       } catch (e) {
     
@@ -148,6 +159,12 @@ export default function ProfileSettingsScreen() {
       fd.append("state", state);
       fd.append("city", city);
       fd.append("address", address);
+      // Réseaux sociaux + Wave
+      fd.append("tiktok_handle",    tiktok);
+      fd.append("instagram_handle", instagram);
+      fd.append("facebook_handle",  facebook);
+      fd.append("twitter_handle",   twitter);
+      fd.append("wave_number",      wave);
 
       // ✅ Photo (field name = image, car Profile.image)
       if (photoFile) fd.append("image", photoFile);
@@ -286,6 +303,27 @@ export default function ProfileSettingsScreen() {
                   <div className="col-12">
                     <label className="form-label">Adresse</label>
                     <input className="form-control" value={address} onChange={(e) => setAddress(e.target.value)} />
+                  </div>
+                </div>
+
+                {/* Réseaux sociaux + Wave */}
+                <hr className="my-3" />
+                <div className="fw-semibold mb-2">Réseaux sociaux <small className="text-muted fw-normal">(pour participer aux concours)</small></div>
+                <div className="row g-2">
+                  {[
+                    ["TikTok @", tiktok, setTiktok],
+                    ["Instagram @", instagram, setInstagram],
+                    ["Facebook", facebook, setFacebook],
+                    ["X / Twitter @", twitter, setTwitter],
+                  ].map(([label, val, setter]) => (
+                    <div className="col-md-6" key={label}>
+                      <label className="form-label">{label}</label>
+                      <input className="form-control" value={val} onChange={e => setter(e.target.value)} placeholder={`Ton handle ${label}`} />
+                    </div>
+                  ))}
+                  <div className="col-md-6">
+                    <label className="form-label">Numéro Wave <small className="text-muted">(pour recevoir tes gains)</small></label>
+                    <input className="form-control" value={wave} onChange={e => setWave(e.target.value)} placeholder="+225 07..." />
                   </div>
                 </div>
 

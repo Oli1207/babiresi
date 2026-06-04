@@ -28,6 +28,10 @@ export const vlogsApi = {
   enterChallenge: (pk, vlogId) =>
     apiInstance.post(`vlogs/challenges/${pk}/enter/`, { vlog_id: vlogId }),
 
+  // Nouveaux concours (Contest)
+  contests:       ()       => apiInstance.get('vlogs/contests/'),
+  contestDetail:  (id)     => apiInstance.get(`vlogs/contests/${id}/`),
+
   creatorDashboard: () => apiInstance.get('vlogs/creator/dashboard/'),
   pointsHistory: () => apiInstance.get('vlogs/creator/points/history/'),
   withdrawals: () => apiInstance.get('vlogs/creator/points/withdraw/'),

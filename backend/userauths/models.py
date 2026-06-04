@@ -45,6 +45,13 @@ class Profile(models.Model):
     address = models.CharField(max_length=100, null=True, blank=True)
     phone = models.CharField(max_length=20, blank=True, null=True,
                              validators=[RegexValidator(r'^[0-9+\-\s()]*$')])
+    # Réseaux sociaux (pour les concours)
+    tiktok_handle    = models.CharField(max_length=80, blank=True, null=True)
+    instagram_handle = models.CharField(max_length=80, blank=True, null=True)
+    facebook_handle  = models.CharField(max_length=120, blank=True, null=True)
+    twitter_handle   = models.CharField(max_length=80, blank=True, null=True)
+    # Numéro Wave (pour les paiements de récompenses)
+    wave_number      = models.CharField(max_length=20, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     pid = ShortUUIDField(unique=True, length=10, max_length=20, alphabet="abcdefghijklmnopqrstuvwxyz")
   

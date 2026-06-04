@@ -30,6 +30,7 @@ import AdminStatsOwnersScreen from "./admin/AdminStatsOwnersScreen";
 import AdminStatsTopListingsScreen from "./admin/AdminStatsTopListingsScreen";
 import AdminStatsProfitScreen from "./admin/AdminStatsProfitScreen";
 import AdminVlogsScreen from "./admin/AdminVlogsScreen";
+import AdminContestsScreen from "./admin/AdminContestsScreen";
 import AdminWithdrawalsScreen from "./admin/AdminWithdrawalsScreen";
 import AdminTravelScreen from "./admin/AdminTravelScreen";
 import AdminDestinationsScreen from "./admin/AdminDestinationsScreen";
@@ -414,6 +415,7 @@ function AppLayout() {
             <Route path="stats/top-listings" element={<AdminStatsTopListingsScreen />} />
             <Route path="stats/profit" element={<AdminStatsProfitScreen />} />
             <Route path="vlogs" element={<AdminVlogsScreen />} />
+            <Route path="contests" element={<AdminContestsScreen />} />
             <Route path="withdrawals" element={<AdminWithdrawalsScreen />} />
             <Route path="travel" element={<AdminTravelScreen />} />
             <Route path="destinations" element={<AdminDestinationsScreen />} />

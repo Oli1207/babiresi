@@ -95,3 +95,76 @@
 .status-confirmed { background: #d1fae5; color: #065f46; }
 .status-completed { background: #f3f4f6; color: #6b7280; }
 .status-cancelled { background: #fee2e2; color: #991b1b; }
+
+/* ── Admin Contests ─────────────────────────────────────── */
+.admin-section { padding: 24px; max-width: 1200px; }
+.admin-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.admin-section-header h2 { font-size: 1.2rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 8px; }
+.admin-btn-primary { background: #f97316; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: .85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+
+.admin-contests-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+@media (max-width: 900px) { .admin-contests-layout { grid-template-columns: 1fr; } }
+
+.admin-contest-list { display: flex; flex-direction: column; gap: 8px; }
+.admin-contest-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 14px; background: #fff; border-radius: 10px;
+  border: 1.5px solid #e5e7eb; cursor: pointer; transition: border-color .15s;
+}
+.admin-contest-item.selected { border-color: #f97316; background: #fff7f0; }
+.admin-contest-item:hover    { border-color: #f97316; }
+.aci-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.aci-status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.aci-left strong { font-size: .9rem; font-weight: 700; display: block; }
+.aci-meta { font-size: .74rem; color: #888; display: block; }
+.aci-edit-btn { background: none; border: none; color: #aaa; cursor: pointer; padding: 4px; }
+.aci-edit-btn:hover { color: #f97316; }
+
+.admin-contest-detail {
+  background: #fff; border-radius: 14px; padding: 20px;
+  border: 1.5px solid #e5e7eb; display: flex; flex-direction: column; gap: 16px;
+}
+.acd-header { display: flex; justify-content: space-between; align-items: center; }
+.acd-header h3 { font-size: 1.05rem; font-weight: 800; margin: 0; }
+.acd-status { font-size: .82rem; font-weight: 700; }
+.acd-meta-row { display: flex; flex-direction: column; gap: 4px; font-size: .8rem; color: #666; }
+.acd-meta-row span { display: flex; align-items: center; gap: 5px; }
+.acd-section h4 { font-size: .85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+
+.acd-winner-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+.acd-rank { width: 24px; font-weight: 700; color: #f97316; flex-shrink: 0; font-size: .85rem; }
+.acd-winner-info { flex: 1; }
+.acd-winner-info strong { font-size: .88rem; display: block; }
+.acd-socials { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.acd-socials a, .acd-socials span { font-size: .74rem; color: #3b82f6; text-decoration: none; background: #eff6ff; padding: 2px 8px; border-radius: 10px; }
+.acd-wave { background: #f0fdf4 !important; color: #16a34a !important; }
+.acd-score { font-weight: 700; font-size: .85rem; }
+.acd-pay.paid    { color: #16a34a; font-size: .78rem; display: flex; align-items: center; gap: 3px; font-weight: 700; }
+.acd-pay.pending { color: #f97316; font-size: .78rem; }
+
+.acd-leaderboard { max-height: 300px; overflow-y: auto; border: 1px solid #f0f0f0; border-radius: 8px; }
+.acd-lb-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid #f5f5f5; font-size: .82rem; }
+.acd-lb-row.winner { background: #f0fdf4; }
+.acd-lb-rank  { width: 24px; font-weight: 700; color: #888; flex-shrink: 0; }
+.acd-lb-name  { flex: 1; }
+.acd-lb-vlogs { font-size: .74rem; color: #aaa; }
+.acd-lb-score { font-weight: 700; }
+
+.declare-panel { background: #f9fafb; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.declare-panel h4 { font-size: .88rem; font-weight: 700; margin: 0 0 4px; }
+
+/* Contest form modal */
+.cf-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.cf-modal { background: #fff; border-radius: 16px; width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; }
+.cf-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #f0f0f0; position: sticky; top: 0; background: #fff; z-index: 1; }
+.cf-modal-header h3 { font-size: 1rem; font-weight: 800; margin: 0; }
+.cf-modal-header button { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #888; }
+.cf-modal-body { padding: 16px 20px 24px; }
+.cf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .cf-grid { grid-template-columns: 1fr; } }
+.cf-field { display: flex; flex-direction: column; gap: 3px; }
+.cf-label { font-size: .78rem; font-weight: 600; color: #555; }
+.cf-input { border: 1.5px solid #e5e7eb; border-radius: 8px; padding: 8px 11px; font-size: .88rem; outline: none; background: #fafafa; width: 100%; box-sizing: border-box; font-family: inherit; resize: vertical; }
+.cf-input:focus { border-color: #f97316; background: #fff; }
+.cf-error { background: #fef2f2; color: #dc2626; border-radius: 8px; padding: 8px 12px; font-size: .82rem; margin-top: 8px; }
+.cf-save-btn { width: 100%; margin-top: 16px; background: #f97316; color: #fff; border: none; border-radius: 10px; padding: 12px; font-size: .95rem; font-weight: 700; cursor: pointer; }
