@@ -52,23 +52,23 @@ export const REGIONS_CI = [
 ];
 
 export const VLOG_CATEGORIES = [
-  { value: 'nature', label: '🌿 Nature' },
-  { value: 'culture', label: '🎭 Culture' },
-  { value: 'food', label: '🍽️ Food' },
-  { value: 'nightlife', label: '🌙 Nightlife' },
-  { value: 'sport', label: '⚽ Sport' },
-  { value: 'artisanat', label: '🎨 Artisanat' },
-  { value: 'voyage', label: '✈️ Voyage' },
-  { value: 'lifestyle', label: '✨ Lifestyle' },
+  { value: 'nature',    label: 'Nature & Paysages' },
+  { value: 'culture',   label: 'Culture & Traditions' },
+  { value: 'food',      label: 'Gastronomie & Food' },
+  { value: 'nightlife', label: 'Vie nocturne' },
+  { value: 'sport',     label: 'Sport' },
+  { value: 'artisanat', label: 'Artisanat' },
+  { value: 'voyage',    label: 'Voyage' },
+  { value: 'lifestyle', label: 'Lifestyle' },
 ];
 
 export const AMBIANCES = [
-  { value: 'chill', label: '😌 Chill' },
-  { value: 'festif', label: '🎉 Festif' },
-  { value: 'aventure', label: '🏕️ Aventure' },
-  { value: 'romantique', label: '💕 Romantique' },
-  { value: 'famille', label: '👨‍👩‍👧 Famille' },
-  { value: 'decouverte', label: '🔍 Découverte' },
+  { value: 'chill',      label: 'Chill' },
+  { value: 'festif',     label: 'Festif' },
+  { value: 'aventure',   label: 'Aventure' },
+  { value: 'romantique', label: 'Romantique' },
+  { value: 'famille',    label: 'Famille' },
+  { value: 'decouverte', label: 'Découverte' },
 ];
 
 export const CREATOR_LEVELS = {

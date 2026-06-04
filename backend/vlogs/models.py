@@ -5,10 +5,17 @@ from django.utils import timezone
 User = settings.AUTH_USER_MODEL
 
 VLOG_CATEGORIES = (
-    ("gastronomie", "Gastronomie"),
-    ("culture", "Culture & Traditions"),
+    # Valeurs frontend actives
     ("nature", "Nature & Paysages"),
+    ("culture", "Culture & Traditions"),
+    ("food", "Gastronomie & Food"),
+    ("nightlife", "Vie nocturne"),
+    ("sport", "Sport"),
     ("artisanat", "Artisanat"),
+    ("voyage", "Voyage"),
+    ("lifestyle", "Lifestyle"),
+    # Valeurs legacy (données existantes)
+    ("gastronomie", "Gastronomie (ancien)"),
     ("fetes", "Fêtes & Événements"),
     ("vie_locale", "Vie quotidienne"),
     ("plages", "Plages"),
@@ -17,11 +24,16 @@ VLOG_CATEGORIES = (
 )
 
 VLOG_AMBIANCE = (
+    # Valeurs frontend actives
+    ("chill", "Chill"),
+    ("festif", "Festif"),
     ("aventure", "Aventure"),
+    ("romantique", "Romantique"),
+    ("famille", "Famille"),
+    ("decouverte", "Découverte"),
+    # Valeurs legacy
     ("detente", "Détente"),
     ("culturel", "Découverte culturelle"),
-    ("famille", "Family-friendly"),
-    ("romantique", "Romantique"),
     ("nocturne", "Vie nocturne"),
 )
 
