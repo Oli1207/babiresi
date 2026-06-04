@@ -4,6 +4,7 @@ from rest_framework import status, permissions
 from rest_framework.throttling import ScopedRateThrottle
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from django.db.models import F
 from django.utils import timezone
 
 from .models import (
@@ -143,8 +144,9 @@ class VlogViewRegisterView(APIView):
         ).exists()
 
         if not already_viewed and watch_pct >= 50:
-            VlogView.objects.create(vlog=vlog, user=user, ip_address=ip, watch_percentage=watch_pct)
-            Vlog.objects.filter(pk=pk).update(views_count=vlog.views_count + 1)
+            with transaction.atomic():
+                VlogView.objects.create(vlog=vlog, user=user, ip_address=ip, watch_percentage=watch_pct)
+                Vlog.objects.filter(pk=pk).update(views_count=F('views_count') + 1)
             award_points(vlog.author, "view", source_vlog=vlog)
             return Response({"counted": True})
 

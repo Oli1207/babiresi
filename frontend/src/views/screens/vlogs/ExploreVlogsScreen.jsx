@@ -227,10 +227,12 @@ function CommentsDrawer({ vlogId, commentCount, onNewComment, onClose }) {
    Single TikTok item
 ───────────────────────────────────────────────────────────── */
 function TikTokItem({ vlog, onLike, onSave, isActive }) {
-  const videoRef    = useRef(null);
-  const fetchedRef  = useRef(false);
-  const timersRef   = useRef([]);
-  const navigate    = useNavigate();
+  const videoRef       = useRef(null);
+  const fetchedRef     = useRef(false);
+  const timersRef      = useRef([]);
+  const viewCountedRef = useRef(false);   // ← vue déjà comptée pour ce vlog
+  const imageTimerRef  = useRef(null);    // ← timer pour images
+  const navigate       = useNavigate();
 
   /* — playback — */
   const [muted,        setMuted]        = useState(true);
@@ -238,6 +240,31 @@ function TikTokItem({ vlog, onLike, onSave, isActive }) {
   const [descExpanded, setDescExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [cmtCount,     setCmtCount]     = useState(vlog.comments_count || 0);
+
+  /* ── Enregistrer une vue ── */
+  const registerView = useCallback((pct = 100) => {
+    if (viewCountedRef.current) return;
+    viewCountedRef.current = true;
+    vlogsApi.registerView(vlog.id, pct).catch(() => {});
+  }, [vlog.id]);
+
+  /* ── Vue vidéo : déclenche à 50% du temps écoulé ── */
+  const handleTimeUpdate = useCallback(() => {
+    if (viewCountedRef.current || !videoRef.current) return;
+    const { currentTime, duration } = videoRef.current;
+    if (!duration) return;
+    const pct = (currentTime / duration) * 100;
+    if (pct >= 50) registerView(Math.round(pct));
+  }, [registerView]);
+
+  /* ── Vue image/no-media : déclenche après 3s d'affichage ── */
+  useEffect(() => {
+    if (vlog.cloudinary_url) return;   // vidéo gérée par onTimeUpdate
+    if (isActive && !viewCountedRef.current) {
+      imageTimerRef.current = setTimeout(() => registerView(100), 3000);
+    }
+    return () => { if (imageTimerRef.current) clearTimeout(imageTimerRef.current); };
+  }, [isActive, vlog.cloudinary_url, registerView]);
 
   /* — context notifications — */
   const [contextItems,  setContextItems]  = useState([]);
@@ -384,6 +411,7 @@ function TikTokItem({ vlog, onLike, onSave, isActive }) {
           playsInline
           className="tt-video"
           onClick={togglePlay}
+          onTimeUpdate={handleTimeUpdate}
         />
       ) : vlog.thumbnail_url ? (
         <img
