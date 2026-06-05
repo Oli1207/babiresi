@@ -184,7 +184,7 @@ function CommentsDrawer({ vlogId, commentCount, onNewComment, onClose }) {
       <div className="cmt-drawer">
         <div className="cmt-handle" />
         <div className="cmt-header">
-          <span>{commentCount} commentaire{commentCount !== 1 ? 's' : ''}</span>
+          <span>{(loading ? commentCount : comments.length)} commentaire{(loading ? commentCount : comments.length) !== 1 ? 's' : ''}</span>
           <button className="cmt-close" onClick={onClose}><X size={18} /></button>
         </div>
         <div className="cmt-list" ref={listRef}>
@@ -722,7 +722,7 @@ function DesktopSidebar({ vlog, onLike, onSave }) {
       prevIdRef.current = vlog.id;
       setCmtLoading(true);
       vlogsApi.getComments(vlog.id)
-        .then(r => setComments(r.data.results || r.data || []))
+        .then(r => { const list = r.data.results || r.data || []; setComments(list); setCmtCount(list.length); })
         .catch(() => {})
         .finally(() => setCmtLoading(false));
     }
@@ -734,7 +734,7 @@ function DesktopSidebar({ vlog, onLike, onSave }) {
     prevIdRef.current = vlog.id;
     setCmtLoading(true);
     vlogsApi.getComments(vlog.id)
-      .then(r => setComments(r.data.results || r.data || []))
+      .then(r => { const list = r.data.results || r.data || []; setComments(list); setCmtCount(list.length); })
       .catch(() => {})
       .finally(() => setCmtLoading(false));
   };

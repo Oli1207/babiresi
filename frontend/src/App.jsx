@@ -347,7 +347,7 @@ function AppLayout() {
       {!isFullscreen && <Navbar />}
       {!isFullscreen && <div className="navbar-spacer" />}
 
-      <main className={isFullscreen ? "main-vlogs" : "container py-4"}>
+      <main className={isVlogFeed ? "main-vlogs" : isColoc ? "main-coloc" : "container py-4"}>
         <Routes>
           {/* "/" = TikTok vlog feed */}
           <Route path="/" element={<ExploreVlogsScreen />} />

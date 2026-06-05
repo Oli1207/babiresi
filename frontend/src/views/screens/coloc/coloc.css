@@ -336,7 +336,7 @@
 }
 
 /* ── Matches list ── */
-.matches-screen { max-width: 600px; margin: 0 auto; padding: 16px; }
+.matches-screen { max-width: 600px; margin: 0 auto; padding: 16px 16px calc(80px + env(safe-area-inset-bottom, 0)); }
 .matches-title  { font-size: 1.3rem; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 
 .match-item {
@@ -454,7 +454,7 @@
 .chat-send-btn:disabled { opacity: .5; cursor: not-allowed; }
 
 /* ── Setup form ── */
-.coloc-setup { max-width: 640px; margin: 0 auto; padding: 20px 16px 48px; }
+.coloc-setup { max-width: 640px; margin: 0 auto; padding: 20px 16px calc(80px + env(safe-area-inset-bottom, 0)); }
 .setup-step { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,.06); margin-bottom: 16px; }
 .setup-step h3 { font-size: 1rem; font-weight: 700; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
 .setup-label { font-size: .82rem; font-weight: 600; color: #555; display: block; margin-bottom: 4px; }
