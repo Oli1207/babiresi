@@ -96,7 +96,7 @@ class VlogCommentSerializer(serializers.ModelSerializer):
     def get_replies(self, obj):
         if obj.parent is None:
             return VlogCommentSerializer(
-                obj.replies.all()[:5], many=True, context=self.context
+                obj.replies.all().order_by("created_at"), many=True, context=self.context
             ).data
         return []
 

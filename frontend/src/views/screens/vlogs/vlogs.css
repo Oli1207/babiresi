@@ -1939,3 +1939,40 @@
   border-top: 1px solid #2a2a2a;
   flex-shrink: 0;
 }
+
+/* ── Réponses (threading) ── */
+.cmt-reply-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: .72rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 0;
+  margin-top: 2px;
+}
+.cmt-reply-btn:hover { color: #f97316; }
+
+.cmt-reply-input {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  align-items: center;
+}
+.cmt-reply-input .cmt-input { padding: 6px 12px; font-size: .82rem; }
+.cmt-reply-input .cmt-send  { width: 30px; height: 30px; }
+
+.cmt-reply {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-left: 4px;
+  border-left: 2px solid #2a2a2a;
+}
+.cmt-avatar-sm {
+  width: 24px;
+  height: 24px;
+  font-size: .7rem;
+}
+/* Sidebar desktop : bordure réponse plus claire */
+.tt-dsk-sidebar .cmt-reply { border-left-color: #333; }

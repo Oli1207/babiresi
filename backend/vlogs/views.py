@@ -262,11 +262,10 @@ class VlogCommentsView(APIView):
 
     def get(self, request, pk):
         vlog = get_object_or_404(Vlog, pk=pk)
-        # Liste plate de TOUS les commentaires (top-level + réponses), récents d'abord.
-        # Garantit que le nombre affiché == comments_count.
-        comments = vlog.comments.select_related("user").order_by("-created_at")
-        # Self-heal : recale comments_count sur le réel
-        real_count = comments.count()
+        # Top-level récents d'abord, avec réponses imbriquées (via serializer).
+        comments = vlog.comments.filter(parent=None).select_related("user").order_by("-created_at")
+        # Self-heal : recale comments_count sur le total réel (parents + réponses)
+        real_count = vlog.comments.count()
         if vlog.comments_count != real_count:
             Vlog.objects.filter(pk=pk).update(comments_count=real_count)
         serializer = VlogCommentSerializer(comments, many=True, context={"request": request})

@@ -6,7 +6,7 @@ import {
   Heart, MessageCircle, Bookmark, Share2, VolumeX, Volume2,
   Search, Flame, Trash2, SlidersHorizontal, RefreshCw,
   Music, Plus, Film, Video, ArrowLeft, Send,
-  Map, Briefcase, Plane, User, Trophy,
+  Map, Briefcase, Plane, User, Trophy, Users,
 } from 'lucide-react';
 import { useAuthStore } from '../../../store/auth';
 import { useVlogStore } from '../../../store/vlogs';
@@ -147,6 +147,83 @@ function ContextDrawer({ data, onClose }) {
   );
 }
 
+/* Total commentaires = parents + réponses */
+function countComments(list) {
+  return (list || []).reduce((s, c) => s + 1 + (c.replies?.length || 0), 0);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Liste de commentaires threadée (parents + réponses imbriquées)
+   Réutilisée dans le drawer mobile ET la sidebar desktop.
+───────────────────────────────────────────────────────────── */
+function CommentList({ vlogId, comments, setComments, onCountChange, isLoggedIn }) {
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText,  setReplyText]  = useState('');
+  const [posting,    setPosting]    = useState(false);
+
+  const cName = (c) => c.author_name || c.user?.full_name || '?';
+  const cMsg  = (c) => c.message || c.content;
+
+  const postReply = async (parentId) => {
+    if (!replyText.trim() || posting) return;
+    setPosting(true);
+    try {
+      const r = await vlogsApi.postComment(vlogId, replyText.trim(), parentId);
+      setComments(list => list.map(c =>
+        c.id === parentId ? { ...c, replies: [...(c.replies || []), r.data] } : c
+      ));
+      setReplyText('');
+      setReplyingTo(null);
+      onCountChange?.(1);
+    } catch {}
+    finally { setPosting(false); }
+  };
+
+  return comments.map(c => (
+    <div key={c.id} className="cmt-item">
+      <div className="cmt-avatar">{cName(c)[0].toUpperCase()}</div>
+      <div className="cmt-body">
+        <span className="cmt-author">{cName(c)}</span>
+        <p className="cmt-text">{cMsg(c)}</p>
+        {isLoggedIn && (
+          <button className="cmt-reply-btn" onClick={() => { setReplyingTo(replyingTo === c.id ? null : c.id); setReplyText(''); }}>
+            Répondre
+          </button>
+        )}
+
+        {/* Champ de réponse */}
+        {replyingTo === c.id && (
+          <div className="cmt-reply-input">
+            <input
+              className="cmt-input"
+              autoFocus
+              value={replyText}
+              onChange={e => setReplyText(e.target.value)}
+              placeholder={`Répondre à ${cName(c)}…`}
+              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && postReply(c.id)}
+              maxLength={500}
+            />
+            <button className="cmt-send" onClick={() => postReply(c.id)} disabled={!replyText.trim() || posting}>
+              <Send size={15} />
+            </button>
+          </div>
+        )}
+
+        {/* Réponses imbriquées */}
+        {c.replies?.map(rep => (
+          <div key={rep.id} className="cmt-reply">
+            <div className="cmt-avatar cmt-avatar-sm">{cName(rep)[0].toUpperCase()}</div>
+            <div className="cmt-body">
+              <span className="cmt-author">{cName(rep)}</span>
+              <p className="cmt-text">{cMsg(rep)}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ));
+}
+
 /* ─────────────────────────────────────────────────────────────
    Comments bottom-sheet drawer (TikTok-style inline)
 ───────────────────────────────────────────────────────────── */
@@ -164,6 +241,8 @@ function CommentsDrawer({ vlogId, commentCount, onNewComment, onClose }) {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [vlogId]);
+
+  const total = loading ? commentCount : countComments(comments);
 
   const post = async () => {
     if (!text.trim() || posting) return;
@@ -184,7 +263,7 @@ function CommentsDrawer({ vlogId, commentCount, onNewComment, onClose }) {
       <div className="cmt-drawer">
         <div className="cmt-handle" />
         <div className="cmt-header">
-          <span>{(loading ? commentCount : comments.length)} commentaire{(loading ? commentCount : comments.length) !== 1 ? 's' : ''}</span>
+          <span>{total} commentaire{total !== 1 ? 's' : ''}</span>
           <button className="cmt-close" onClick={onClose}><X size={18} /></button>
         </div>
         <div className="cmt-list" ref={listRef}>
@@ -192,15 +271,15 @@ function CommentsDrawer({ vlogId, commentCount, onNewComment, onClose }) {
             <p className="cmt-empty">Chargement…</p>
           ) : comments.length === 0 ? (
             <p className="cmt-empty">Sois le premier à commenter ✍️</p>
-          ) : comments.map(c => (
-            <div key={c.id} className="cmt-item">
-              <div className="cmt-avatar">{(c.author_name || c.user?.full_name || '?')[0].toUpperCase()}</div>
-              <div className="cmt-body">
-                <span className="cmt-author">{c.author_name || c.user?.full_name}</span>
-                <p className="cmt-text">{c.message || c.content}</p>
-              </div>
-            </div>
-          ))}
+          ) : (
+            <CommentList
+              vlogId={vlogId}
+              comments={comments}
+              setComments={setComments}
+              onCountChange={() => onNewComment?.()}
+              isLoggedIn={isLoggedIn}
+            />
+          )}
         </div>
         {isLoggedIn ? (
           <div className="cmt-input-row">
@@ -676,6 +755,7 @@ function DesktopSideNav({ onClose, zoneFilter }) {
     { to: '/residences',  icon: <Home      size={20} strokeWidth={1.6} />, label: 'Hébergements' },
     { to: '/carte',       icon: <Map       size={20} strokeWidth={1.6} />, label: 'Carte'        },
     { to: '/services',    icon: <Briefcase size={20} strokeWidth={1.6} />, label: 'Services'     },
+    { to: '/coloc',       icon: <Users     size={20} strokeWidth={1.6} />, label: 'Coloc'        },
     { to: '/voyager',     icon: <Plane     size={20} strokeWidth={1.6} />, label: 'Planifier'    },
     { to: '/vlogs/challenges', icon: <Trophy size={20} strokeWidth={1.6} />, label: 'Concours'  },
     { to: '/mon-espace',  icon: <User      size={20} strokeWidth={1.6} />, label: 'Mon espace'  },
@@ -722,7 +802,7 @@ function DesktopSidebar({ vlog, onLike, onSave }) {
       prevIdRef.current = vlog.id;
       setCmtLoading(true);
       vlogsApi.getComments(vlog.id)
-        .then(r => { const list = r.data.results || r.data || []; setComments(list); setCmtCount(list.length); })
+        .then(r => { const list = r.data.results || r.data || []; setComments(list); setCmtCount(countComments(list)); })
         .catch(() => {})
         .finally(() => setCmtLoading(false));
     }
@@ -734,7 +814,7 @@ function DesktopSidebar({ vlog, onLike, onSave }) {
     prevIdRef.current = vlog.id;
     setCmtLoading(true);
     vlogsApi.getComments(vlog.id)
-      .then(r => { const list = r.data.results || r.data || []; setComments(list); setCmtCount(list.length); })
+      .then(r => { const list = r.data.results || r.data || []; setComments(list); setCmtCount(countComments(list)); })
       .catch(() => {})
       .finally(() => setCmtLoading(false));
   };
@@ -773,9 +853,6 @@ function DesktopSidebar({ vlog, onLike, onSave }) {
           <div className="tt-dsk-avatar">{vlog.author_name?.[0]?.toUpperCase() || '?'}</div>
           <span className="tt-dsk-author-name">@{vlog.author_name}</span>
         </div>
-        <Link to={`/vlogs/${vlog.id}`} className="tt-dsk-view-btn">
-          Voir
-        </Link>
       </div>
 
       {/* Panel switcher */}
@@ -829,15 +906,15 @@ function DesktopSidebar({ vlog, onLike, onSave }) {
               <p className="cmt-empty">Chargement…</p>
             ) : comments.length === 0 ? (
               <p className="cmt-empty">Sois le premier à commenter ✍️</p>
-            ) : comments.map(c => (
-              <div key={c.id} className="cmt-item">
-                <div className="cmt-avatar">{(c.author_name || c.user?.full_name || '?')[0].toUpperCase()}</div>
-                <div className="cmt-body">
-                  <span className="cmt-author">{c.author_name || c.user?.full_name}</span>
-                  <p className="cmt-text">{c.message || c.content}</p>
-                </div>
-              </div>
-            ))}
+            ) : (
+              <CommentList
+                vlogId={vlog.id}
+                comments={comments}
+                setComments={setComments}
+                onCountChange={() => setCmtCount(c => c + 1)}
+                isLoggedIn={isLoggedIn}
+              />
+            )}
           </div>
           {isLoggedIn ? (
             <div className="cmt-input-row">

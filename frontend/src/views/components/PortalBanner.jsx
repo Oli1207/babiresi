@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plane, Globe, Video, Briefcase, MapPin, Home, Eye, Mountain } from 'lucide-react';
+import { Plane, Globe, Video, Briefcase, MapPin, Home, Eye, Mountain, Users } from 'lucide-react';
 import { vlogsApi } from '../../utils/vlogs';
 import { destinationsApi } from '../../utils/destinations';
 import './PortalBanner.css';
@@ -46,6 +46,11 @@ export default function PortalBanner() {
           <span className="pillar-icon"><Briefcase size={28} strokeWidth={1.4} /></span>
           <h3>{t('home.pillars.experience')}</h3>
           <p>{t('home.pillars.experienceDesc')}</p>
+        </Link>
+        <Link to="/coloc" className="pillar-card">
+          <span className="pillar-icon"><Users size={28} strokeWidth={1.4} /></span>
+          <h3>Coloc</h3>
+          <p>Trouve ton colocataire idéal à Abidjan</p>
         </Link>
         <Link to="/voyager" className="pillar-card pillar-featured">
           <span className="pillar-icon"><Plane size={28} strokeWidth={1.4} /></span>
