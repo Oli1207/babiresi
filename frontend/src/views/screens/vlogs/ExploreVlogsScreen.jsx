@@ -6,6 +6,7 @@ import {
   Heart, MessageCircle, Bookmark, Share2, VolumeX, Volume2,
   Search, Flame, Trash2, SlidersHorizontal, RefreshCw,
   Music, Plus, Film, Video, ArrowLeft, Send,
+  Map, Briefcase, Plane, User, Trophy,
 } from 'lucide-react';
 import { useAuthStore } from '../../../store/auth';
 import { useVlogStore } from '../../../store/vlogs';
@@ -668,6 +669,200 @@ function SearchBar({ value, onChange, onClose }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
+   Desktop Left Sidenav
+───────────────────────────────────────────────────────────── */
+function DesktopSideNav({ onClose, zoneFilter }) {
+  const { isLoggedIn } = useAuthStore();
+  const navLinks = [
+    { to: '/residences',  icon: <Home      size={20} strokeWidth={1.6} />, label: 'Hébergements' },
+    { to: '/carte',       icon: <Map       size={20} strokeWidth={1.6} />, label: 'Carte'        },
+    { to: '/services',    icon: <Briefcase size={20} strokeWidth={1.6} />, label: 'Services'     },
+    { to: '/voyager',     icon: <Plane     size={20} strokeWidth={1.6} />, label: 'Planifier'    },
+    { to: '/vlogs/challenges', icon: <Trophy size={20} strokeWidth={1.6} />, label: 'Concours'  },
+    { to: '/mon-espace',  icon: <User      size={20} strokeWidth={1.6} />, label: 'Mon espace'  },
+  ];
+  return (
+    <nav className="tt-dsk-sidenav">
+      <Link to="/" className="tt-dsk-logo">
+        <span>B</span>
+      </Link>
+      <div className="tt-dsk-nav-links">
+        {navLinks.map(l => (
+          <Link key={l.to} to={l.to} className="tt-dsk-nav-link">
+            {l.icon}
+            <span>{l.label}</span>
+          </Link>
+        ))}
+      </div>
+      <Link to="/vlogs/create" className="tt-dsk-post-btn">
+        <Plus size={18} /> Poster
+      </Link>
+    </nav>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Desktop Right Sidebar
+───────────────────────────────────────────────────────────── */
+function DesktopSidebar({ vlog, onLike, onSave }) {
+  const { isLoggedIn } = useAuthStore();
+  const navigate = useNavigate();
+  const [panel,       setPanel]       = useState('info');   // 'info' | 'comments'
+  const [comments,    setComments]    = useState([]);
+  const [cmtLoading,  setCmtLoading]  = useState(false);
+  const [cmtText,     setCmtText]     = useState('');
+  const [posting,     setPosting]     = useState(false);
+  const [cmtCount,    setCmtCount]    = useState(vlog?.comments_count || 0);
+  const prevIdRef = useRef(null);
+
+  // Reload comments when switching to comments panel or vlog changes
+  useEffect(() => {
+    if (!vlog) return;
+    setCmtCount(vlog.comments_count || 0);
+    if (panel === 'comments' && prevIdRef.current !== vlog.id) {
+      prevIdRef.current = vlog.id;
+      setCmtLoading(true);
+      vlogsApi.getComments(vlog.id)
+        .then(r => setComments(r.data.results || r.data || []))
+        .catch(() => {})
+        .finally(() => setCmtLoading(false));
+    }
+  }, [vlog, panel]);
+
+  const openComments = () => {
+    setPanel('comments');
+    if (!vlog || prevIdRef.current === vlog.id) return;
+    prevIdRef.current = vlog.id;
+    setCmtLoading(true);
+    vlogsApi.getComments(vlog.id)
+      .then(r => setComments(r.data.results || r.data || []))
+      .catch(() => {})
+      .finally(() => setCmtLoading(false));
+  };
+
+  const postComment = async () => {
+    if (!cmtText.trim() || posting || !vlog) return;
+    setPosting(true);
+    try {
+      const r = await vlogsApi.postComment(vlog.id, cmtText.trim());
+      setComments(c => [r.data, ...c]);
+      setCmtText('');
+      setCmtCount(c => c + 1);
+    } catch {}
+    finally { setPosting(false); }
+  };
+
+  if (!vlog) {
+    return (
+      <aside className="tt-dsk-sidebar">
+        <div className="tt-dsk-empty">
+          <Video size={40} strokeWidth={1.2} color="#444" />
+          <p>Fais défiler pour explorer</p>
+        </div>
+      </aside>
+    );
+  }
+
+  const catLabel = VLOG_CATEGORIES.find(c => c.value === vlog.category)?.label;
+  const regLabel = REGIONS_CI.find(r => r.value === vlog.region)?.label;
+
+  return (
+    <aside className="tt-dsk-sidebar">
+      {/* Header */}
+      <div className="tt-dsk-sb-header">
+        <div className="tt-dsk-author">
+          <div className="tt-dsk-avatar">{vlog.author_name?.[0]?.toUpperCase() || '?'}</div>
+          <span className="tt-dsk-author-name">@{vlog.author_name}</span>
+        </div>
+        <Link to={`/vlogs/${vlog.id}`} className="tt-dsk-view-btn">
+          Voir
+        </Link>
+      </div>
+
+      {/* Panel switcher */}
+      {panel === 'info' ? (
+        <div className="tt-dsk-sb-body">
+          <h3 className="tt-dsk-title">{vlog.title}</h3>
+          {vlog.description && <p className="tt-dsk-desc">{vlog.description}</p>}
+          <div className="tt-dsk-tags">
+            {catLabel && <span className="tt-dsk-tag">{catLabel}</span>}
+            {regLabel && <span className="tt-dsk-tag"><MapPin size={11} /> {regLabel}</span>}
+          </div>
+
+          {/* Actions */}
+          <div className="tt-dsk-actions">
+            <button
+              className={`tt-dsk-action ${vlog.is_liked ? 'active' : ''}`}
+              onClick={() => onLike(vlog.id)}
+            >
+              <Heart size={22} strokeWidth={1.8} fill={vlog.is_liked ? 'currentColor' : 'none'} />
+              <span>{vlog.likes_count}</span>
+            </button>
+            <button className="tt-dsk-action" onClick={openComments}>
+              <MessageCircle size={22} strokeWidth={1.8} />
+              <span>{cmtCount}</span>
+            </button>
+            <button
+              className={`tt-dsk-action ${vlog.is_saved ? 'active' : ''}`}
+              onClick={() => onSave(vlog.id)}
+            >
+              <Bookmark size={22} strokeWidth={1.8} fill={vlog.is_saved ? 'currentColor' : 'none'} />
+              <span>{vlog.saves_count}</span>
+            </button>
+            <button
+              className="tt-dsk-action"
+              onClick={() => navigator.share?.({ title: vlog.title, url: `${window.location.origin}/vlogs/${vlog.id}` })}
+            >
+              <Share2 size={22} strokeWidth={1.8} />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="tt-dsk-comments-panel">
+          <div className="tt-dsk-comments-header">
+            <button className="tt-dsk-back-btn" onClick={() => setPanel('info')}>
+              <ArrowLeft size={16} /> Retour
+            </button>
+            <span>{cmtCount} commentaire{cmtCount !== 1 ? 's' : ''}</span>
+          </div>
+          <div className="tt-dsk-comments-list">
+            {cmtLoading ? (
+              <p className="cmt-empty">Chargement…</p>
+            ) : comments.length === 0 ? (
+              <p className="cmt-empty">Sois le premier à commenter ✍️</p>
+            ) : comments.map(c => (
+              <div key={c.id} className="cmt-item">
+                <div className="cmt-avatar">{(c.author_name || c.user?.full_name || '?')[0].toUpperCase()}</div>
+                <div className="cmt-body">
+                  <span className="cmt-author">{c.author_name || c.user?.full_name}</span>
+                  <p className="cmt-text">{c.message || c.content}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {isLoggedIn ? (
+            <div className="cmt-input-row">
+              <input
+                className="cmt-input"
+                value={cmtText}
+                onChange={e => setCmtText(e.target.value)}
+                placeholder="Ajouter un commentaire…"
+                onKeyDown={e => e.key === 'Enter' && !e.shiftKey && postComment()}
+              />
+              <button className="cmt-send" onClick={postComment} disabled={!cmtText.trim() || posting}>
+                <Send size={17} />
+              </button>
+            </div>
+          ) : (
+            <p className="cmt-login-hint">Connecte-toi pour commenter</p>
+          )}
+        </div>
+      )}
+    </aside>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
    Main Screen
 ───────────────────────────────────────────────────────────── */
 /**
@@ -799,8 +994,20 @@ export default function ExploreVlogsScreen({ initialVlogId, zoneFilter, onClose 
     ? (zoneFilter.city || zoneFilter.region || 'Zone')
     : null;
 
+  const currentVlog = displayVlogs[activeIndex] || null;
+
   return (
     <div className="tt-screen">
+
+      {/* ── DESKTOP SIDENAV (hidden on mobile) ── */}
+      <DesktopSideNav zoneFilter={zoneFilter} onClose={onClose} />
+
+      {/* ── DESKTOP SIDEBAR (hidden on mobile) ── */}
+      <DesktopSidebar
+        vlog={currentVlog}
+        onLike={handleLike}
+        onSave={handleSave}
+      />
 
       {/* ── TOP BAR ── */}
       <div className={`tt-topbar ${showSearch ? 'hidden' : ''}`}>
