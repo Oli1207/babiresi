@@ -151,7 +151,7 @@ function ContextDrawer({ data, onClose }) {
    Comments bottom-sheet drawer (TikTok-style inline)
 ───────────────────────────────────────────────────────────── */
 function CommentsDrawer({ vlogId, commentCount, onNewComment, onClose }) {
-  const { isLoggedIn } = useAuthStore();
+  const isLoggedIn = !!useAuthStore(s => s.user);
   const [comments, setComments] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [text,     setText]     = useState('');
@@ -672,7 +672,6 @@ function SearchBar({ value, onChange, onClose }) {
    Desktop Left Sidenav
 ───────────────────────────────────────────────────────────── */
 function DesktopSideNav({ onClose, zoneFilter }) {
-  const { isLoggedIn } = useAuthStore();
   const navLinks = [
     { to: '/residences',  icon: <Home      size={20} strokeWidth={1.6} />, label: 'Hébergements' },
     { to: '/carte',       icon: <Map       size={20} strokeWidth={1.6} />, label: 'Carte'        },
@@ -705,7 +704,7 @@ function DesktopSideNav({ onClose, zoneFilter }) {
    Desktop Right Sidebar
 ───────────────────────────────────────────────────────────── */
 function DesktopSidebar({ vlog, onLike, onSave }) {
-  const { isLoggedIn } = useAuthStore();
+  const isLoggedIn = !!useAuthStore(s => s.user);
   const navigate = useNavigate();
   const [panel,       setPanel]       = useState('info');   // 'info' | 'comments'
   const [comments,    setComments]    = useState([]);

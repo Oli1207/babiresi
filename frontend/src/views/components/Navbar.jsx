@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Globe, Map, Briefcase, Plane, User, LogIn, UserPlus, LogOut, Menu, X } from 'lucide-react';
+import { Globe, Map, Briefcase, Plane, User, LogIn, UserPlus, LogOut, Menu, X, Users } from 'lucide-react';
 import { useAuthStore } from '../../store/auth';
 import NotificationBell from './NotificationBell';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -44,6 +44,9 @@ function Navbar() {
           </Link>
           <Link to="/services" className={active('/services')} onClick={close}>
             <Briefcase size={15} /> Services
+          </Link>
+          <Link to="/coloc" className={active('/coloc')} onClick={close}>
+            <Users size={15} /> Coloc
           </Link>
           <Link to="/voyager" className={`${active('/voyager')} navbar-link-primary`} onClick={close}>
             <Plane size={15} /> Planifier

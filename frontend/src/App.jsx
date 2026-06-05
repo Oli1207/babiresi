@@ -45,6 +45,11 @@ import ServicesScreen from "./views/screens/services/ServicesScreen";
 import ArtisanShopScreen from "./views/screens/services/ArtisanShopScreen";
 import ServiceDetailScreen from "./views/screens/services/ServiceDetailScreen";
 import RegisterServiceScreen from "./views/screens/services/RegisterServiceScreen";
+import ColocScreen from "./views/screens/coloc/ColocScreen";
+import ColocSetupScreen from "./views/screens/coloc/ColocSetupScreen";
+import ColocMatchesScreen from "./views/screens/coloc/ColocMatchesScreen";
+import ColocChatScreen from "./views/screens/coloc/ColocChatScreen";
+import ColocProfileScreen from "./views/screens/coloc/ColocProfileScreen";
 
 import ExploreCIScreen from "./views/screens/destinations/ExploreCIScreen";
 import DestinationScreen from "./views/screens/destinations/DestinationScreen";
@@ -70,6 +75,8 @@ function AppLayout() {
   const location = useLocation();
 
   const isVlogFeed = location.pathname === "/";
+  const isColoc    = location.pathname.startsWith("/coloc");
+  const isFullscreen = isVlogFeed || isColoc;
   const isHome     = false;  // no longer used for full-screen lock
   const isAuth     = location.pathname === "/login" || location.pathname === "/register";
 
@@ -336,11 +343,11 @@ function AppLayout() {
         </div>
       )}
 
-      {/* Hide navbar on fullscreen vlog feed (it locks scroll itself) */}
-      {!isVlogFeed && <Navbar />}
-      {!isVlogFeed && <div className="navbar-spacer" />}
+      {/* Hide navbar on fullscreen vlog feed + coloc (they manage their own nav) */}
+      {!isFullscreen && <Navbar />}
+      {!isFullscreen && <div className="navbar-spacer" />}
 
-      <main className={isVlogFeed ? "main-vlogs" : "container py-4"}>
+      <main className={isFullscreen ? "main-vlogs" : "container py-4"}>
         <Routes>
           {/* "/" = TikTok vlog feed */}
           <Route path="/" element={<ExploreVlogsScreen />} />
@@ -389,6 +396,13 @@ function AppLayout() {
           {/* Services */}
           <Route path="/services" element={<ServicesScreen />} />
           <Route path="/services/register" element={<RegisterServiceScreen />} />
+
+          {/* Coloc — Tinder pour colocataires */}
+          <Route path="/coloc" element={<ColocScreen />} />
+          <Route path="/coloc/setup" element={<ColocSetupScreen />} />
+          <Route path="/coloc/matches" element={<ColocMatchesScreen />} />
+          <Route path="/coloc/chat/:matchId" element={<ColocChatScreen />} />
+          <Route path="/coloc/profiles/:profileId" element={<ColocProfileScreen />} />
           <Route path="/services/:type/:id" element={<ServiceDetailScreen />} />
           <Route path="/services/artisans/:id" element={<ArtisanShopScreen />} />
 

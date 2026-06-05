@@ -44,6 +44,7 @@ urlpatterns = [
     path('api/v1/vlogs/', include('vlogs.urls')),
     path('api/v1/services/', include('services.urls')),
     path('api/v1/travel/', include('travel.urls')),
+    path('api/v1/coloc/',  include('coloc.urls')),
 ]
 
 if settings.DEBUG:
