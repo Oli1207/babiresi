@@ -57,12 +57,14 @@ import DestinationScreen from "./views/screens/destinations/DestinationScreen";
 import ExploreVlogsScreen from "./views/screens/vlogs/ExploreVlogsScreen";
 import VlogDetailScreen from "./views/screens/vlogs/VlogDetailScreen";
 import CreateVlogScreen from "./views/screens/vlogs/CreateVlogScreen";
+import MyVlogsScreen from "./views/screens/vlogs/MyVlogsScreen";
 import CreatorDashboardScreen from "./views/screens/vlogs/CreatorDashboardScreen";
 import ChallengesScreen from "./views/screens/vlogs/ChallengesScreen";
 
 import Navbar from "./views/components/Navbar";
 import Footer from "./views/components/Footer";
 import BottomNav from "./views/components/BottomNav";
+import { AuthGateProvider } from "./context/AuthGate";
 import "./App.css";
 
 import { setUser } from "./utils/auth";
@@ -434,6 +436,7 @@ function AppLayout() {
 
           {/* Vlogs — static routes BEFORE :id to avoid conflicts */}
           <Route path="/vlogs/create"     element={<CreateVlogScreen />} />
+          <Route path="/vlogs/me"         element={<MyVlogsScreen />} />
           <Route path="/vlogs/creator"    element={<CreatorDashboardScreen />} />
           <Route path="/vlogs/challenges" element={<ChallengesScreen />} />
           <Route path="/vlogs/:id"        element={<VlogDetailScreen />} />
@@ -474,7 +477,9 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <AppLayout />
+      <AuthGateProvider>
+        <AppLayout />
+      </AuthGateProvider>
     </BrowserRouter>
   );
 }

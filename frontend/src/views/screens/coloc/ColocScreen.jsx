@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, X, Info, Users, Home, MessageCircle, Settings } from 'lucide-react';
 import { useAuthStore } from '../../../store/auth';
 import { colocApi, fmtBudget, ZONES_ABIDJAN } from '../../../utils/coloc';
+import { useAuthGate } from '../../../context/AuthGate';
 import logoImage from '../../../assets/logo.png';
 import './coloc.css';
 
@@ -182,6 +183,7 @@ function ColocCard({ profile, onLike, onPass, isTop, stackIndex }) {
 export default function ColocScreen() {
   const user = useAuthStore(s => s.user);
   const isLoggedIn = !!user;
+  const { openAuth } = useAuthGate();
   const navigate = useNavigate();
 
   const [profiles,    setProfiles]    = useState([]);
@@ -235,9 +237,9 @@ export default function ColocScreen() {
           <Users size={56} strokeWidth={1} color="#764ba2" />
           <h3>Trouve ta coloc idéale</h3>
           <p>Connecte-toi pour swiper des profils et trouver ton futur colocataire.</p>
-          <Link to="/login" style={{ background: 'linear-gradient(135deg,#667eea,#764ba2)', color:'#fff', padding:'12px 28px', borderRadius:12, fontWeight:700, textDecoration:'none', marginTop:8 }}>
+          <button onClick={() => openAuth('Connecte-toi pour trouver ta coloc')} style={{ background: 'linear-gradient(135deg,#667eea,#764ba2)', color:'#fff', border:'none', padding:'12px 28px', borderRadius:12, fontWeight:700, cursor:'pointer', marginTop:8 }}>
             Se connecter
-          </Link>
+          </button>
         </div>
       </div>
     );

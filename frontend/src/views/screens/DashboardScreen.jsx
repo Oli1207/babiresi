@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Video, PlusCircle, Star, Trophy,
+  Video, PlusCircle, Star, Trophy, Heart,
   Plane, ClipboardList,
   Map, Calendar, Building2, Inbox, Key, Home,
   Compass, LayoutGrid,
@@ -66,6 +66,7 @@ export default function DashboardScreen() {
       {/* 1. Vlogs */}
       <Section title="Vlogs & Création" Icon={Video}>
         <Card to="/"              Icon={Video}        label="Explorer"         desc="Feed vidéo CI"        accent />
+        <Card to="/vlogs/me"      Icon={Heart}        label="Mon espace vlog"  desc="Mes vlogs, aimés, enregistrés" />
         <Card to="/vlogs/create"  Icon={PlusCircle}   label="Poster un vlog"   desc="Partager mon voyage" />
         <Card to="/vlogs/creator" Icon={Star}         label="Mes points"       desc="Revenus & retraits" />
         <Card to="/vlogs/challenges" Icon={Trophy}    label="Challenges"       desc="Concours en cours" />

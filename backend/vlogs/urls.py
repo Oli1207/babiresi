@@ -13,6 +13,9 @@ urlpatterns = [
     path("<int:pk>/share/", views.VlogShareView.as_view(), name="vlog-share"),
     path("<int:pk>/comments/", views.VlogCommentsView.as_view(), name="vlog-comments"),
 
+    # Mon activité vlog (liked / saved / mine)
+    path("me/", views.MyVlogActivityView.as_view(), name="vlog-me"),
+
     # Séries
     path("series/", views.VlogSeriesListView.as_view(), name="vlog-series-list"),
 

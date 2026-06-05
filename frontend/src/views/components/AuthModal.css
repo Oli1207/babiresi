@@ -1,0 +1,149 @@
+/* ============================================================
+   AuthModal
+   ============================================================ */
+.authm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .55);
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(2px);
+}
+
+.authm-modal {
+  position: relative;
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  padding: 28px 24px 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+  animation: authmPop .25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-height: 92vh;
+  overflow-y: auto;
+}
+@keyframes authmPop {
+  from { transform: scale(.92) translateY(10px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.authm-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 50%;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #666;
+}
+.authm-close:hover { background: #e5e7eb; }
+
+.authm-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.authm-logo img {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.authm-title {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+.authm-intent {
+  text-align: center;
+  font-size: .85rem;
+  color: #f97316;
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+
+.authm-tabs {
+  display: flex;
+  background: #f3f4f6;
+  border-radius: 12px;
+  padding: 4px;
+  margin: 14px 0 18px;
+}
+.authm-tabs button {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 9px;
+  border-radius: 9px;
+  font-size: .88rem;
+  font-weight: 700;
+  color: #888;
+  cursor: pointer;
+  transition: all .15s;
+}
+.authm-tabs button.active {
+  background: #fff;
+  color: #111;
+  box-shadow: 0 1px 4px rgba(0,0,0,.1);
+}
+
+.authm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.authm-input {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 11px;
+  padding: 12px 14px;
+  font-size: .92rem;
+  outline: none;
+  background: #fafafa;
+  width: 100%;
+  box-sizing: border-box;
+}
+.authm-input:focus { border-color: #f97316; background: #fff; }
+
+.authm-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: .82rem;
+  text-align: center;
+}
+
+.authm-submit {
+  margin-top: 4px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: .95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.authm-submit:disabled { opacity: .6; cursor: not-allowed; }
+
+.authm-switch {
+  text-align: center;
+  font-size: .84rem;
+  color: #888;
+  margin: 16px 0 0;
+}
+.authm-switch button {
+  background: none;
+  border: none;
+  color: #f97316;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}

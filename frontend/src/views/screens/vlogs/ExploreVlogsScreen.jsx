@@ -9,6 +9,7 @@ import {
   Map, Briefcase, Plane, User, Trophy, Users, Globe,
 } from 'lucide-react';
 import { useAuthStore } from '../../../store/auth';
+import { useAuthGate } from '../../../context/AuthGate';
 import { useVlogStore } from '../../../store/vlogs';
 import { vlogsApi, VLOG_CATEGORIES, REGIONS_CI, AMBIANCES, formatFCFA } from '../../../utils/vlogs';
 import { servicesApi } from '../../../utils/services';
@@ -230,6 +231,7 @@ function CommentList({ vlogId, comments, setComments, onCountChange, isLoggedIn 
 ───────────────────────────────────────────────────────────── */
 function CommentsDrawer({ vlogId, commentCount, onNewComment, onClose }) {
   const isLoggedIn = !!useAuthStore(s => s.user);
+  const { openAuth } = useAuthGate();
   const [comments, setComments] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [text,     setText]     = useState('');
@@ -297,7 +299,9 @@ function CommentsDrawer({ vlogId, commentCount, onNewComment, onClose }) {
             </button>
           </div>
         ) : (
-          <p className="cmt-login-hint">Connecte-toi pour commenter</p>
+          <button className="cmt-login-hint cmt-login-btn" onClick={() => openAuth('Connecte-toi pour commenter')}>
+            Connecte-toi pour commenter
+          </button>
         )}
       </div>
     </>
@@ -314,6 +318,7 @@ function TikTokItem({ vlog, onLike, onSave, isActive }) {
   const viewCountedRef = useRef(false);   // ← vue déjà comptée pour ce vlog
   const imageTimerRef  = useRef(null);    // ← timer pour images
   const navigate       = useNavigate();
+  const { requireAuth } = useAuthGate();
 
   /* — playback — */
   const [muted,        setMuted]        = useState(true);
@@ -592,7 +597,7 @@ function TikTokItem({ vlog, onLike, onSave, isActive }) {
 
         <button
           className={`tt-action-btn ${vlog.is_liked ? 'liked' : ''}`}
-          onClick={(e) => { e.stopPropagation(); onLike(vlog.id); }}
+          onClick={(e) => { e.stopPropagation(); requireAuth(() => onLike(vlog.id), 'Connecte-toi pour aimer ce vlog'); }}
         >
           <Heart size={26} className="tt-action-icon" strokeWidth={1.8}
             fill={vlog.is_liked ? 'currentColor' : 'none'} />
@@ -606,7 +611,7 @@ function TikTokItem({ vlog, onLike, onSave, isActive }) {
 
         <button
           className={`tt-action-btn ${vlog.is_saved ? 'saved' : ''}`}
-          onClick={(e) => { e.stopPropagation(); onSave(vlog.id); }}
+          onClick={(e) => { e.stopPropagation(); requireAuth(() => onSave(vlog.id), 'Connecte-toi pour enregistrer ce vlog'); }}
         >
           <Bookmark size={26} className="tt-action-icon" strokeWidth={1.8}
             fill={vlog.is_saved ? 'currentColor' : 'none'} />
@@ -752,6 +757,8 @@ function SearchBar({ value, onChange, onClose }) {
    Desktop Left Sidenav
 ───────────────────────────────────────────────────────────── */
 function DesktopSideNav({ onClose, zoneFilter }) {
+  const navigate = useNavigate();
+  const { requireAuth } = useAuthGate();
   const navLinks = [
     { to: '/carte',  icon: <Map       size={20} strokeWidth={1.6} />, label: 'Carte & Séjours' },
     { to: '/decouvrir',   icon: <Globe     size={20} strokeWidth={1.6} />, label: 'Destinations' },
@@ -774,9 +781,12 @@ function DesktopSideNav({ onClose, zoneFilter }) {
           </Link>
         ))}
       </div>
-      <Link to="/vlogs/create" className="tt-dsk-post-btn">
+      <button
+        onClick={() => requireAuth(() => navigate('/vlogs/create'), 'Connecte-toi pour poster un vlog')}
+        className="tt-dsk-post-btn"
+      >
         <Plus size={18} /> Poster
-      </Link>
+      </button>
     </nav>
   );
 }
@@ -786,6 +796,7 @@ function DesktopSideNav({ onClose, zoneFilter }) {
 ───────────────────────────────────────────────────────────── */
 function DesktopSidebar({ vlog, onLike, onSave }) {
   const isLoggedIn = !!useAuthStore(s => s.user);
+  const { requireAuth, openAuth } = useAuthGate();
   const navigate = useNavigate();
   const [panel,       setPanel]       = useState('info');   // 'info' | 'comments'
   const [comments,    setComments]    = useState([]);
@@ -870,7 +881,7 @@ function DesktopSidebar({ vlog, onLike, onSave }) {
           <div className="tt-dsk-actions">
             <button
               className={`tt-dsk-action ${vlog.is_liked ? 'active' : ''}`}
-              onClick={() => onLike(vlog.id)}
+              onClick={() => requireAuth(() => onLike(vlog.id), 'Connecte-toi pour aimer ce vlog')}
             >
               <Heart size={22} strokeWidth={1.8} fill={vlog.is_liked ? 'currentColor' : 'none'} />
               <span>{vlog.likes_count}</span>
@@ -881,7 +892,7 @@ function DesktopSidebar({ vlog, onLike, onSave }) {
             </button>
             <button
               className={`tt-dsk-action ${vlog.is_saved ? 'active' : ''}`}
-              onClick={() => onSave(vlog.id)}
+              onClick={() => requireAuth(() => onSave(vlog.id), 'Connecte-toi pour enregistrer ce vlog')}
             >
               <Bookmark size={22} strokeWidth={1.8} fill={vlog.is_saved ? 'currentColor' : 'none'} />
               <span>{vlog.saves_count}</span>
@@ -931,7 +942,9 @@ function DesktopSidebar({ vlog, onLike, onSave }) {
               </button>
             </div>
           ) : (
-            <p className="cmt-login-hint">Connecte-toi pour commenter</p>
+            <button className="cmt-login-hint cmt-login-btn" onClick={() => openAuth('Connecte-toi pour commenter')}>
+              Connecte-toi pour commenter
+            </button>
           )}
         </div>
       )}
@@ -968,6 +981,10 @@ export default function ExploreVlogsScreen({ initialVlogId, zoneFilter, onClose 
   const loaderRef    = useRef(null);
   const didJumpRef   = useRef(false);
   const { t }        = useTranslation();
+  const navigate     = useNavigate();
+  const { requireAuth } = useAuthGate();
+
+  const goCreateVlog = () => requireAuth(() => navigate('/vlogs/create'), 'Connecte-toi pour poster un vlog');
 
   useLockBodyScroll();
 
@@ -1132,9 +1149,9 @@ export default function ExploreVlogsScreen({ initialVlogId, zoneFilter, onClose 
             {hasActiveFilters && <span className="tt-filter-dot" />}
           </button>
           {!onClose && (
-            <Link to="/vlogs/create" className="tt-icon-btn tt-post-btn" aria-label="Poster">
+            <button onClick={goCreateVlog} className="tt-icon-btn tt-post-btn" aria-label="Poster">
               <Plus size={18} />
-            </Link>
+            </button>
           )}
         </div>
       </div>
@@ -1199,9 +1216,9 @@ export default function ExploreVlogsScreen({ initialVlogId, zoneFilter, onClose 
           <div className="tt-empty">
             <Film size={48} strokeWidth={1.2} />
             <p>Aucun vlog disponible.</p>
-            <Link to="/vlogs/create" className="tt-empty-cta">
+            <button onClick={goCreateVlog} className="tt-empty-cta">
               Sois le premier à poster !
-            </Link>
+            </button>
           </div>
         )}
       </div>

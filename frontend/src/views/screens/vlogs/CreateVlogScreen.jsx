@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-lea
 import 'leaflet/dist/leaflet.css';
 import { MapPin, Navigation, Upload, Video, Image, X } from 'lucide-react';
 import { useAuthStore } from '../../../store/auth';
+import { useAuthGate } from '../../../context/AuthGate';
 import { vlogsApi, VLOG_CATEGORIES, AMBIANCES, REGIONS_CI } from '../../../utils/vlogs';
 import apiInstance from '../../../utils/axios';
 import './vlogs.css';
@@ -41,7 +42,8 @@ function DraggableMarker({ lat, lng, onDrag }) {
 /* ── Main ────────────────────────────────────────────────── */
 export default function CreateVlogScreen() {
   const navigate  = useNavigate();
-  const isLoggedIn = useAuthStore(s => s.isLoggedIn);
+  const isLoggedIn = !!useAuthStore(s => s.user);
+  const { openAuth } = useAuthGate();
 
   /* — media upload — */
   const fileInputRef   = useRef(null);
@@ -192,6 +194,10 @@ export default function CreateVlogScreen() {
     if (!form.title.trim())       { setError('Le titre est requis.'); return; }
     if (!form.cloudinary_url)     { setError('Ajoute une vidéo ou une image.'); return; }
     if (!form.category)           { setError('Choisis une catégorie.'); return; }
+    if (typeof form.latitude !== 'number' || typeof form.longitude !== 'number') {
+      setError('Place ta localisation sur la carte (clique ou utilise ta position).');
+      return;
+    }
     setSubmitting(true);
     setError('');
     try {
@@ -212,8 +218,13 @@ export default function CreateVlogScreen() {
   if (!isLoggedIn) {
     return (
       <div className="create-vlog-screen">
-        <div className="create-vlog-container">
-          <p>Connecte-toi pour poster un vlog.</p>
+        <div className="create-vlog-container" style={{ textAlign: 'center', paddingTop: 40 }}>
+          <h2>Connexion requise</h2>
+          <p>Connecte-toi pour poster un vlog et participer aux concours.</p>
+          <button className="btn-submit-vlog" style={{ maxWidth: 240, margin: '12px auto 0' }}
+                  onClick={() => openAuth('Connecte-toi pour poster un vlog')}>
+            Se connecter
+          </button>
         </div>
       </div>
     );
@@ -308,28 +319,18 @@ export default function CreateVlogScreen() {
               <label className="cvf-label">Tags (séparés par des virgules)</label>
               <input className="cvf-input" value={form.tags} onChange={e => setField('tags', e.target.value)} placeholder="plage, famille, coucher de soleil" />
             </div>
-
-            {error && <div className="form-error">{error}</div>}
-
-            <div className="points-hint">
-              Ce vlog peut te rapporter des points : <strong>1pt/vue · 5pts/like · 10pts/commentaire · 15pts/partage</strong>
-            </div>
-
-            <button type="submit" disabled={submitting || uploading} className="btn-submit-vlog">
-              {submitting ? 'Publication…' : 'Publier le Vlog'}
-            </button>
           </div>
 
           {/* ── COLONNE DROITE : CARTE ── */}
           <div className="cvf-right">
             <div className="cvf-card">
               <div className="cvf-loc-header">
-                <h3 className="cvf-card-title"><MapPin size={16} /> Localisation (optionnel)</h3>
+                <h3 className="cvf-card-title"><MapPin size={16} /> Localisation <span style={{ color: '#ef4444' }}>*</span></h3>
                 <button type="button" className="cvf-gps-btn" onClick={useMyLocation} disabled={loadingGeo}>
                   <Navigation size={14} /> {loadingGeo ? 'Détection…' : 'Ma position'}
                 </button>
               </div>
-              <p className="cvf-loc-hint">Place le pin pour que ton vlog apparaisse sur la carte.</p>
+              <p className="cvf-loc-hint">Obligatoire — place le pin pour que ton vlog apparaisse sur la carte.</p>
 
               {geoError && <div className="cvf-geo-error">{geoError}</div>}
 
@@ -385,6 +386,17 @@ export default function CreateVlogScreen() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* ── FOOTER (pleine largeur, après la carte sur mobile) ── */}
+          <div className="cvf-footer">
+            {error && <div className="form-error">{error}</div>}
+            <div className="points-hint">
+              Ce vlog peut te rapporter des points : <strong>1pt/vue · 5pts/like · 10pts/commentaire · 15pts/partage</strong>
+            </div>
+            <button type="submit" disabled={submitting || uploading} className="btn-submit-vlog">
+              {submitting ? 'Publication…' : 'Publier le Vlog'}
+            </button>
           </div>
 
         </form>

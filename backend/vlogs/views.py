@@ -212,6 +212,24 @@ def _check_contest_threshold(vlog):
             winner.save(update_fields=["threshold_reached_at", "won_at", "best_vlog", "rank", "score"])
 
 
+class MyVlogActivityView(APIView):
+    """GET vlogs/me/?type=liked|saved|mine — l'activité vlog de l'utilisateur."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        kind = request.query_params.get("type", "mine")
+        if kind == "liked":
+            ids = VlogLike.objects.filter(user=request.user).values_list("vlog_id", flat=True)
+            qs = Vlog.objects.filter(id__in=ids)
+        elif kind == "saved":
+            ids = VlogSave.objects.filter(user=request.user).values_list("vlog_id", flat=True)
+            qs = Vlog.objects.filter(id__in=ids)
+        else:  # mine
+            qs = Vlog.objects.filter(author=request.user)
+        qs = qs.select_related("author", "destination").order_by("-created_at")
+        return Response(VlogSerializer(qs, many=True, context={"request": request}).data)
+
+
 class VlogLikeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
