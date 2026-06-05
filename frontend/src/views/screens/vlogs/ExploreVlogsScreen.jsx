@@ -753,7 +753,7 @@ function SearchBar({ value, onChange, onClose }) {
 ───────────────────────────────────────────────────────────── */
 function DesktopSideNav({ onClose, zoneFilter }) {
   const navLinks = [
-    { to: '/residences',  icon: <Map       size={20} strokeWidth={1.6} />, label: 'Carte & Séjours' },
+    { to: '/carte',  icon: <Map       size={20} strokeWidth={1.6} />, label: 'Carte & Séjours' },
     { to: '/decouvrir',   icon: <Globe     size={20} strokeWidth={1.6} />, label: 'Destinations' },
     { to: '/services',    icon: <Briefcase size={20} strokeWidth={1.6} />, label: 'Services'     },
     { to: '/coloc',       icon: <Users     size={20} strokeWidth={1.6} />, label: 'Coloc'        },
@@ -763,7 +763,7 @@ function DesktopSideNav({ onClose, zoneFilter }) {
   ];
   return (
     <nav className="tt-dsk-sidenav">
-      <Link to="/residences" className="tt-dsk-logo">
+      <Link to="/carte" className="tt-dsk-logo">
         <img src={logoImage} alt="Sostay" />
       </Link>
       <div className="tt-dsk-nav-links">
@@ -1094,7 +1094,7 @@ export default function ExploreVlogsScreen({ initialVlogId, zoneFilter, onClose 
             <ArrowLeft size={16} /> Carte
           </button>
         ) : (
-          <Link to="/residences" className="tt-logo-btn" aria-label="Accueil / Carte">
+          <Link to="/carte" className="tt-logo-btn" aria-label="Accueil / Carte">
             <img src={logoImage} alt="Sostay" className="tt-logo-img" />
           </Link>
         )}

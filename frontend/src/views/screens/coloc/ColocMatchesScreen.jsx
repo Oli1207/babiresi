@@ -47,7 +47,7 @@ export default function ColocMatchesScreen() {
   return (
     <div className="coloc-screen">
       <div className="coloc-header">
-        <Link to="/residences" className="coloc-home-btn" aria-label="Retour à l'app">
+        <Link to="/carte" className="coloc-home-btn" aria-label="Retour à l'app">
           <img src={logoImage} alt="Sostay" />
         </Link>
         <h1>Mes matchs</h1>

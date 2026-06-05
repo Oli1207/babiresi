@@ -39,7 +39,7 @@ function Navbar() {
           <Link to="/decouvrir" className={active('/decouvrir')} onClick={close}>
             <Globe size={15} /> Destinations
           </Link>
-          <Link to="/residences" className={active('/residences')} onClick={close}>
+          <Link to="/carte" className={active('/carte')} onClick={close}>
             <Map size={15} /> Carte
           </Link>
           <Link to="/services" className={active('/services')} onClick={close}>

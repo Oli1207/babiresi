@@ -34,6 +34,36 @@
 }
 .btn-become-provider:hover { background: rgba(255,255,255,.28); color: #fff; }
 
+/* Encart Voyager dans Services */
+.services-travel-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(135deg, #1e3a5f 0%, #c2520c 100%);
+  color: #fff;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  text-decoration: none;
+  flex-wrap: wrap;
+}
+.services-travel-cta .stc-text { display: flex; flex-direction: column; gap: 2px; }
+.services-travel-cta .stc-text strong { font-size: .95rem; }
+.services-travel-cta .stc-text span   { font-size: .8rem; opacity: .9; }
+.services-travel-cta .stc-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,.18);
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: .85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.services-travel-cta:hover .stc-arrow { background: rgba(255,255,255,.3); }
+
 .services-search {
   display: flex;
   gap: 8px;

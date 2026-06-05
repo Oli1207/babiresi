@@ -168,7 +168,7 @@ export default function OwnerProfileScreen() {
         <div className="alert alert-light border mt-3">
           Tu n’as encore publié aucune résidence.
           <div className="mt-2">
-            <button className="btn btn-dark" onClick={() => navigate("/residences/create")}>
+            <button className="btn btn-dark" onClick={() => navigate("/create")}>
               Publier une résidence
             </button>
           </div>

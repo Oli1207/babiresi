@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import Cookies from "js-cookie";
 
@@ -62,6 +62,7 @@ import ChallengesScreen from "./views/screens/vlogs/ChallengesScreen";
 
 import Navbar from "./views/components/Navbar";
 import Footer from "./views/components/Footer";
+import BottomNav from "./views/components/BottomNav";
 import "./App.css";
 
 import { setUser } from "./utils/auth";
@@ -74,11 +75,23 @@ import { useAuthStore } from "./store/auth";
 function AppLayout() {
   const location = useLocation();
 
-  const isVlogFeed = location.pathname === "/";
-  const isColoc    = location.pathname.startsWith("/coloc");
+  const path       = location.pathname;
+  const isVlogFeed = path === "/";
+  const isColoc    = path.startsWith("/coloc");
   const isFullscreen = isVlogFeed || isColoc;
   const isHome     = false;  // no longer used for full-screen lock
-  const isAuth     = location.pathname === "/login" || location.pathname === "/register";
+  const isAuth     = path === "/login" || path === "/register";
+
+  // Bottom bar : visible partout SAUF feed vlog (immersif), carte (toggle déjà là),
+  // coloc (sa propre nav), création vlog, et pages auth.
+  const hideBottomNav =
+    isVlogFeed ||
+    isColoc ||
+    isAuth ||
+    path === "/carte" ||
+    path === "/vlogs/create" ||
+    path.startsWith("/admin");
+  const showBottomNav = !hideBottomNav;
 
   // =========================================================
   // ✅ Push permission popup (custom) + subscribe only on accept
@@ -277,6 +290,13 @@ function AppLayout() {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = prev; };
   }, [isHome, isMobile]);
+
+  // Padding bas du body quand la bottom nav est visible
+  useEffect(() => {
+    document.body.classList.toggle("has-bottom-nav", showBottomNav);
+    return () => document.body.classList.remove("has-bottom-nav");
+  }, [showBottomNav]);
+
   return (
     <div className="app-container">
       {/* ========================================================= */}
@@ -351,8 +371,10 @@ function AppLayout() {
         <Routes>
           {/* "/" = TikTok vlog feed */}
           <Route path="/" element={<ExploreVlogsScreen />} />
-          {/* "/residences" = map + list des logements */}
-          <Route path="/residences" element={<HomeScreen />} />
+          {/* "/carte" = map + list des logements */}
+          <Route path="/carte" element={<HomeScreen />} />
+          {/* Redirect ancien chemin */}
+          <Route path="/residences" element={<Navigate to="/carte" replace />} />
 
           {/* Auth */}
           <Route path="/login" element={<Login />} />
@@ -436,6 +458,9 @@ function AppLayout() {
           </Route>
         </Routes>
       </main>
+
+      {/* Bottom nav mobile (masquée sur feed/carte/coloc/auth/admin) */}
+      {showBottomNav && <BottomNav />}
 
      {/* {!(isHome && isMobile) && <Footer />} */}
     </div>

@@ -247,7 +247,7 @@ export default function ColocScreen() {
     <div className="coloc-screen">
       {/* Header */}
       <div className="coloc-header">
-        <Link to="/residences" className="coloc-home-btn" aria-label="Retour à l'app">
+        <Link to="/carte" className="coloc-home-btn" aria-label="Retour à l'app">
           <img src={logoImage} alt="Sostay" />
         </Link>
         <h1>Coloc</h1>

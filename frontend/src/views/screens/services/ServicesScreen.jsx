@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Compass, Utensils, Zap, Car, Palette,
-  Star, Clock, Users, Search,
+  Star, Clock, Users, Search, Plane,
 } from 'lucide-react';
 import { servicesApi, formatFCFA, RESTAURANT_CATEGORIES, VEHICLE_TYPES } from '../../../utils/services';
 import './services.css';
@@ -188,6 +188,15 @@ export default function ServicesScreen() {
           + Devenir prestataire
         </Link>
       </div>
+
+      {/* Encart Voyager : séjour clé en main */}
+      <Link to="/voyager" className="services-travel-cta">
+        <div className="stc-text">
+          <strong>Tu préfères un séjour clé en main&nbsp;?</strong>
+          <span>Dis-nous ce que tu veux, on organise tout pour toi.</span>
+        </div>
+        <span className="stc-arrow"><Plane size={18} /> Planifier mon voyage →</span>
+      </Link>
 
       {/* Search */}
       <form onSubmit={handleSearch} className="services-search">

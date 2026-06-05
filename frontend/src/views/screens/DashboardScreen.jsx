@@ -79,7 +79,7 @@ export default function DashboardScreen() {
 
       {/* 3. Hébergements */}
       <Section title="Hébergements" Icon={Home}>
-        <Card to="/residences"    Icon={Map}       label="Carte"             desc="Trouver un logement" />
+        <Card to="/carte"    Icon={Map}       label="Carte"             desc="Trouver un logement" />
         <Card to="/me/bookings"   Icon={Calendar}  label="Mes réservations"  desc="Historique & statuts" />
         {isOwner ? (
           <>
