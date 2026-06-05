@@ -75,15 +75,22 @@ export const setUser = async () => {
 
   if (!accessToken || !refreshToken) return;
 
+  // ✅ Hydrate TOUT DE SUITE depuis les cookies (même si access expiré) :
+  // l'UI reste connectée. L'intercepteur axios rafraîchira au prochain appel.
+  setAuthUser(accessToken, refreshToken);
+
+  // ✅ Si access expiré, tente un refresh en arrière-plan.
+  // En cas d'échec TRANSITOIRE (backend qui redémarre, réseau), on NE déconnecte PAS.
   if (isAccessTokenExpired(accessToken)) {
     try {
       const response = await getRefreshToken(); // { access: ... }
-      setAuthUser(response.access, refreshToken);
+      if (response?.access) setAuthUser(response.access, refreshToken);
     } catch (error) {
-      // ignore
+      const status = error?.response?.status;
+      // Déconnexion seulement si le refresh token est réellement invalide (401)
+      if (status === 401) logout();
+      // sinon : on garde la session, ce sera retenté plus tard
     }
-  } else {
-    setAuthUser(accessToken, refreshToken);
   }
 };
 
@@ -140,19 +147,15 @@ export const getRefreshToken = async () => {
   const refresh_token = Cookies.get("refresh_token");
 
   if (!refresh_token) {
-    logout();
     throw new Error("Missing refresh token");
   }
 
-  try {
-    const response = await axios.post(`${BASE_URL}user/token/refresh/`, {
-      refresh: refresh_token,
-    });
-    return response.data; // { access: 'new_access_token' } (par défaut)
-  } catch (error) {
-    logout();
-    throw error;
-  }
+  // ✅ Ne PAS appeler logout() ici : laisser l'appelant décider selon le type d'erreur.
+  // (un échec réseau/5xx pendant un redéploiement ne doit jamais déconnecter)
+  const response = await axios.post(`${BASE_URL}user/token/refresh/`, {
+    refresh: refresh_token,
+  });
+  return response.data; // { access: 'new_access_token' }
 };
 
 export const isAccessTokenExpired = (accessToken) => {

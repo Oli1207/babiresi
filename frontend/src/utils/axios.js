@@ -88,9 +88,16 @@ apiInstance.interceptors.response.use(
         config.headers = { ...(config.headers || {}), Authorization: `Bearer ${newAccess}` };
         return apiInstance(config);
       } catch (e) {
-        Cookies.remove("access_token");
-        Cookies.remove("refresh_token");
-        window.location.href = "/login";
+        // ✅ Ne déconnecter QUE si le refresh token est réellement invalide (401).
+        // Un échec réseau / 5xx (backend qui redémarre pendant un déploiement)
+        // ne doit JAMAIS effacer la session.
+        const refreshStatus = e?.response?.status;
+        if (refreshStatus === 401 || refreshStatus === 400) {
+          Cookies.remove("access_token");
+          Cookies.remove("refresh_token");
+          localStorage.removeItem("is_logged_in");
+          window.location.href = "/login";
+        }
         return Promise.reject(e);
       }
     }

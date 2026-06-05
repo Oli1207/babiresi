@@ -160,10 +160,14 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    # Access token plus long => moins de refresh, moins de risque pendant un redéploiement
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=12),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=200),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    # Rotation désactivée : le refresh token reste stable.
+    # Évite les déconnexions quand setUser (boot) et l'intercepteur axios
+    # rafraîchissent en parallèle, ou en multi-onglets.
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,
     'ALGORITHM': 'HS256',
     'VERIFYING_KEY': None,
