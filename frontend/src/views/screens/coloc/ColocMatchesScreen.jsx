@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, MessageCircle, Settings, Users } from 'lucide-react';
 import { useAuthStore } from '../../../store/auth';
 import { colocApi } from '../../../utils/coloc';
+import logoImage from '../../../assets/logo.png';
 import './coloc.css';
 
 function timeAgo(ts) {
@@ -46,6 +47,9 @@ export default function ColocMatchesScreen() {
   return (
     <div className="coloc-screen">
       <div className="coloc-header">
+        <Link to="/residences" className="coloc-home-btn" aria-label="Retour à l'app">
+          <img src={logoImage} alt="Sostay" />
+        </Link>
         <h1>Mes matchs</h1>
         <p>Discute avec tes futurs colocataires</p>
       </div>

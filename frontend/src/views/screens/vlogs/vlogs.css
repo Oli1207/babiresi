@@ -38,12 +38,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f97316, #ea580c);
+  background: #fff;
   text-decoration: none;
   flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+.tt-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .tt-logo-icon {
   color: #fff;
@@ -651,17 +658,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px; height: 42px;
+  width: 46px; height: 46px;
   border-radius: 50%;
-  background: #f97316;
+  background: #fff;
   text-decoration: none;
   margin-bottom: 16px;
   flex-shrink: 0;
+  overflow: hidden;
 }
-.tt-dsk-logo span {
-  color: #fff;
-  font-weight: 900;
-  font-size: 1.2rem;
+.tt-dsk-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .tt-dsk-nav-links {
   display: flex;

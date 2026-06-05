@@ -6,13 +6,14 @@ import {
   Heart, MessageCircle, Bookmark, Share2, VolumeX, Volume2,
   Search, Flame, Trash2, SlidersHorizontal, RefreshCw,
   Music, Plus, Film, Video, ArrowLeft, Send,
-  Map, Briefcase, Plane, User, Trophy, Users,
+  Map, Briefcase, Plane, User, Trophy, Users, Globe,
 } from 'lucide-react';
 import { useAuthStore } from '../../../store/auth';
 import { useVlogStore } from '../../../store/vlogs';
 import { vlogsApi, VLOG_CATEGORIES, REGIONS_CI, AMBIANCES, formatFCFA } from '../../../utils/vlogs';
 import { servicesApi } from '../../../utils/services';
 import apiInstance from '../../../utils/axios';
+import logoImage from '../../../assets/logo.png';
 import './vlogs.css';
 
 /* ─────────────────────────────────────────────────────────────
@@ -752,8 +753,8 @@ function SearchBar({ value, onChange, onClose }) {
 ───────────────────────────────────────────────────────────── */
 function DesktopSideNav({ onClose, zoneFilter }) {
   const navLinks = [
-    { to: '/residences',  icon: <Home      size={20} strokeWidth={1.6} />, label: 'Hébergements' },
-    { to: '/carte',       icon: <Map       size={20} strokeWidth={1.6} />, label: 'Carte'        },
+    { to: '/residences',  icon: <Map       size={20} strokeWidth={1.6} />, label: 'Carte & Séjours' },
+    { to: '/decouvrir',   icon: <Globe     size={20} strokeWidth={1.6} />, label: 'Destinations' },
     { to: '/services',    icon: <Briefcase size={20} strokeWidth={1.6} />, label: 'Services'     },
     { to: '/coloc',       icon: <Users     size={20} strokeWidth={1.6} />, label: 'Coloc'        },
     { to: '/voyager',     icon: <Plane     size={20} strokeWidth={1.6} />, label: 'Planifier'    },
@@ -762,8 +763,8 @@ function DesktopSideNav({ onClose, zoneFilter }) {
   ];
   return (
     <nav className="tt-dsk-sidenav">
-      <Link to="/" className="tt-dsk-logo">
-        <span>B</span>
+      <Link to="/residences" className="tt-dsk-logo">
+        <img src={logoImage} alt="Sostay" />
       </Link>
       <div className="tt-dsk-nav-links">
         {navLinks.map(l => (
@@ -1093,8 +1094,8 @@ export default function ExploreVlogsScreen({ initialVlogId, zoneFilter, onClose 
             <ArrowLeft size={16} /> Carte
           </button>
         ) : (
-          <Link to="/decouvrir" className="tt-logo-btn" aria-label="Menu">
-            <span className="tt-logo-icon">B</span>
+          <Link to="/residences" className="tt-logo-btn" aria-label="Accueil / Carte">
+            <img src={logoImage} alt="Sostay" className="tt-logo-img" />
           </Link>
         )}
 

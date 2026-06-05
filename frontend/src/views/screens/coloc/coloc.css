@@ -10,6 +10,7 @@
 
 /* ── Header ── */
 .coloc-header {
+  position: relative;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   padding: 20px 16px 16px;
@@ -17,6 +18,21 @@
 }
 .coloc-header h1 { font-size: 1.4rem; font-weight: 800; margin: 0 0 4px; }
 .coloc-header p  { opacity: .85; font-size: .85rem; margin: 0; }
+
+/* Bouton retour vers l'app (logo) */
+.coloc-home-btn {
+  position: absolute;
+  top: 16px;
+  left: 14px;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.95);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+}
+.coloc-home-btn img { width: 100%; height: 100%; object-fit: cover; }
 
 /* ── Swipe counter chip ── */
 .swipe-counter {

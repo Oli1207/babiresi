@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, X, Info, Users, Home, MessageCircle, Settings } from 'lucide-react';
 import { useAuthStore } from '../../../store/auth';
 import { colocApi, fmtBudget, ZONES_ABIDJAN } from '../../../utils/coloc';
+import logoImage from '../../../assets/logo.png';
 import './coloc.css';
 
 /* ── Helper ── */
@@ -246,6 +247,9 @@ export default function ColocScreen() {
     <div className="coloc-screen">
       {/* Header */}
       <div className="coloc-header">
+        <Link to="/residences" className="coloc-home-btn" aria-label="Retour à l'app">
+          <img src={logoImage} alt="Sostay" />
+        </Link>
         <h1>Coloc</h1>
         <p>Trouve ton futur colocataire à Abidjan</p>
         {swipesLeft !== null && !isPremium && (

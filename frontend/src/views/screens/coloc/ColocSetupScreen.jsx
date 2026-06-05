@@ -7,6 +7,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Users, Home, Upload, X, Trash2, Heart, MessageCircle, Settings } from 'lucide-react';
 import { useAuthStore } from '../../../store/auth';
 import { colocApi, ZONES_ABIDJAN, INTERESTS, LIFESTYLE_OPTIONS } from '../../../utils/coloc';
+import logoImage from '../../../assets/logo.png';
 import './coloc.css';
 
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'babiresi_vlogs';
@@ -151,6 +152,9 @@ export default function ColocSetupScreen() {
   return (
     <div className="coloc-screen">
       <div className="coloc-header">
+        <Link to="/residences" className="coloc-home-btn" aria-label="Retour à l'app">
+          <img src={logoImage} alt="Sostay" />
+        </Link>
         <h1>Mon profil coloc</h1>
         <p>Plus ton profil est complet, meilleurs sont tes matchs</p>
       </div>
