@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
 
 import HomeScreen from "./views/screens/HomeScreen";
@@ -76,6 +77,7 @@ import { useAuthStore } from "./store/auth";
 
 function AppLayout() {
   const location = useLocation();
+  const { t } = useTranslation();
 
   const path       = location.pathname;
   const isVlogFeed = path === "/";
@@ -307,9 +309,9 @@ function AppLayout() {
       {showNotifPopup && (
         <div className="modal-backdrop-custom">
           <div className="modal-card-custom">
-            <h5 style={{ marginBottom: 8 }}>Active les notifications 🔔</h5>
+            <h5 style={{ marginBottom: 8 }}>{t("pwa.notificationsTitle")}</h5>
             <p style={{ margin: 0, opacity: 0.9 }}>
-              C’est important pour recevoir les confirmations de réservation, les réponses et les alertes.
+              {t("pwa.notificationsText")}
             </p>
 
             <div style={{ display: "flex", gap: 10, marginTop: 14, justifyContent: "flex-end" }}>
@@ -318,15 +320,15 @@ function AppLayout() {
                 onClick={handleLaterNotifications}
                 disabled={notifLoading}
               >
-                Plus tard
+                {t("common.later")}
               </button>
               <button className="btn btn-primary btn-sm" onClick={handleEnableNotifications} disabled={notifLoading}>
-                {notifLoading ? "Activation..." : "Activer"}
+                {notifLoading ? t("pwa.activating") : t("pwa.enable")}
               </button>
             </div>
 
             <small style={{ display: "block", marginTop: 10, opacity: 0.7 }}>
-              Tu peux désactiver à tout moment dans les réglages du navigateur.
+              {t("pwa.notificationsHint")}
             </small>
           </div>
         </div>
@@ -338,26 +340,26 @@ function AppLayout() {
       {showInstallPopup && (
         <div className="modal-backdrop-custom">
           <div className="modal-card-custom">
-            <h5 style={{ marginBottom: 8 }}>Installe l’app 📲</h5>
+            <h5 style={{ marginBottom: 8 }}>{t("pwa.installTitle")}</h5>
 
             {/* ✅ CHANGE: iOS => instructions, Android => vrai bouton installer */}
             {deferredPrompt ? (
               <p style={{ margin: 0, opacity: 0.9 }}>
-                Installe l’application sur ton téléphone pour une expérience plus rapide (et les notifications plus fiables).
+                {t("pwa.installText")}
               </p>
             ) : (
               <p style={{ margin: 0, opacity: 0.9 }}>
-                Sur iPhone : appuie sur <b>Partager</b> puis <b>Sur l’écran d’accueil</b>.
+                {t("pwa.iosInstallPrefix")} <b>{t("pwa.share")}</b> {t("pwa.iosInstallMiddle")} <b>{t("pwa.addToHome")}</b>.
               </p>
             )}
 
             <div style={{ display: "flex", gap: 10, marginTop: 14, justifyContent: "flex-end" }}>
               <button className="btn btn-outline-secondary btn-sm" onClick={handleCloseInstallPopup}>
-                Fermer
+                {t("common.close")}
               </button>
               {deferredPrompt && (
                 <button className="btn btn-light btn-sm" onClick={handleInstallPWA}>
-                  Installer
+                  {t("pwa.install")}
                 </button>
               )}
             </div>

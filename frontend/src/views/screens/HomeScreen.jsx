@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Map, List } from "lucide-react";
 import apiInstance from "../../utils/axios";
 
@@ -33,6 +34,7 @@ function buildParams(filters, page, pageSize) {
 }
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const [listings,    setListings]    = useState([]);
   const [loading,     setLoading]     = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -99,21 +101,21 @@ export default function HomeScreen() {
     <div className="res-shell">
       {/* ── Sticky tab bar ── */}
       <div className="res-tabbar">
-        <span className="res-tabbar-title">Hébergements</span>
+        <span className="res-tabbar-title">{t("listings.title")}</span>
         <div className="res-tabs">
           <button
             className={`res-tab ${tab === "map" ? "active" : ""}`}
             onClick={() => setTab("map")}
           >
             <Map size={15} />
-            Carte
+            {t("nav.map")}
           </button>
           <button
             className={`res-tab ${tab === "list" ? "active" : ""}`}
             onClick={() => setTab("list")}
           >
             <List size={15} />
-            Liste
+            {t("listings.list")}
           </button>
         </div>
       </div>

@@ -21,7 +21,7 @@ function StarRating({ value }) {
   );
 }
 
-function GuideCard({ guide }) {
+function GuideCard({ guide, t }) {
   return (
     <Link to={`/services/guides/${guide.id}`} className="service-card">
       <div className="service-card-img">
@@ -32,12 +32,12 @@ function GuideCard({ guide }) {
         {guide.is_anglophone_certified && <span className="cert-badge">Certified</span>}
       </div>
       <div className="service-card-body">
-        <h3>{guide.user_name || 'Guide'}</h3>
+        <h3>{guide.user_name || t('services.guide')}</h3>
         <StarRating value={guide.rating_avg} />
         <div className="service-card-tags">
           {guide.languages?.slice(0, 3).map(l => <span key={l} className="tag">{l}</span>)}
         </div>
-        <div className="service-card-price">À partir de {formatFCFA(guide.half_day_price || 0)}</div>
+        <div className="service-card-price">{t('services.fromPrice', { price: formatFCFA(guide.half_day_price || 0) })}</div>
       </div>
     </Link>
   );
@@ -63,7 +63,7 @@ function RestaurantCard({ r }) {
   );
 }
 
-function ActivityCard({ a }) {
+function ActivityCard({ a, t }) {
   return (
     <Link to={`/services/activities/${a.id}`} className="service-card">
       <div className="service-card-img">
@@ -78,15 +78,15 @@ function ActivityCard({ a }) {
         <p className="service-card-desc">
           <Clock size={11} /> {a.duration_hours}h
           &nbsp;·&nbsp;
-          <Users size={11} /> {a.min_persons}-{a.max_persons} pers.
+          <Users size={11} /> {a.min_persons}-{a.max_persons} {t('common.personsShort')}
         </p>
-        <div className="service-card-price">{formatFCFA(a.price_per_person)}/pers.</div>
+        <div className="service-card-price">{formatFCFA(a.price_per_person)}{t('services.perPerson')}</div>
       </div>
     </Link>
   );
 }
 
-function DriverCard({ d }) {
+function DriverCard({ d, t }) {
   const vehicle = d.vehicles?.[0];
   return (
     <Link to={`/services/drivers/${d.id}`} className="service-card">
@@ -97,7 +97,7 @@ function DriverCard({ d }) {
         }
       </div>
       <div className="service-card-body">
-        <h3>{d.user_name || 'Chauffeur'}</h3>
+        <h3>{d.user_name || t('services.driver')}</h3>
         <StarRating value={d.rating_avg} />
         {vehicle && (
           <p className="service-card-desc">
@@ -106,7 +106,7 @@ function DriverCard({ d }) {
         )}
         {vehicle && (
           <div className="service-card-price">
-            Avec chauffeur : {formatFCFA(vehicle.price_per_day_with_driver)}/j
+            {t('services.withDriverPrice', { price: formatFCFA(vehicle.price_per_day_with_driver) })}
           </div>
         )}
       </div>
@@ -114,7 +114,7 @@ function DriverCard({ d }) {
   );
 }
 
-function ArtisanCard({ a }) {
+function ArtisanCard({ a, t }) {
   return (
     <Link to={`/services/artisans/${a.id}`} className="service-card">
       <div className="service-card-img">
@@ -128,7 +128,7 @@ function ArtisanCard({ a }) {
         <h3>{a.user_name}</h3>
         <StarRating value={a.rating_avg} />
         <p className="service-card-desc">{a.craft_type}</p>
-        {a.products_count > 0 && <span className="tag">{a.products_count} créations</span>}
+        {a.products_count > 0 && <span className="tag">{t('services.creationsCount', { count: a.products_count })}</span>}
       </div>
     </Link>
   );
@@ -183,19 +183,19 @@ export default function ServicesScreen() {
     <div className="services-screen">
       <div className="services-header">
         <h1>{t('services.title')}</h1>
-        <p>Guides certifiés, restaurants authentiques, activités inoubliables</p>
+        <p>{t('services.subtitle')}</p>
         <Link to="/services/register" className="btn-become-provider">
-          + Devenir prestataire
+          + {t('services.becomeProvider')}
         </Link>
       </div>
 
       {/* Encart Voyager : séjour clé en main */}
       <Link to="/voyager" className="services-travel-cta">
         <div className="stc-text">
-          <strong>Tu préfères un séjour clé en main&nbsp;?</strong>
-          <span>Dis-nous ce que tu veux, on organise tout pour toi.</span>
+          <strong>{t('services.travelCtaTitle')}</strong>
+          <span>{t('services.travelCtaText')}</span>
         </div>
-        <span className="stc-arrow"><Plane size={18} /> Planifier mon voyage →</span>
+        <span className="stc-arrow"><Plane size={18} /> {t('services.planTrip')} →</span>
       </Link>
 
       {/* Search */}
@@ -232,11 +232,11 @@ export default function ServicesScreen() {
         <p className="no-data">{t('services.noServices')}</p>
       ) : (
         <div className="services-grid">
-          {activeTab === 'guides'      && data.map(g => <GuideCard      key={g.id} guide={g} />)}
+          {activeTab === 'guides'      && data.map(g => <GuideCard      key={g.id} guide={g} t={t} />)}
           {activeTab === 'restaurants' && data.map(r => <RestaurantCard key={r.id} r={r} />)}
-          {activeTab === 'activities'  && data.map(a => <ActivityCard   key={a.id} a={a} />)}
-          {activeTab === 'drivers'     && data.map(d => <DriverCard     key={d.id} d={d} />)}
-          {activeTab === 'artisans'    && data.map(a => <ArtisanCard    key={a.id} a={a} />)}
+          {activeTab === 'activities'  && data.map(a => <ActivityCard   key={a.id} a={a} t={t} />)}
+          {activeTab === 'drivers'     && data.map(d => <DriverCard     key={d.id} d={d} t={t} />)}
+          {activeTab === 'artisans'    && data.map(a => <ArtisanCard    key={a.id} a={a} t={t} />)}
         </div>
       )}
     </div>

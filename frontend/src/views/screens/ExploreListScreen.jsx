@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 function formatMoney(x) {
@@ -12,7 +13,12 @@ function pickCover(listing) {
   return cover?.image_url || "/listing-fallback.jpg";
 }
 
-function ListingCard({ l, active, onClick }) {
+function listingTypeLabel(t, type) {
+  const key = String(type || "residence").toLowerCase();
+  return t(`listings.types.${key}`, { defaultValue: type || t("listings.fallbackTitle") });
+}
+
+function ListingCard({ l, active, onClick, t }) {
   return (
     <div className={`list-card ${active ? "active" : ""}`} onClick={onClick}>
       <div className="list-thumb">
@@ -20,7 +26,7 @@ function ListingCard({ l, active, onClick }) {
       </div>
 
       <div className="list-meta">
-        <div className="list-title">{l?.title || "Résidence"}</div>
+        <div className="list-title">{l?.title || t("listings.fallbackTitle")}</div>
         {l?.test && (
           <div
             style={{
@@ -33,7 +39,7 @@ function ListingCard({ l, active, onClick }) {
               fontWeight: 600,
             }}
           >
-            ⚠️ Résidence de démonstration — annonce fictive
+            {t("listings.demoListing")}
           </div>
         )}
 
@@ -45,16 +51,16 @@ function ListingCard({ l, active, onClick }) {
         </div>
 
         <div className="small text-muted mt-1">
-          🛏 {l?.bedrooms ?? 0} ch · 🛋 {l?.living_rooms ?? 0} salon(s)
+          🛏 {l?.bedrooms ?? 0} {t("listings.bedroomsShort")} · 🛋 {l?.living_rooms ?? 0} {t("listings.livingRooms")}
           {l?.author_name ? ` · 👤 ${l.author_name}` : ""}
         </div>
 
         <div className="list-bottom">
           <div className="list-price">
-            {formatMoney(l?.price_per_night)} FCFA <span>/ nuit</span>
+            {formatMoney(l?.price_per_night)} FCFA <span>{t("listings.perNight")}</span>
           </div>
           <div className="list-chip">
-            {(l?.listing_type || "Résidence").toUpperCase()}
+            {listingTypeLabel(t, l?.listing_type).toUpperCase()}
           </div>
         </div>
       </div>
@@ -62,7 +68,7 @@ function ListingCard({ l, active, onClick }) {
   );
 }
 
-function Section({ title, items, activeId, onPick }) {
+function Section({ title, items, activeId, onPick, t }) {
   const arr = Array.isArray(items) ? items : [];
   if (!arr.length) return null;
 
@@ -76,6 +82,7 @@ function Section({ title, items, activeId, onPick }) {
             l={l}
             active={activeId === l.id}
             onClick={() => onPick(l)}
+            t={t}
           />
         ))}
       </div>
@@ -84,6 +91,7 @@ function Section({ title, items, activeId, onPick }) {
 }
 
 export default function ExploreListScreen(props) {
+  const { t } = useTranslation();
   const {
     loading = false,
     loadingMore = false,
@@ -218,14 +226,14 @@ export default function ExploreListScreen(props) {
     <div className="list-screen">
       <div className="list-header">
         <div>
-          <div className="list-h1">Résidences</div>
+          <div className="list-h1">{t("listings.residences")}</div>
           <div className="list-h2">
-            {loading ? "Chargement..." : `${dataList.length} résultats`}
+            {loading ? t("common.loading") : t("listings.resultsCount", { count: dataList.length })}
           </div>
         </div>
 
         <button type="button" className="btn btn-outline-dark" onClick={goMap}>
-          Voir sur la carte
+          {t("listings.viewOnMap")}
         </button>
       </div>
 
@@ -237,7 +245,7 @@ export default function ExploreListScreen(props) {
           onChange={(e) =>
             setEffectiveFilters((p) => ({ ...p, q: e.target.value }))
           }
-          placeholder="Rechercher: titre, quartier, commune..."
+          placeholder={t("listings.searchPlaceholder")}
         />
 
         {/* ✅ SELECT bindé directement sur listing_type de l'API */}
@@ -248,12 +256,12 @@ export default function ExploreListScreen(props) {
             setEffectiveFilters((p) => ({ ...p, listing_type: e.target.value }))
           }
         >
-          <option value="all">Tous types</option>
-          <option value="appartement">Appartement</option>
-          <option value="studio">Studio</option>
-          <option value="maison">Maison</option>
-          <option value="villa">Villa</option>
-          <option value="chambre">Chambre</option>
+          <option value="all">{t("listings.types.all")}</option>
+          <option value="appartement">{t("listings.types.appartement")}</option>
+          <option value="studio">{t("listings.types.studio")}</option>
+          <option value="maison">{t("listings.types.maison")}</option>
+          <option value="villa">{t("listings.types.villa")}</option>
+          <option value="chambre">{t("listings.types.chambre")}</option>
         </select>
 
         <div className="row g-2 mt-2">
@@ -261,7 +269,7 @@ export default function ExploreListScreen(props) {
             <input
               type="number"
               className="form-control"
-              placeholder="Prix max"
+              placeholder={t("listings.maxPrice")}
               value={effectiveFilters.max_price}
               onChange={(e) =>
                 setEffectiveFilters((p) => ({ ...p, max_price: e.target.value }))
@@ -273,7 +281,7 @@ export default function ExploreListScreen(props) {
             <input
               type="number"
               className="form-control"
-              placeholder="Personnes"
+              placeholder={t("common.persons")}
               value={effectiveFilters.guests}
               onChange={(e) =>
                 setEffectiveFilters((p) => ({ ...p, guests: e.target.value }))
@@ -285,7 +293,7 @@ export default function ExploreListScreen(props) {
             <input
               type="number"
               className="form-control"
-              placeholder="Min chambres"
+              placeholder={t("listings.minBedrooms")}
               value={effectiveFilters.min_bedrooms}
               onChange={(e) =>
                 setEffectiveFilters((p) => ({ ...p, min_bedrooms: e.target.value }))
@@ -297,7 +305,7 @@ export default function ExploreListScreen(props) {
             <input
               type="number"
               className="form-control"
-              placeholder="Min salons"
+              placeholder={t("listings.minLivingRooms")}
               value={effectiveFilters.min_living_rooms}
               onChange={(e) =>
                 setEffectiveFilters((p) => ({
@@ -311,12 +319,12 @@ export default function ExploreListScreen(props) {
 
         <div className="d-flex flex-wrap gap-2 mt-3">
           {[
-            ["has_wifi", "Wifi"],
-            ["has_ac", "Clim"],
-            ["has_parking", "Parking"],
-            ["has_garden", "Jardin"],
-            ["has_generator", "Groupe"],
-            ["has_security", "Sécurité"],
+            ["has_wifi", t("listings.amenities.wifi")],
+            ["has_ac", t("listings.amenities.ac")],
+            ["has_parking", t("listings.amenities.parking")],
+            ["has_garden", t("listings.amenities.garden")],
+            ["has_generator", t("listings.amenities.generator")],
+            ["has_security", t("listings.amenities.security")],
           ].map(([key, label]) => (
             <button
               key={key}
@@ -335,7 +343,7 @@ export default function ExploreListScreen(props) {
             className="btn btn-sm btn-outline-secondary"
             onClick={resetFilters}
           >
-            Reset
+            {t("common.reset")}
           </button>
         </div>
       </div>
@@ -349,19 +357,19 @@ export default function ExploreListScreen(props) {
       {(effectiveFilters.listing_type === "all" || !effectiveFilters.listing_type) ? (
          /* Affichage standard catégorisé si pas de filtre type strict */
          <>
-            <Section title="Recommandées" items={categories.recommended} activeId={activeId} onPick={pick} />
-            <Section title="Petits budgets (≤ 20k)" items={categories.budget} activeId={activeId} onPick={pick} />
-            <Section title="Confort (20k – 50k)" items={categories.mid} activeId={activeId} onPick={pick} />
-            <Section title="Premium (50k+)" items={categories.premium} activeId={activeId} onPick={pick} />
+            <Section title={t("listings.sections.recommended")} items={categories.recommended} activeId={activeId} onPick={pick} t={t} />
+            <Section title={t("listings.sections.budget")} items={categories.budget} activeId={activeId} onPick={pick} t={t} />
+            <Section title={t("listings.sections.comfort")} items={categories.mid} activeId={activeId} onPick={pick} t={t} />
+            <Section title={t("listings.sections.premium")} items={categories.premium} activeId={activeId} onPick={pick} t={t} />
             
-            <Section title="Studios" items={categories.studio} activeId={activeId} onPick={pick} />
-            <Section title="Appartements" items={categories.appartement} activeId={activeId} onPick={pick} />
-            <Section title="Villas" items={categories.villa} activeId={activeId} onPick={pick} />
-            <Section title="Maisons" items={categories.maison} activeId={activeId} onPick={pick} />
+            <Section title={t("listings.sections.studios")} items={categories.studio} activeId={activeId} onPick={pick} t={t} />
+            <Section title={t("listings.sections.apartments")} items={categories.appartement} activeId={activeId} onPick={pick} t={t} />
+            <Section title={t("listings.sections.villas")} items={categories.villa} activeId={activeId} onPick={pick} t={t} />
+            <Section title={t("listings.sections.houses")} items={categories.maison} activeId={activeId} onPick={pick} t={t} />
          </>
       ) : (
          /* Si un type est sélectionné, on affiche tout dans une section Résultats */
-         <Section title={`Résultats : ${effectiveFilters.listing_type}`} items={categories.all} activeId={activeId} onPick={pick} />
+         <Section title={t("listings.filteredResults", { type: listingTypeLabel(t, effectiveFilters.listing_type) })} items={categories.all} activeId={activeId} onPick={pick} t={t} />
       )}
 
       {/* Load more pro */}
@@ -373,16 +381,16 @@ export default function ExploreListScreen(props) {
             onClick={onLoadMore}
             disabled={loadingMore}
           >
-            {loadingMore ? "Chargement..." : "Charger plus"}
+            {loadingMore ? t("common.loading") : t("common.loadMore")}
           </button>
         </div>
       )}
 
       {!loading && dataList.length === 0 && (
         <div className="list-empty">
-          <div className="fw-semibold">Aucun résultat</div>
+          <div className="fw-semibold">{t("listings.noResults")}</div>
           <div className="text-muted small">
-            Essaie un autre quartier ou retire un filtre.
+            {t("listings.noResultsHint")}
           </div>
         </div>
       )}

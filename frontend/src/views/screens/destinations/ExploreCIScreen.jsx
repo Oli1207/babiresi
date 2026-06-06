@@ -34,7 +34,7 @@ export default function ExploreCIScreen() {
       <div className="ci-hero">
         <div className="ci-hero-content">
           <h1>{t('destinations.explore')}</h1>
-          <p>14 régions, des centaines de merveilles à explorer</p>
+          <p>{t('destinations.subtitle')}</p>
           <div className="hero-search">
             <input
               type="text"
@@ -69,7 +69,7 @@ export default function ExploreCIScreen() {
 
       {/* Regions filter */}
       <section className="section">
-        <h2 className="section-title">Filtrer par région</h2>
+        <h2 className="section-title">{t('destinations.filterByRegion')}</h2>
         <div className="regions-scroll">
           <button
             className={`region-chip ${regionFilter === '' ? 'active' : ''}`}
@@ -92,7 +92,9 @@ export default function ExploreCIScreen() {
       {/* Grid */}
       <section className="section">
         <h2 className="section-title">
-          {regionFilter ? `${CI_REGIONS_LABELS[regionFilter]} (${destinations.length})` : `Toutes les destinations (${destinations.length})`}
+          {regionFilter
+            ? t('destinations.regionCount', { region: CI_REGIONS_LABELS[regionFilter], count: destinations.length })
+            : t('destinations.allDestinationsCount', { count: destinations.length })}
         </h2>
 
         {loading ? (

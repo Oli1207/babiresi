@@ -40,7 +40,7 @@ export default function PortalBanner() {
         <Link to="/vlogs" className="pillar-card">
           <span className="pillar-icon"><Video size={28} strokeWidth={1.4} /></span>
           <h3>{t('nav.vlogs')}</h3>
-          <p>Contenu local authentique + gagne des points</p>
+          <p>{t('home.pillars.vlogsDesc')}</p>
         </Link>
         <Link to="/services" className="pillar-card">
           <span className="pillar-icon"><Briefcase size={28} strokeWidth={1.4} /></span>
@@ -49,8 +49,8 @@ export default function PortalBanner() {
         </Link>
         <Link to="/coloc" className="pillar-card">
           <span className="pillar-icon"><Users size={28} strokeWidth={1.4} /></span>
-          <h3>Coloc</h3>
-          <p>Trouve ton colocataire idéal à Abidjan</p>
+          <h3>{t('nav.coloc')}</h3>
+          <p>{t('home.pillars.colocDesc')}</p>
         </Link>
         <Link to="/voyager" className="pillar-card pillar-featured">
           <span className="pillar-icon"><Plane size={28} strokeWidth={1.4} /></span>
@@ -103,7 +103,7 @@ export default function PortalBanner() {
 
       {/* Divider before listings */}
       <div className="portal-divider">
-        <h2><Home size={18} strokeWidth={1.6} /> Hébergements disponibles</h2>
+        <h2><Home size={18} strokeWidth={1.6} /> {t('home.availableListings')}</h2>
       </div>
     </div>
   );

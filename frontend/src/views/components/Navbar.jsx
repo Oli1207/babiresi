@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Globe, Map, Briefcase, Plane, User, LogIn, UserPlus, LogOut, Menu, X, Users } from 'lucide-react';
 import { useAuthStore } from '../../store/auth';
 import NotificationBell from './NotificationBell';
@@ -12,6 +13,7 @@ function Navbar() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const location   = useLocation();
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
   const close = () => setOpen(false);
 
   const active = (path) =>
@@ -37,19 +39,19 @@ function Navbar() {
         <div className={`navbar-links ${open ? 'mobile-open' : ''}`}>
 
           <Link to="/decouvrir" className={active('/decouvrir')} onClick={close}>
-            <Globe size={15} /> Destinations
+            <Globe size={15} /> {t('nav.destinations')}
           </Link>
           <Link to="/carte" className={active('/carte')} onClick={close}>
-            <Map size={15} /> Carte
+            <Map size={15} /> {t('nav.map')}
           </Link>
           <Link to="/services" className={active('/services')} onClick={close}>
-            <Briefcase size={15} /> Services
+            <Briefcase size={15} /> {t('nav.services')}
           </Link>
           <Link to="/coloc" className={active('/coloc')} onClick={close}>
-            <Users size={15} /> Coloc
+            <Users size={15} /> {t('nav.coloc')}
           </Link>
           <Link to="/voyager" className={`${active('/voyager')} navbar-link-primary`} onClick={close}>
-            <Plane size={15} /> Planifier
+            <Plane size={15} /> {t('nav.plan')}
           </Link>
 
           <div className="navbar-divider" />
@@ -57,22 +59,22 @@ function Navbar() {
           {isLoggedIn() ? (
             <>
               <Link to="/mon-espace" className={active('/mon-espace')} onClick={close}>
-                <User size={15} /> Mon espace
+                <User size={15} /> {t('nav.mySpace')}
               </Link>
               <NotificationBell />
               <LanguageSwitcher />
               <Link to="/logout" className="navbar-logout-btn" onClick={close}>
-                <LogOut size={14} /> Déconnexion
+                <LogOut size={14} /> {t('nav.logout')}
               </Link>
             </>
           ) : (
             <>
               <LanguageSwitcher />
               <Link to="/login" className="navbar-link" onClick={close}>
-                <LogIn size={15} /> Connexion
+                <LogIn size={15} /> {t('nav.login')}
               </Link>
               <Link to="/register" className="navbar-link navbar-link-primary" onClick={close}>
-                <UserPlus size={15} /> S'inscrire
+                <UserPlus size={15} /> {t('auth.register')}
               </Link>
             </>
           )}

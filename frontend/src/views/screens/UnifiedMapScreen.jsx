@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import {
@@ -21,17 +22,16 @@ function BoundsWatcher({ onBoundsChange }) {
     onBoundsChange(map.getBounds());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return null;
 }
 
 // ─── Layer config ─────────────────────────────────────────────
 const LAYERS = [
-  { id: 'all',         label: 'Tout',       Icon: Layers,   color: '#334155' },
-  { id: 'vlogs',       label: 'Vlogs',      Icon: Video,    color: '#f97316' },
-  { id: 'listings',    label: 'Séjours',    Icon: Home,     color: '#0ea5e9' },
-  { id: 'activities',  label: 'Activités',  Icon: Zap,      color: '#8b5cf6' },
-  { id: 'restaurants', label: 'Restos',     Icon: Utensils, color: '#ef4444' },
-  { id: 'guides',      label: 'Guides',     Icon: Compass,  color: '#22c55e' },
+  { id: 'all',         labelKey: 'common.all',                Icon: Layers,   color: '#334155' },
+  { id: 'vlogs',       labelKey: 'nav.vlogs',                 Icon: Video,    color: '#f97316' },
+  { id: 'listings',    labelKey: 'map.layers.stays',          Icon: Home,     color: '#0ea5e9' },
+  { id: 'activities',  labelKey: 'services.activities',       Icon: Zap,      color: '#8b5cf6' },
+  { id: 'restaurants', labelKey: 'services.restaurantsShort', Icon: Utensils, color: '#ef4444' },
+  { id: 'guides',      labelKey: 'services.guides',           Icon: Compass,  color: '#22c55e' },
 ];
 
 // ─── Custom DivIcons ──────────────────────────────────────────
@@ -42,8 +42,8 @@ function makeVlogIcon(thumb) {
   return L.divIcon({ html, className: '', iconSize: [52, 52], iconAnchor: [26, 52] });
 }
 
-function makeListingIcon(listing) {
-  const raw   = listing.title || listing.listing_type || 'Résidence';
+function makeListingIcon(listing, t) {
+  const raw   = listing.title || listing.listing_type || t('listings.fallbackTitle');
   const label = raw.length > 16 ? raw.slice(0, 15) + '…' : raw;
   return L.divIcon({
     html: `<div class="map-pin-price">${label}</div>`,
@@ -71,12 +71,12 @@ const GUIDE_ICON      = () => makeServiceIcon(svgIcon('<circle cx="12" cy="12" r
 const ARTISAN_ICON    = () => makeServiceIcon(svgIcon('<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>', '#fff'), '#a16207');
 
 // ─── Drawer content per type ──────────────────────────────────
-function DrawerContent({ pin, onClose, onOpenVlogFeed }) {
+function DrawerContent({ pin, onClose, onOpenVlogFeed, t }) {
   const navigate = useNavigate();
   if (!pin) return (
     <div className="umap-drawer-empty">
       <MapPin size={24} strokeWidth={1.5} style={{ opacity: .4, margin: '0 auto 8px', display: 'block' }} />
-      <p>Clique sur un pin pour explorer</p>
+      <p>{t('map.clickPin')}</p>
     </div>
   );
 
@@ -103,10 +103,10 @@ function DrawerContent({ pin, onClose, onOpenVlogFeed }) {
         </div>
         <div className="umap-drawer-actions">
           <button className="umap-btn-primary" onClick={() => { onClose(); onOpenVlogFeed(pin); }}>
-            Voir le feed de la zone
+            {t('map.viewAreaFeed')}
           </button>
           <button className="umap-btn-secondary" onClick={() => { onClose(); navigate(`/vlogs/${pin.id}`); }}>
-            Ce vlog seulement
+            {t('map.thisVlogOnly')}
           </button>
         </div>
       </div>
@@ -130,11 +130,11 @@ function DrawerContent({ pin, onClose, onOpenVlogFeed }) {
   };
 
   const LABEL = {
-    listing:    'Voir la résidence',
-    activity:   "Voir l'activité",
-    restaurant: 'Voir le restaurant',
-    guide:      'Voir le guide',
-    artisan:    "Voir l'artisan",
+    listing:    t('map.viewListing'),
+    activity:   t('map.viewActivity'),
+    restaurant: t('map.viewRestaurant'),
+    guide:      t('map.viewGuide'),
+    artisan:    t('map.viewArtisan'),
   };
 
   return (
@@ -151,9 +151,9 @@ function DrawerContent({ pin, onClose, onOpenVlogFeed }) {
         {pin.rating_avg > 0 && (
           <p className="umap-ds-rating"><Star size={11} fill="#f59e0b" color="#f59e0b" /> {Number(pin.rating_avg).toFixed(1)}</p>
         )}
-        {type === 'listing'    && <p className="umap-ds-price">{fmtFCFA(pin.price_per_night)} <span>/nuit</span></p>}
-        {type === 'activity'   && <p className="umap-ds-price">{fmtFCFA(pin.price_per_person)} <span>/pers.</span></p>}
-        {type === 'guide'      && <p className="umap-ds-price">Demi-journée : {fmtFCFA(pin.half_day_price)}</p>}
+        {type === 'listing'    && <p className="umap-ds-price">{fmtFCFA(pin.price_per_night)} <span>{t('listings.perNight')}</span></p>}
+        {type === 'activity'   && <p className="umap-ds-price">{fmtFCFA(pin.price_per_person)} <span>{t('services.perPerson')}</span></p>}
+        {type === 'guide'      && <p className="umap-ds-price">{t('services.halfDay')} : {fmtFCFA(pin.half_day_price)}</p>}
         {type === 'restaurant' && pin.price_range && <p className="umap-ds-loc">{pin.price_range}</p>}
         {ROUTE[type] && (
           <button className="umap-btn-primary" onClick={() => { onClose(); navigate(ROUTE[type](pin.id)); }}>
@@ -163,12 +163,11 @@ function DrawerContent({ pin, onClose, onOpenVlogFeed }) {
       </div>
     </div>
   );
-
-  return null;
 }
 
 // ─── Main component ───────────────────────────────────────────
 export default function UnifiedMapScreen({ onGoList }) {
+  const { t } = useTranslation();
   const mapRef    = useRef(null);
   const reqId     = useRef(0);
   const debounce  = useRef(null);
@@ -263,7 +262,7 @@ export default function UnifiedMapScreen({ onGoList }) {
     }
     if (show('listings')) {
       (pins.listings || []).forEach(l => {
-        const icon = makeListingIcon(l);
+        const icon = makeListingIcon(l, t);
         els.push({ key: `l-${l.id}`, lat: l.lat, lng: l.lng, icon, pin: { ...l, _type: 'listing' } });
       });
     }
@@ -288,7 +287,7 @@ export default function UnifiedMapScreen({ onGoList }) {
       });
     }
     return els;
-  }, [pins, activeLayer]);
+  }, [pins, activeLayer, t]);
 
   // ── Total count for current layer ─────────────────────────
   const totalCount = useMemo(() => {
@@ -311,7 +310,7 @@ export default function UnifiedMapScreen({ onGoList }) {
             onClick={() => setActiveLayer(l.id)}
           >
             <l.Icon size={14} />
-            {l.label}
+            {t(l.labelKey)}
           </button>
         ))}
       </div>
@@ -319,11 +318,11 @@ export default function UnifiedMapScreen({ onGoList }) {
       {/* ── Top chip (count + go-list) ── */}
       <div className="map-overlay-top" style={{ top: 58 }}>
         <div className="map-chip">
-          {loading ? 'Chargement…' : `${totalCount} résultat${totalCount !== 1 ? 's' : ''}`}
+          {loading ? t('common.loading') : t('listings.resultsCount', { count: totalCount })}
         </div>
         {onGoList && (
           <button className="map-chip map-chip-btn" onClick={onGoList}>
-            Liste →
+            {t('listings.list')} →
           </button>
         )}
       </div>
@@ -350,13 +349,14 @@ export default function UnifiedMapScreen({ onGoList }) {
       {/* ── Bottom drawer (carte flottante sur desktop) ── */}
       <div className={`umap-drawer ${drawerOpen ? 'open' : ''}`}>
         <div className="umap-drawer-handle" onClick={() => setDrawerOpen(p => !p)} />
-        <button className="umap-drawer-close" onClick={() => setDrawerOpen(false)} aria-label="Fermer">
+        <button className="umap-drawer-close" onClick={() => setDrawerOpen(false)} aria-label={t('common.close')}>
           <X size={18} />
         </button>
         <DrawerContent
           pin={drawerPin}
           onClose={() => setDrawerOpen(false)}
           onOpenVlogFeed={openVlogFeed}
+          t={t}
         />
       </div>
 
