@@ -378,6 +378,13 @@ function TikTokItem({ vlog, onLike, onSave, isActive }) {
     else         { videoRef.current.play();  setPlaying(true);  }
   };
 
+  const handleVideoClick = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const controlsZoneHeight = 72;
+    if (e.clientY >= rect.bottom - controlsZoneHeight) return;
+    togglePlay();
+  };
+
   /* ── fetch context services once when first active ── */
   useEffect(() => {
     if (!isActive || fetchedRef.current) return;
@@ -493,10 +500,11 @@ function TikTokItem({ vlog, onLike, onSave, isActive }) {
           src={vlog.cloudinary_url}
           poster={vlog.thumbnail_url || undefined}
           muted={muted}
+          controls
           loop
           playsInline
           className="tt-video"
-          onClick={togglePlay}
+          onClick={handleVideoClick}
           onTimeUpdate={handleTimeUpdate}
         />
       ) : vlog.thumbnail_url ? (

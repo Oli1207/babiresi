@@ -327,7 +327,7 @@
 /* ── Pause indicator (center play icon) ── */
 .tt-pause-indicator {
   position: absolute;
-  inset: 0;
+  inset: 0 0 72px 0;
   display: flex;
   align-items: center;
   justify-content: center;
