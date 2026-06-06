@@ -213,11 +213,11 @@ export default function ServicesScreen() {
       </form>
 
       {/* Tabs */}
-      <div className="vlogs-tabs" style={{ marginBottom: 20 }}>
+      <div className="services-tabs">
         {TABS.map(tab => (
           <button
             key={tab.key}
-            className={`vlog-tab ${activeTab === tab.key ? 'active' : ''}`}
+            className={`service-tab ${activeTab === tab.key ? 'active' : ''}`}
             onClick={() => { setActiveTab(tab.key); setSearch(''); }}
           >
             {TAB_ICONS[tab.key]}
