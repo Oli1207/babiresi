@@ -347,9 +347,12 @@ export default function UnifiedMapScreen({ onGoList }) {
         </MapContainer>
       </div>
 
-      {/* ── Bottom drawer ── */}
+      {/* ── Bottom drawer (carte flottante sur desktop) ── */}
       <div className={`umap-drawer ${drawerOpen ? 'open' : ''}`}>
         <div className="umap-drawer-handle" onClick={() => setDrawerOpen(p => !p)} />
+        <button className="umap-drawer-close" onClick={() => setDrawerOpen(false)} aria-label="Fermer">
+          <X size={18} />
+        </button>
         <DrawerContent
           pin={drawerPin}
           onClose={() => setDrawerOpen(false)}

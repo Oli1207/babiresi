@@ -729,6 +729,49 @@ html, body, #root {
   cursor: pointer;
 }
 
+/* Bouton fermer (visible surtout sur desktop) */
+.umap-drawer-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,.9);
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.umap-drawer-close:hover { background: #fff; }
+
+/* ── Desktop : carte flottante en bas à gauche au lieu d'un bandeau pleine largeur ── */
+@media (min-width: 768px) {
+  .umap-drawer {
+    left: 20px;
+    right: auto;
+    width: 370px;
+    bottom: 20px;
+    border-radius: 18px;
+    border: 1px solid rgba(0,0,0,.08);
+    box-shadow: 0 16px 48px rgba(0,0,0,.2);
+    max-height: 72vh;
+    transform: translateY(calc(100% + 60px));
+    transition: transform .3s ease, bottom 0s;
+    padding-top: 8px;
+  }
+  .umap-drawer.open {
+    bottom: 20px;
+    transform: translateY(0);
+  }
+  .umap-drawer-handle { display: none; }
+  .umap-drawer-close  { display: flex; }
+}
+
 .umap-drawer-empty {
   padding: 28px 16px;
   text-align: center;
